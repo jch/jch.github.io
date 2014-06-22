@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Debian/Ubuntu Specific Rails with Postgresql
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Debian/Ubuntu Specific Rails with Postgresql</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I spent the weekend migrating from my shared hosting at Dreamhost over
+to VPS hosting at <a href="http://www.silverrack.com/">SilverRack</a>.  In the
+move, I setup my housing app to run on postgresql instead of mysql.  I
+was in for a few surprises though.</p><p>When I ran db:migrate, I got a strange error:</p><pre><code> rake aborted!
+ No such file or directory - /tmp/.s.PGSQL.5432
+</code></pre><p>At first I thought it was because postgres wasn't started, but that
+didn't make sense because I had another terminal with psql running
+just fine.  If you follow the --trace message, you'll find that the
+most poorly named option in database.yml will fix this problem:</p><pre><code> production:
+   adapter: postgresql
+   # ... other stuff
+   host: /var/run/postgresql
+</code></pre><p>The 'host' parameter is the directory Rails looks in to get the tmp
+file to determine how to connect to postgres.  I guess in other *nix
+systems this is conventionally in tmp, but that's not true for Debian
+based distros.</p><p>After fixing that, I ran into another little problem:</p><pre><code>psql: FATAL:  Ident authentication failed for user "xxx"
+</code></pre><p>This one comes as a result of good defaults by the Debian postgresql
+configs.  A <a href="http://semweb.weblog.ub.rug.nl/node/61">quick google</a>
+solved this one:</p><pre><code># add to pg_hba.conf, found in /etc/postgresql/...
+local    all   all   trust
+host     all   127.0.0.1  255.255.255.255    trust
+</code></pre><p>For a cheatsheet of setting up a Rails project with Postgresql, check
+out <a href="../../02/05/setup_rails_with_postgresql/index.html">this guide I wrote a while
+back</a>.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Debian/Ubuntu Specific Rails with Postgresql';
+  var disqus_identifier = '/articles/2008/08/10/debian-ubuntu-specific-rails-with-postgresql';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

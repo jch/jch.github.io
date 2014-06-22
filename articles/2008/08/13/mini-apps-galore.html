@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Mini-apps Galore!
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Mini-apps Galore!</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I'm warming up to the idea of using small webapps that do <em>less</em>.
+Instead of full blown behemoth applications that take a lot of time to
+learn and configure, they're more in the spirit of Unix tools or perl
+one-liners.  Here's three that I came across that show quite a bit of
+promise.</p><h2>Hoptoad</h2><p><a href="../../../../images/hoptoadapp.png">
+   <img src="../../../../images/hoptoadapp-thumb.png" alt="hoptoad main page with a listing of unresolved exceptions from my application">
+</a></p><p>Think of Hoptoad as a beautiful and functional wrapper around
+<a href="http://agilewebdevelopment.com/plugins/exception_notifier">exception
+notifier</a>.
+Only rather than installing exception notifier per application,
+Hoptoad is a single stop for all your broken app needs.  Setup is as
+simple as installing the Hoptoad plugin, adding 4 lines to your app,
+and running a rake task.  After this, you can access your exceptions
+in Hoptoad's simple web interface, or subscribe to the provided RSS
+feeds.  Each exception gets a summary view, some environment context,
+and a full backtrace.  If you wanted to munge on that exception data
+some more, they include an
+<a href="http://whatcodecraves.hoptoadapp.com/pages/api">API</a> to access the
+site.</p><h2>PingMyMap</h2><p><a href="../../../../images/pingmymap.png">
+  <img src="../../../../images/pingmymap-thumb.png" alt="listing of what sites pingmymap sent my sitemap to">
+</a></p><p>I came across PingMyMap when I was cleaning up my sitemap generator.
+At the time I only used Google's <a href="https://www.google.com/webmasters/tools/docs/en/sitemap-generator.html">python sitemap
+generator</a>.
+I'm not hell-bent on SEO, but I figured it wouldn't hurt for people to
+be able to find my site if it actually helps them.  PingMyMap doesn't
+offer any tips or tools for optimizing your site.  For an app that
+deals with <a href="http://www.sitemaps.org/">sitemaps</a>, it doesn't even offer
+you a tool to generate a sitemap!  Instead all this mini app does is
+take an existing sitemap and send it off to 5 search engines that it
+knows about.  It provides an
+<a href="http://pingmymap.com/documentation/#api">API</a> for you to post the
+actual sitemap, and then it'll tell you whether it was successful or
+not in submitting your sitemap to those search engines.</p><h2>Disqus</h2><p><a href="../../../../images/disqus.png">
+  <img src="../../../../images/disqus-thumb.png" alt="disqus showing list of comments for this blog article">
+</a></p><p>To play with Disqus, simply post a comment to this blog article :).
+Like the other two examples above, Disqus offloads the common tasks of
+'comments' into a shared webapp.  You can manage comments you get from
+multiples sites.  It also offers integration with existing popular
+blog engines.  Unlike the others, Disqus also holds some of your data.
+This eases management of that data, but at the cost of losing control
+of your own data.  One of the main reasons I enjoyed using Blogger was
+that it allowed me the option to store my own data on my own server.
+One of the main reasons why I disliked Blogger was that functionality
+wasn't always guaranteed.  Disqus shows promise because they also
+<em>plan</em> on having APIs for accessing their app, but only time can show
+if this one's a keeper.</p><p>For the record, I had the exact same idea for a webapp like Disqus for
+a long time.  I even spent an evening a few days ago prototyping out a
+super raw version.  My raw version let you do all kinds of crazy
+stuff... including XSS attacks, off-site AJAX calls, and SQL injection
+attacks :)</p><h2>Wrap up</h2><p>Even though these 3 apps do very different things, they all share a
+very similar <em>feel</em>.  They don't try to do everything, they're simple
+to setup, and best of all, they're extendable and hackable through
+their APIs.  It might not be the kind of extensibility that a
+full-blown open source project provides, but with the shallow learning
+curve, it's the <em>right</em> amount of extensibility to get stuff done.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Mini-apps Galore!';
+  var disqus_identifier = '/articles/2008/08/13/mini-apps-galore';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+A Day in Python Library Hell
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>A Day in Python Library Hell</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I haven't used python as my main day-to-day language, but I've already
+run into problems with the tools and libraries that has had me pulling
+my hair out.</p><h2>Library Management</h2><p>There doesn't appear to be a consensus in the community for how you
+distribute or install libraries.  As a result, every library is a
+little different, and you have to figure it out per package.
+Sometimes it's through python eggs, sometimes through your OS's
+package manager, sometimes it's from source, and sometimes it's just
+drop in a file.  As if this wasn't bad enough, the method you choose
+to install a library might determine whether it works or not.  When I
+tried to install the oauth module via an egg, the module didn't work.
+From this <a href="http://agileweb.wordpress.com/2009/04/28/step-by-step-guide-to-use-sign-in-with-twitter-with-django/">blog post
+comment</a>,
+it turns out I wasn't alone:</p><pre><code>I had this problem too. I get it when I used setuptools to install
+an egg of ouath. Instead, just copy oauth.py into your Python path
+and it will work fine.
+</code></pre><p>"just copy oauth.py into your Python path"?  Is this seriously the
+solution?  If so, then why even bother to have distribute a broken
+egg?</p><h3>easy_install is Stupid</h3><p>First of all, what a stupid name for a program.  It doesn't tell me
+anything about what it does, and isn't remotely related to 'eggs' nor
+python.  The --help message has no short description, and there's no
+man page for it.  When you google for 'python egg', the first result
+is <a href="http://pypi.python.org/pypi/setuptools">'setuptools'</a>, which is
+'easy_install', which happens to install eggs.</p><p>Oh, and guess what?  There's no easy_uninstall.  For that, you'll have
+to remove it yourself from your local site-packages, or <a href="http://ubuntuforums.org/showthread.php?t=666698">roll your own
+uninstall</a>.</p><h2>
+<strong>init</strong>.py is Useless</h2><p>Every init file I've seen so far has been empty.  I understand the
+purpose for this file, but requiring it in a directory for something
+to be considered a module is annoying.  Java also uses directories for
+packages, but doesn't require you to touch a file in every folder.</p><h2>Rotten Eggs</h2><p>I'm disappointed something that developers use day in and day out can
+be so clunky and vague.  I've singled out the oauth library as an
+example, but the problem isn't just a single bad library.  The problem
+is how freaking difficult it is to try a new library; Even if you like
+the API of the library, there's an additional hurdle of installing and
+maintaining it.  I wish the Python community would come to a consensus
+and choose a standard way of distributing libraries.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'A Day in Python Library Hell';
+  var disqus_identifier = '/articles/2010/01/11/a-day-in-python-library-hell';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

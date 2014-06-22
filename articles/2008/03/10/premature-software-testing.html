@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Premature Software Testing
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Premature Software Testing</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I've fallen victim to it a few times now and would like to remind
+myself of the causes and consequences.  Don't get me wrong, I love
+testing and have attempted/done/failed at it ever since CS61B.  I've
+used standardized test frameworks, hackish quickie frameworks from
+school, and created my own small frameworks for specific projects.
+Testing is a good thing.</p><p>But there is such a thing as testing too early.  My most recent mishap
+happened during my internship.  I finished a tool that I thought did
+what I want, and fully tested it.  Well, the plus side was that it was
+perfectly tested against what it does, and worked beautifully for all
+possible inputs.  The downside was that the code didn't do what it was
+supposed to do!  I misunderstood my own requirements and coded
+something wrong.  Then instead of having tests that could support me
+as I refactored, I ended up with an extra set of barriers that kept me
+constrained to wrong solutions.  In other words, I believed in my
+tests and this slowed down my redesign towards a correct solution.</p><p>Another time this happened to me was during cs164 while I was writing
+an Earley parser.  This one cut me deep because the solution just
+happened to work against the cases I specified in my tests.  Then
+about one week before the due date, I noticed that I misread the
+original paper and implemented a system with different semantics.  All
+the tests that exercised individual methods were scrapped.  In the
+end, all tests were scrapped :(</p><p>I lost many hours on both those mistakes, but I have noticed different
+cases when I'm more successful.  Here are some guidelines I think work
+well:</p><h2>When to Start Testing</h2><ul>
+<li><p>start testing when you start coding for real.</p></li>
+<li><p>start coding <em>for real</em> after you've read and re-read your
+spec enough times to recite it backwards.  Think of a design, think of
+how use cases would fare against that design.</p></li>
+<li><p>if there are sections of the design that are ambiguous, or if you
+aren't sure of what tools to use to implement something, explore with
+quick dummy code and take notes.  Don't even bother putting the dummy
+code in your repo, or actual directory... It'll only tempt you to keep
+crappy code.  Throw the code away, but keep the notes.</p></li>
+<li><p>with design doc, and notes from exploring in hand, try writing some
+real code.  If you find yourself rewriting a ton of stuff repeatedly,
+you didn't design/explore your problem space enough before starting.</p></li>
+<li><p>when exploring concepts and designs, it's a good idea to explore
+what test strategies are appropriate.  I say appropriate because
+there'll always be some gigantic mammoth of a testing framework with
+more features than your project needs and a configuration and learning
+curve to match.  Sometimes, the framework that's "just right" is one
+that you glue together.</p></li>
+</ul><h2>How to Test</h2><p>There are plenty of good guides out there on 'what' to test, but I
+think many of them provide examples that are too trivial and brittle
+against refactoring.</p><ul>
+<li><p>when testing data models, focus on getting consistent domains, and
+lightweight models.  If it's hard to test, it might indicate a flaw
+in your design.</p></li>
+<li><p>unit testing is fantastic, but double check that the methods you're
+testing are actually relevant and useful.  A correct method doesn't
+imply a useful one.  Also, instead of tying very strictly with method
+names, it can be more readable and flexible to describe your test in
+terms of the action or mutation.</p></li>
+<li><p>don't strictly focus on unit testing.  Do the functional tests in
+parallel to expose useless methods and flawed interactions early on.
+The same applies for integration tests.  Also, the sooner you
+communicate with modules written by other members of your team, the
+better.</p></li>
+</ul><p>We all knew that testing too late or not testing at all can cause
+cancer, but there is such a thing as testing too early.  It wastes
+your time, and may restrict you to a suboptimal or incorrect design.
+Furthermore, testing isn't the same as designing.  No amount of random
+testing will yield a solid design.  Rather, an elegant design will
+naturally encourage you to think about tests, and those tests can then
+verify your implementation.  Testing is like eating your vegetables:
+it's good for your health in the long run, but eating too much or the
+wrong kind will give you the runs.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Premature Software Testing';
+  var disqus_identifier = '/articles/2008/03/10/premature-software-testing';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

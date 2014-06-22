@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Email Delivery for Webapps
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Email Delivery for Webapps</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Delivering email is easy.  Having that email actually get received is
+freaking hard.  In this era rife with spammers, if you don't jump
+through several hoops of verifying yourself, your messages will be
+automatically marked as spam during transit, and never see the light
+of an inbox.  I didn't realize how tricky this was when I first
+started sending out email for <a href="http://outspokes.com">Outspokes</a>, but
+when our account activation and notification emails were always being
+delivered to the spam folder, I dug deeper and learned quite a lot.
+Follow the jump to save your future emails.</p><h2>The Right Way</h2><p>Before I share my personal experiences, I want to point out that the
+fastest and most sensible way to guarantee good email deliverability
+is to have someone else do it for you.  Rather than setting up your
+own mail server and coming up with a solution that you have to
+maintain yourself, there are smart dedicated teams working on this
+problem on your behalf.  The cost of entry is so low that they're all
+effectively free until the volume of you email you need is large
+enough that you should generate enough revenue to cover the cost.
+I'll cover a few hosted services like
+<a href="http://sendgrid.com/">Sendgrid</a>, and
+<a href="http://postmarkapp.com/">Postmark</a> in a separate blog post.</p><h2>Setting it Up Yourself</h2><p>Now that I've warned you of the easier path, here's the steps I took
+to make sure our emails were actually delivered rather than canned
+outright.</p><h3>Reverse DNS Points to your Hostname</h3><p>This is important when you're using a hosted environment.  Outspokes
+uses <a href="http://www.rackspace.com/">Rackspace</a>, and the initial reverse
+lookup of our IP address yielded a very spam-like looking domain:</p><pre><code>67-23-23-207.static.slicehost.net
+</code></pre><p>From the control panel, I changed this value to a more sane-looking
+'outspokes.com'.  To see what your current reverse dns entry is:</p><pre><code>dig -x 67.23.23.207    # your static IP address
+
+# other useful commands
+dig outspokes.com ANY  # show all DNS records for outspokes.com
+dig @ns1.editdns.net outspokes.com  # ask editdns for outspokes records
+</code></pre><h3>Setup DNS SPF Record</h3><p>SPF stands for <a href="http://en.wikipedia.org/wiki/Sender_Policy_Framework">Sender Policy
+Framework</a>, and
+is a DNS record that can be looked up to determine what servers are
+allowed to send email for a given hostname.  For example, for
+Outspokes, I only wanted the server with the static IP 67.23.23.207 to
+be able to send email.  If a spam server tries to send email with a
+'from address' of outspokes.com from a non-verified server, then that
+email will be marked as spam and rightfully zapped from existence.</p><p>In your DNS, add a TXT record:</p><pre><code>v=spf1 a mx ~all
+</code></pre><p>This allow servers listed in A and MX records to send email.  Some DNS
+services don't support adding TXT records, so your mileage may vary
+for getting this setup.</p><h3>Setup DKIM</h3><p>DKIM stands for <a href="http://en.wikipedia.org/wiki/DomainKeys">DomainKeys</a>,
+and works similar in concept to SPF.  I followed a guide from the
+<a href="https://help.ubuntu.com/community/Postfix/DKIM">Ubuntu forums</a> to get
+it setup.</p><pre><code>aptitude install dkim-filter
+generate rsa keypair, put in /etc/ssl/private/dkim/private.key
+edit dns add TXT record with public key
+edit /etc/dkim-filter.conf, /etc/default/dkim-filter
+edit /etc/postfix/main.cf - add smtpd milter (mail filter)
+/etc/init.d/dkim-filter start
+/etc/init.d/postfix restart
+</code></pre><h3>Debugging and Testing Your Configuration</h3><p>If you've followed this guide blindly up until this point.  Chances
+are good that you're emails are still getting spammed-out.  Luckily,
+there are tools that help you diagnose whether all these new changes
+are actually making a positive effect.</p><p>One great way to test is to pretend that you're a mail client sending
+an email and telneting to the mail server directly.  I learned this
+from a <a href="http://articles.slicehost.com/2008/8/6/postfix-using-telnet-to-test-postfix">Slicehost
+tutorial</a>.</p><pre><code># I ran this directly from the mail server b/c of firewall rules
+telnet localhost 25
+HELO localhost
+MAIL FROM: jerry@outspokes.com
+RCPT TO: check-auth@verifier.port25.com
+DATA
+Subject: test
+body text
+.
+QUIT
+</code></pre><p>Now you can email anyone you'd like for testing, but it's much more
+helpful to email check-auth@verifier.port25.com, or
+auth-results@verifier.port25.com.  These two emails will check your
+mail headers against your DNS records and give you a rating of how
+likely your emails will be marked as spam.  The report will be sent to
+the 'MAIL FROM' field.</p><h3>Additional Improvements</h3><p>Now that you have a good baseline setup for your emails to be
+delivered, it's time to take a breather and marvel at how your
+messages actually make it past spam filters.  But spammers are
+constantly improving their game, so having a baseline setup far from
+guarantees that your emails will be safe forever.  Here are some
+additional tips that may mark your message as suspicious.</p><p>Send multipart email instead of only HTML email: send an HTML version
+that includes your pretty graphics, but also send a plain text version
+that gets the same point across.</p><p>Shrink size of images in message - large image implies spam.</p><p>Use a real email address instead of noreply@yourdomain.com - By real
+address, I mean an address that can be delivered to.  This could be
+admin@outspokes.com, or support@outspokes.com.</p><h3>Resources</h3><p>Quick listing of links that I read:</p><ul>
+<li><a href="http://www.corvidworks.com/articles/mail-deliverability-tip">Reverse DNS</a></li>
+<li><a href="http://www.kitterman.com/spf/validate.html">SPF</a></li>
+<li><a href="http://dkimproxy.sourceforge.net/usage.html">DKIM Proxy usage</a></li>
+<li><a href="http://serverfault.com/questions/52393/postfix-with-dkim-on-ubuntu">Postfix with DKIM on Ubuntu via serverfault.com</a></li>
+<li><a href="http://www.pocketsmith.com/blog/2009/07/05/setting-up-dkim-and-domainkeys-using-dkimproxy-with-postfix-in-ubuntu-hardy/">DKIM and DomainKeys with DKIM Proxy on Ubuntu Hardy</a></li>
+<li><a href="http://www.sendmail.org/dkim/testChecker">Testing DKIM</a></li>
+</ul><h3>Conclusion</h3><p>Like I said before, I strongly believe that the right thing to do for
+email deliverability is to have someone dedicated handling it.  For
+small teams with limited resources, this means going with an external
+hosted SMTP service.  On the other hand, if you're curious about how
+email works, setting up your own mail server and going through the
+setup for ensuring the messages get delivered can teach you the
+fundamentals of how email work and also a lot of practical tools to go
+along with it.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Email Delivery for Webapps';
+  var disqus_identifier = '/articles/2010/05/14/email-deliverability';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

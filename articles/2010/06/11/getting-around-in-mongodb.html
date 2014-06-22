@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Getting Around in MongoDB
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Getting Around in MongoDB</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p><a href="http://mongodb.com"><img src="../../../../images/mongodb.png" style="float:right;padding-top:10px;padding-left:20px"></a>
+I started working with <a href="http://www.mongodb.org">MongoDB</a> a few days
+ago.  To oversimplify, think of Mongo as a really big and fast hash
+that gets saved to disk. It lets you query, retrieve, and manipulate
+data in Javascript and <a href="http://en.wikipedia.org/wiki/JSON">JSON</a>.  I
+had a ton of work to do, so I didn't get a chance to explore the
+technology as much as I would've liked.  Today, after getting a solid
+night's sleep, I got a chance to experiment more.  Read on to get some
+quick tips about writing Mongo queries and generating reports from the
+Mongo shell.</p><p>When I first started interacting with Mongo, I used the Ruby
+<a href="http://mongoid.org/">Mongoid</a> adapter.  It gave me a familiar
+ActiveRecord interface so I could accomplish things like:</p><pre><code>Beer.all(:conditions =&gt; { :style =&gt; "stout" })
+</code></pre><p>But it also gave me a sneak peak at Mongo's 'criteria' API for querying</p><pre><code>Beer.criteria.where(:style =&gt; "stout")
+</code></pre><p>It's worthwhile to note that criterias are lazily loaded, meaning
+that the query isn't performed until you actually need to access the
+data.</p><pre><code>Beer.criteria.where(:style =&gt; "stout")  # doesn't hit mongo
+Beer.criteria.where(:style =&gt; "stout").first.drink!  # executes actual query
+</code></pre><p>This was all fine and dandy, but just like learning SQL and
+ActiveRecord, having an understanding of the underlying system gives
+you a better idea of what you can do.  So I busted out the <a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell">mongo
+shell</a>
+and started running queries.  The
+<a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial">tutorial</a> was
+a good starting point for familiarizing myself with how to connect to
+mongo, executing some queries, and printing out results.  My favorite
+feature was that the mongo shell doubled as a Javascript interpreter.
+I was able to write JS to manipulate the query results:</p><pre><code>function map(arr, func) {
+  var collection = [];
+  if(arr &amp;&amp; arr.length) {
+    for(var i = 0; i &lt; arr.length; i++) {
+      collection.push(func(arr[i]));
+    }
+  }
+  return collection;
+}
+
+db.beers.find().forEach(function(beer) {
+  print(beer.name);
+  print('--------------');
+  map(beer.ingredients, function(ingredient) {
+    print(beer.ingredient.quantity + ' - ' + beer.ingredient.name);
+  });
+});
+</code></pre><p>I got pretty tired of copying and pasting this script every time I
+edited it.  Thankfully, mongo shell lets you pass in script files to
+execute:</p><pre><code>&gt; mongo --help
+MongoDB shell version: 1.4.0
+usage: mongo [options] [db address] [file names (ending in .js)
+</code></pre><p>This little feature enabled me to write more complex scripts and tweak
+to my heart's content.  Something was still missing though.  I love
+Javascript as a language, but nowadays, I've grown so accustomed to
+jQuery that I'll start typing jQuery assuming it's available even when
+it's not.</p><pre><code>db.beers.find().forEach(function(beer) {
+  // CURSES! JQuery isn't available :(
+  $(beer.ingredients).each(function() {
+    // ... do something
+  });
+})
+</code></pre><p>My next genius idea: load jQuery as the first script:</p><pre><code>&gt; mongo beerdb jquery-1.4.2.min.js reporting.js
+JS Error: ReferenceError: window is not defined jquery-1.4.2.min.js:153
+failed to load: jquery-1.4.2.min.js
+</code></pre><p>Noooooo! It makes a lot of sense that jQuery would assume a browser
+environment, but I was hoping that it wouldn't require it for the nice
+utility functions.</p><p>To get the job done, I wrote myself a small utility library:</p><pre><code>$ = {
+  // &gt; $.map([1,2,3,4], function(x) { return x*x; }
+  // [1,4,9,16]
+  map: function(arr, func) {
+    var collection = [];
+    if(arr &amp;&amp; arr.length) {
+      for(var i=0; i&lt;arr.length; i++) {
+        collection.push(func(arr[i]));
+      }
+    }
+    return collection;
+  },
+
+  // &gt; $.max([1,2,3,4])
+  // 4
+  // &gt; $.max([1,2,3,4], function(x) { return x*2; })
+  // 8
+  max: function(arr, func) {
+    if(arr == undefined) { return arr; }
+    var max = null;
+    for(var i=0; i&lt;arr.length; i++) {
+      var current = (func ? func(arr[i]) : arr[i]);
+      max = (current &gt; max ? current : max);
+    }
+    return max;
+  },
+}
+</code></pre><p>This didn't buy me the full power of JQuery, but at the same time, I
+was pretty happy I was able to quickly whip together some JS and get
+the reports I needed.</p><p>Does anyone know of a JS library that buys you a lot of core library
+features and fixes, but doesn't assume a browser?  I looked at <a href="http://ejohn.org/blog/bringing-the-browser-to-the-server/">John
+Resig's
+Env.js</a>,
+but even that assumes that you're running JS in
+<a href="http://www.mozilla.org/rhino/">Rhino</a>.  What other Mongo tricks do
+people find useful?</p><h2>Reference</h2><p>Here's the order I recommend reading the Mongo documentation.  The
+Advanced Queries link was especially useful.</p><ul>
+<li><a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial">Mongo Tutorial</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell">Overview - The MongoDB Interactive Shell</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/dbshell+Reference">dbshell Reference</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries">Advanced Queries</a></li>
+</ul><p><em>All databases are fictional. No beers were harmed in the making of this blog post.</em></p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Getting Around in MongoDB';
+  var disqus_identifier = '/articles/2010/06/11/getting-around-in-mongodb';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

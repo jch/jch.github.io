@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Setup Rails with Postgresql
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Setup Rails with Postgresql</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Everytime I set up a Rails project, there are many braindead steps
+that need to be followed.  Instead of doing a web search each time I
+need to get an app setup, I follow these simple sequence of
+instructions.</p><p>The first thing to do is to create the rails directory structure.
+Many Rails tutorials assume SQLite or MySQL.  Here in ivy covered UC
+Berkeley, our database of choice is Postgresql.</p><pre><code>rails --database=postgresql myapp
+</code></pre><h2>Postgresql</h2><pre><code>(as postgres admin user)
+psql template1
+
+create role myapp with createdb login password 'myapp';  // 'login' is optional if you plan to use psql
+// with newer versions of Rails, 'rake db:create:all' will create all the databases listed in config/database.yml
+select * from pg_user;    // verify user created
+select * from pg_shadow;  // sysid listed here
+create database myapp_development owner myapp;
+create database myapp_test owner myapp;
+create database myapp_production owner myapp;
+
+(in RAILS_ROOT)
+rake db:migrate
+</code></pre><p>If rake complains that it can't load the file 'postgres', then you are
+missing the postgresql database adapter.  You can get it via:</p><pre><code>sudo gem install pg
+</code></pre><p>If that fails, read the <a href="http://wiki.rubyonrails.org/rails/pages/PostgreSQL">wiki
+page</a> about it.
+For the lazy, you can simply install the slower pure ruby adapter
+'postgres-pr'</p><p>The 'postgres' gem is
+<a href="http://archives.postgresql.org/pgsql-interfaces/2007-12/msg00001.php">unmaintained</a>,
+and a new <a href="http://rubyforge.org/projects/ruby-pg">fork of the project 'pg'</a>.</p><h2>Config</h2><p>Keep your database.yml
+<a href="http://blog.bleything.net/2006/06/27/dry-out-your-database-yml">DRY</a>.
+Edit database.yml as follows:</p><pre><code>common: &amp;common
+  adapter: postgresql
+  username: myapp
+  password: password # from psql setup, see Postgresql
+
+development:
+  &lt;&lt;: *common
+  database: myapp_development
+
+test:
+  &lt;&lt;: *common
+  database: myapp_test
+
+production:
+  &lt;&lt;: *common
+  database: myapp_production
+</code></pre><h2>Subversion</h2><p>The following keeps your repository squeaky clean:</p><pre><code>mv myapp myapp-tmp
+mkdir -p myapp/{branches,tags}
+mv myapp-tmp myapp/trunk
+cd myapp/trunk
+rm -rf log/* tmp/*
+mv config/database{,-example}.yml
+svn ps svn:ignore '*' log
+svn ps svn:ignore '*' tmp
+svn ps svn:ignore 'database.yml' config
+</code></pre><h2>Updating Stuff</h2><p>To update rails, do</p><pre><code>sudo gem install -y rails
+</code></pre>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Setup Rails with Postgresql';
+  var disqus_identifier = '/articles/2008/02/05/setup-rails-with-postgresql';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

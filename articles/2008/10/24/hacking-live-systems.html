@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Hacking Live Systems
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Hacking Live Systems</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>After my evening jog, I hopped onto the QA environment around 11pm
+because I wanted to look something up for another blog post I was
+writing.  Instead of being greeted with the welcome screen of the app,
+I get redirected to our homepage.  All kinds of warning flags were
+going off in my head, but I couldn't collect my thoughts because of
+the runner high.  Did I break something before I left work?  Did I
+forget to deploy the latest code base to QA?  Were we going to lose a
+night of quality QA from the team in India?</p><p>My fears were confirmed when I signed on to chat.  Kyle was online.
+Kyle is <em>never</em> online this late.  I shoot him a quick message, "can
+you reach devtrunk?".  Just as I hit return, I get a message from
+Minh, "did you change the deploy stuff?".  QA in India had nothing to
+test on.  Things were looking grim.</p><p>Deep breath, and go!</p><p>Do a fresh deploy.  Interesting, the deployment went through without a
+hiccup.</p><p>SSH into the QA box, look at the Apache logs.  Interesting, Apache's
+down.  Let's bring her back up.</p><p>Hit the page.  Interesting, still getting redirected.  Must be a bad
+config.</p><p>Scan through httpd.conf, scan through the included vhosts.
+Interesting, they all look ok...</p><p>WAIT!  There's no vhost defined for devtrunk, the QA environment.  But
+I saw it earlier today...  Let's find an old working config and put
+that guy in for now.</p><p>Reloading Apache...</p><p><img src="../../../../images/devtrunk-lives.png" alt="devtrunk lives!"></p><p>I have never been happier to see Domo-kun.</p><p>It's funny when these situations come up.  Programmers go into this
+'turbo' mode.  They start typing really fast, fixing and breaking
+things left and right.  This surge of energy can't be sustained for a
+long period of time, so it's really important that they both diagnose
+and fix the problem before they burn out.  I left out all the details
+in my description for the solution, but they involved a lot of window
+switching, poorly typed out IM messages, and a lot of keystrokes.</p><p>Man, what a rush.  I'm not sure what gave me more of a workout, a 45
+minute hour run, or typing frantically while figeting my leg.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Hacking Live Systems';
+  var disqus_identifier = '/articles/2008/10/24/hacking-live-systems';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

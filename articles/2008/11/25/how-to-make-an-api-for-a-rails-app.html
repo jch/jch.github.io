@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+How to Make an API for a Rails App
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>How to Make an API for a Rails App</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I've come across the same problem in my personal projects and also at
+work.  You have an existing Rails app that has some authentication and
+authorization scheme to protect who has access to your controllers,
+but now you need to write an API that can access those controllers.
+How do you keep the same authentication routine for your API users?</p><p>The are two approaches I've seen used.  One is based on using HTTP
+AuthBasic, and the other is to generate a unique API key for API
+users.</p><h2>Option 1: HTTP Basic Auth</h2><p>I learned this snippet from working with <a href="http://overhrd.com/">Mike</a>.
+Rails 2.x support <a href="http://railscasts.com/episodes/82">HTTP Basic Auth</a>
+out of the box.  For our app, we check the request format and only do
+basic auth if the format is xml.</p><pre><code>class ApplicationController &lt; ActionController::Base
+  protected
+  def http_basic_authentication
+    if request.format == Mime::XML
+      authenticate_or_request_with_http_basic do |username, password|
+        username == 'foo' &amp;&amp; password == 'bar'
+      end
+    end
+  end
+end
+</code></pre><p>Then for controllers that allow API access, we simply add a before
+filter.</p><pre><code>class OrangesController &lt; ActionController::Base
+  before_filter :http_basic_authentication, :only =&gt; :create
+
+  def create
+    # do stuff
+  end
+end
+</code></pre><p>Then to create an Orange via the API, we could do:</p><pre><code># we expect an XML response, so we suffix url with 'xml'
+# optionally, we can also add 'foo:bar@' before the domain name.
+url = URI.parse("http://example.com/oranges.xml")
+
+req = Net::HTTP::Post.new(url.path)
+req.basic_auth 'foo', 'bar'
+
+req.set_form_data({'size' =&gt; 'large', 'juicy' =&gt; '1'})
+http = Net::HTTP.new(url.host, url.port)
+response = http.start {|http| http.request(req) }
+</code></pre><p>(Note: Beware of ssl, remember to set <code>http.use_ssl =
+true</code>)</p><h2>Options 2: Using API key</h2><p>I didn't know about HTTP Basic Auth when I was writing my <a href="http://money.whatcodecraves.com/">Money
+app</a>, so I took a little time to
+fully understand how Rail's
+<a href="http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html">ActionController::Filters</a>
+work.  The documentation is clear and the source is straightforward to
+understand.</p><p>For API authentication, I decided to write my own custom filter
+object and put it in lib/api_authorized_filter.rb</p><pre><code># Use this filter as an around_filter around actions that can be
+# accessed via the API.
+#
+# Example:
+#   class ItemsController &lt; ApplicationController
+#     prepend_around_filter ApiAuthorizedFilter.new, :only =&gt; [:create]
+#   end
+#
+class ApiAuthorizedFilter
+  def before(controller)
+    return true unless controller.params[:api_key]
+    controller.current_user = User.find_by_api_key(controller.params[:api_key]))
+  end
+
+  def after(controller)
+    controller.current_user = nil
+  end
+end
+</code></pre><p>ApiAuthorizedFilter is put at the very beginning of the filter chain
+with <code>prepend_around_filter</code>, before any normal
+authentication <code>before_filters</code>.  When it's called, the
+<code>before</code> method is invoked with the current controller, and
+the filter 'logins' an API User if the api_key is valid.  When my
+normal authentication filters run, they won't halt because it'll seem
+like there is a logged in user.  Finally, when the action is finished
+running, the <code>after</code> method will log out the API User to
+prevent a User from staying logged in.  This last step is optional,
+but I think it's better to only let API Users authenticate every time
+they need something.</p><p>In order to use this Filter, you'll have to add an 'api_key' column to
+your User model, and also tweak the <code>before</code> and
+<code>after</code> code to login and logout the user.</p><h2>Which one should I use?</h2><p>I personally like the latter because the api key gives me another way
+to reference a logged in user.  Since the api key is independent of a
+user's login and password, it's also easier to replace the key without
+resetting the user's web credentials.  Of course, you can make both
+methods work the same way, so it's really a matter of personal taste.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'How to Make an API for a Rails App';
+  var disqus_identifier = '/articles/2008/11/25/how-to-make-an-api-for-a-rails-app';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

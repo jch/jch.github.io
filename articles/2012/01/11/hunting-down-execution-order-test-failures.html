@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Hunting Down Execution Order Test Failures
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Hunting Down Execution Order Test Failures</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Unit tests should pass when run in random order. But for an existing legacy
+project certain tests might depend on the execution order. One test might run
+perfectly fine by itself, but fail miserably when run <em>after</em> another test.
+Rather than running different combinations manually, RSpec 2.8 has the option
+to run specs in random order with the <code>--order random</code> flag. But even with
+this it can be hard to determine which specific test is causing the
+dependency.  For example:</p><pre><code>rspec spec/controllers  # succeeds
+rspec spec/lib/my_lib_spec.rb  # succeeds
+rspec spec/controllers spec/lib/my_lib_spec.rb  # fails
+</code></pre><p>In this scenario you know that one of the spec files in spec/controllers is
+not jiving with your lib spec, but if you have hundreds of spec files, it's
+hard to tell which. Never fear! There's a Ruby one-liner for that:</p><pre><code>ls spec/controllers/*.rb | ruby -pe '$_=`rspec #{$_} spec/lib/my_lib_spec.rb`'
+</code></pre><p>Let's break this command down into its components:</p><pre><code>ls spec/controllers/*.rb
+</code></pre><p>gives you a list of spec files to run alongside your lib spec</p><pre><code>ruby -pe
+</code></pre><p>'e' for execute, and 'p' means wrap the code in a loop and assign  each line of STDIN to <code>$_</code>. We're piping in STDIN from the <code>ls</code> command.</p><pre><code>$_=`rspec #{$_} spec/lib/my_lib_spec.rb`
+</code></pre><p>The 'p' flag also prints out the value of <code>$_</code> at the end of each loop. So we assign the output of running rspec with the 2 files (one from ls alongside <code>my_lib_spec</code>).</p><p>My bash buddies would wag their fingers at me for using a ruby one-liner here,
+but it's a familiar syntax and it's easier for me than remembering other
+shell commands and regex flags. If there's something another unix program is
+better at processing, then I can then take the output of the ruby one-liner
+and pipe it into another command. It's a very simple and versatile way to
+munge on text.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Hunting Down Execution Order Test Failures';
+  var disqus_identifier = '/articles/2012/01/11/hunting-down-execution-order-test-failures';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

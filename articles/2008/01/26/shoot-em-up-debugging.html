@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Shoot em up Debugging
+</title>
+<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Shoot em up Debugging</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Debugging is like a video game.  Unfortunately, it's the meanest video
+game you will ever play.  The objective is to destroy bugs, but each
+destroyed bug will only reveal more sinister bugs with more health,
+greater mana, and better AI.  After you've smooshed all the trivial
+syntax buggers, a whole new species evolves and leaves you fighting a
+being as intelligent as yourself.  That fleeting sense of
+accomplishment that you felt the first time you vanquished a missing
+semicolon quickly melts into a never-ending nightmare of software
+maintenance.</p><p>Is there no hope at all?  Are we all doomed to play this never-ending
+and un-winnable game?  Well, not really.  At least, I sincerely hope
+not.  Thankfully the rewards are great, and who knows what the next
+bug-boss will be like?</p><h2>Prevention</h2><p>The first step to kicking bug-ass is to minimize the number of bugs.
+It doesn't matter how great you are at finding mistakes after the
+fact, it's much more rewarding to write a system and have it work to
+spec the first time around.  Creating fewer bugs also keeps you
+focused on writing <em>real</em> code and the big picture rather than chasing
+down silly obscurities.</p><h3>Better Design</h3><p>Everyone messes this one up.  I'm just as guilty as the next guy when
+it comes to starting to code too early and digging myself into a hole.
+Take your time and <em>think</em>.  Don't think with a computer, just grab
+some coffee and doodle on some napkins.  It's amazing how detrimental
+a computer and Internet can be for this.  They'll only lead you to all
+kinds of minutia you shouldn't worry about.  It's as if you're
+creating bugs before you even have an idea of what you need to do.
+You can't win like that!</p><h3>Better Components</h3><p>As you're designing, it's always good to start classifying your
+components and modules.  Don't try to abstract everything into pez-sized
+libraries.  Simply make a note to remind yourself when it's possible
+and revisit these notes when needed.</p><p>Make sure to challenge your own bias and assumptions.  The more you
+play devil's advocate, the less chance those bugs will have to
+surprise you.  It's MUCH better to predict a bug rather than to have
+one sneak in an infinite loops when you're not looking.</p><p>Challenge your interfaces.  Check your input, and output for
+consistency.  Will your code degrade gracefully when something doesn't
+work?  Will it notify somebody?  Am I trying too hard here?  Am I
+making assumptions because I don't understand the problem?</p><p>A great way to see if you've covered all cases is to run it by a
+friend.</p><h3>Better Testing</h3><p>The absolute low point of every developer's life isn't when they're
+stuck.  It isn't when a system fails;  It isn't even when we pass out
+on our keyboards after that 3rd all-nighter.</p><p>No.  The lowest we succumb to is sitting in front of a terminal,
+stepping through a jillion lines of code.</p><p>Debuggers are meant to help you, but I can't help but see them as a
+very very expensive crutch.  That's because people use them when they
+shouldn't.  When you're stepping through all those lines and praying
+to see some anomaly, you're a goner.  Instead, you should identify the
+naughty component and <em>test</em> it.  Testing beats stepping any day of
+the week.  If designed with testability in mind, then woot.  Otherwise
+if you're given a giant monolithic beast of a legacy system, try black
+box tests.  Remember that testing doesn't require a fancy harness or
+framework, but make a honest effort to make your tests available and
+repeatable.</p><h2>Tools</h2><p>Prevention can only get you so far.  When stuff starts crashing and
+the cause is not immediately obvious, hunker down with some tools.</p><p>Be wary of tools.  There are always too many choices, and most will
+offer more configuration than usefulness.  Always weigh the benefits
+before you install the latest and greatest.  If GNU make does
+everything you want, and you're comfortable with it, look long and
+hard before switching over to the 'next big thing'.  Don't say I
+didn't warn you if an afternoon goes by and you have a half-configured
+build system.</p><ul>
+<li><p>Automation of tests with CruiseControl or similar systems is
+fantastic, but are only as useful as the tests that are written.
+Given limited resources, prioritize quality of tests over
+automation.</p></li>
+<li><p>Profiling code for performance, leaks, and bugs are a great way to
+catch bugs that aren't mission critical now, but could get nasty in
+the future.  To be honest, I don't have much experience in this
+arena.  I hear Valgrind is pure black magic though.</p></li>
+<li><p>I hate debuggers.  Graphical or otherwise, there's just a ton of
+information spewing at you, and if you're stepping line by line and
+you missing a line, you have to start over. If you get tired, just
+stop.  There's no benefits to blankly staring at a call stack when
+your head goes numb.  Go have a lollipop instead.</p></li>
+<li><p>Learn to avoid using logging frameworks for debugging.  You're
+logging output will grow, and digging through log output is the same
+type of misery as going through a debugger.  Use logging as a form
+of notifying the user.  Use testing to verify correctness.</p></li>
+</ul><h2>Conclusion</h2><p>Debugging is a nasty topic.  A big reason why software engineers are
+paid so much is because of the pain it takes to maintain and debug
+software.  But I believe that bugs aren't a lost cause, and with the
+right attitude and habits, it might be more game than chore.</p><p>Now if you'll excuse me, I have to go tackle some decade-old crufty
+Perl.</p>
+</div>
+<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Shoot em up Debugging';
+  var disqus_identifier = '/articles/2008/01/26/shoot-em-up-debugging';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>
