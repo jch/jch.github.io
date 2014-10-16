@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Rails and Gems Documentation Everywhere
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Rails and Gems Documentation Everywhere</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p><img src="../../../../images/mobile-me.png" alt="stick figure of me and macbook" style="float:left;padding:0 10px 10px;"> A great thing about
+<a href="http://www.coupa.com/">Coupa</a> work is how I can hack it up without a
+network connection.  The codebase is checked out and I run mysql
+locally.  I fire up emacs and a script/server and I'm pretty much good
+to go.  The only downside is not being able to access the rails and
+gems docs.  Here's what I did to put together a productive local
+setup.</p><p><strong>Update:</strong> 2009-03-30 <a href="http://jasonseifer.com/2009/02/22/offline-gem-server-rdocs">Jason
+  Seifer</a>
+  of RailsEnvy does a better job of explaining the process than I do.</p><p><strong>Note:</strong> For the rest of this guide, I'm going to assume you have
+ruby and gem installed via MacPorts.  If they aren't, change the
+directories in the commands appropriately.</p><p><br style="clear:both"></p><h2>Gems</h2><p>First of all, let's generate the documentation for all of your
+gems. If you're more accustomed to the layout of Rails documentation,
+then install <a href="../../../../files/rdoc_template.rb">Jamis's rdoc template</a>.</p><pre><code># this step is optional
+cd /opt/local/lib/ruby/1.8/rdoc/generators/template/html
+sudo mv html html.original.rb
+sudo curl -o html.rb http://www.whatcodecraves.com/posts/2009/02/28/rails_and_gems_documentation_anywhere/rdoc_template.rb
+</code></pre><p>(The link to the original template was broken for me.)</p><p>Now actually generate the rdocs.</p><pre><code>sudo gem rdoc --all
+</code></pre><p>After the command finishes, start a gem server so you can browse the
+docs:</p><pre><code>gem server --daemon
+</code></pre><p>Point your browser at <a href="http://localhost:8088">the gem server</a>.</p><h2>Rails</h2><p>You'll notice that no rdocs were generated for the Rails gem. This is
+because the rdoc task is intended to be run from the root of a frozen
+Rails app.  This is amazingly annoying, but is a <a href="http://www.nullislove.com/2007/05/29/rails-documentation/">solved
+problem</a>.
+Basically, you have to freeze Rails in your app, rdoc it, unfreeze it,
+and copy over the rdocs.</p><pre><code>cd myapp
+rake rails:freeze:gems
+rake doc:rails
+rake rails:unfreeze
+sudo cp -R doc/api/ /opt/local/lib/ruby/gems/1.8/doc/rails-2.1.1/rdoc/
+</code></pre><p>Now you can code from anywhere!  As an added bonus, the docs will load
+blazingly fast.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Rails and Gems Documentation Everywhere';
+  var disqus_identifier = '/posts/2009/02/28/rails-and-gems-documentation-anywhere';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

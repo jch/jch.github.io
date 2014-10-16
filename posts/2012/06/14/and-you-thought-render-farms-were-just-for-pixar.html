@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+And You Thought Render Farms Were Just For Pixar!
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>And You Thought Render Farms Were Just For Pixar!</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Rails views are typically rendered after some controller action is executed. But the code that powers Rails controllers is flexible and extensible enough to create custom rendering objects that can reuse views and helpers, but live outside of web request processing. In this post, I'll cover what a Rails controller is and what it's composed of. I'll also go over how to extend it to create your own custom renderers, and show an example of how you can render views in your background jobs and push the results to your frontend.</p><h2>What's a Controller?</h2><p>A Rails controller is a subclass of <code>ActionController::Base</code>. The <a href="http://api.rubyonrails.org/classes/ActionController/Base.html">documentation</a> says:</p><blockquote>
+<p>Action Controllers are the core of a web request in Rails. They are made up of one or more actions that are executed on request and then either render a template or redirect to another action. An action is defined as a public method on the controller, which will automatically be made accessible to the web-server through Rails Routes.</p>
+</blockquote><p>While <code>Base</code> suggests that this is a root class, it actually inherits from <code>ActionController::Metal</code> and <code>AbstractController::Base</code>. Also, some of the core features such as rendering and redirection are actually mixins. Visually, this class hierarchy looks something like:</p><p><img src="http://f.cl.ly/items/1b1Z2N0k0r3H1a3t3f0P/Screen%20Shot%202012-06-12%20at%209.38.55%20PM.png"></p><p><code>ActionController::Metal</code> is a stripped down version of what we know as controllers. It's a <a href="http://guides.rubyonrails.org/rails_on_rack.html">rackable</a> object that understands HTTP. By default though, it doesn't have know anything about rendering, redirection, or route paths.</p><p><code>AbstractController::Base</code> is one layer above <code>Metal</code>. This class dispatches calls to known actions and knows about a generic response body. An <code>AbstractController::Base</code> doesn't assume it's being used in an HTTP request context. In fact, if we peek at the source code for <a href="http://api.rubyonrails.org/classes/ActionMailer/Base.html">actionmailer</a>, we'll see that it's a subclass of <code>AbstractController::Base</code>, but used in the context of generating emails rather than processing HTTP requests.</p><pre><code class="ruby">module ActionMailer
+  class Base &lt; AbstractController::Base
+    include AbstractController::Logger
+    include AbstractController::Rendering  # &lt;- ActionController::Base also uses
+    include AbstractController::Layouts    # &lt;- these mixins, but for generating
+    include AbstractController::Helpers    # &lt;- HTTP response bodies, instead of email response bodies
+    include AbstractController::Translation
+    include AbstractController::AssetPaths
+  end
+end
+</code></pre><h2>Custom Controller for Background Job Rendering</h2><p>For a recent project, I needed to execute flight searches in background jobs against an external API. Initially, I planned to push the search results as a json object and render everything client-side, but I wanted to reuse existing Rails views, helpers, and route path helpers without redefining them in the frontend. Also, because of differing client performance, rendering server-side <a href="http://engineering.twitter.com/2012/05/improving-performance-on-twittercom.html">improves page load times for users</a> in this instance. Architecturally, what I wanted looks like:</p><p><img src="http://f.cl.ly/items/0m082R153Z2D3L1A0t1h/Screen%20Shot%202012-06-12%20at%209.47.36%20PM.png"></p><p>The requirements for this custom controller were:</p><ul>
+<li>access to route helpers</li>
+<li>renders templates and partials in app/views</li>
+</ul><p>Unlike a full blown <code>ActionController</code>, this custom controller doesn't need to understand HTTP. All it needs is the result of the flight search from background workers to be able to render an html response.</p><p>The full code for the custom controller is:</p><pre><code class="ruby">class SearchRenderer &lt; AbstractController::Base
+  include Rails.application.routes.url_helpers  # rails route helpers
+  include Rails.application.helpers             # rails helpers under app/helpers
+
+  # Add rendering mixins
+  include AbstractController::Rendering
+  include AbstractController::Logger
+
+  # Setup templates and partials search path
+  append_view_path "#{Rails.root}/app/views"
+
+  # Instance variables are available in the views,
+  # so we save the variables we want to access in the views
+  def initialize(search_results)
+    @search_results = search_results
+  end
+
+  # running this action will render 'app/views/search_renderer/foo.html.erb'
+  # with @search_results, and route helpers available in the views.
+  def execute
+    render :action =&gt; 'foo'
+  end
+end
+</code></pre><p>A runnable example of this source code is available at <a href="https://github.com/jch/custom-controller-renderer">this github repository</a>.</p><p>Breaking down the above code, the first thing we do is inherit from <code>AbstractController::Base</code>:</p><pre><code class="ruby">class SearchRenderer &lt; AbstractController::Base
+  def initialize(search_results)
+    @search_results = search_results
+  end
+end
+</code></pre><p>We also save the search results in an instance variable so that our templates can access them later.</p><pre><code class="ruby">  include Rails.application.routes.url_helpers  # rails route helpers
+  include Rails.application.helpers             # rails helpers under app/helpers
+</code></pre><p>These methods return Rails route helpers like <code>resource_path</code> and <code>resource_url</code>, and also any helpers defined in <code>app/helpers</code>.</p><p>Next we add the mixins we need to be able to call the <code>#render</code> controller method. Calling <code>#append_view_path</code> sets up the view lookup path to be the same as our Rails controller views lookup path.</p><pre><code class="ruby">  include AbstractController::Rendering
+  include AbstractController::Logger
+
+  append_view_path "#{Rails.root}/app/views"
+</code></pre><p>Then we define a controller action named <code>execute</code> that'll render out the response as a string. The <code>#render</code> method used here is very similar to the one used by <code>ActionController</code>.</p><pre><code class="ruby">  def execute
+    render :action =&gt; 'foo'
+  end
+</code></pre><p>To use this renderer object, you need to initialize it with a search results object, and call <code>#execute</code>:</p><pre><code class="ruby">search_results = [{:foo =&gt; "bar"}, {:foo =&gt; "baz"}]
+renderer = SearchRenderer.new(search_results)
+renderer.execute
+</code></pre><h2>Summary</h2><p>Rails ActionControllers are specific to HTTP, but its abstract parent class can be used to construct objects for generic controller objects for coordinating actions outside of an HTTP context. Custom controller objects can be composed with the available mixins to add common functionality such as rendering. These custom controllers can also share code with existing Rails applications DRY up templates and helpers.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'And You Thought Render Farms Were Just For Pixar!';
+  var disqus_identifier = '/posts/2012/06/14/and-you-thought-render-farms-were-just-for-pixar';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

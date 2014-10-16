@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Where to Find Things in Rails
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Where to Find Things in Rails</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>When I started learning Rails, I was amazed when all kinds of magical
+things started working.  The problem was that I never felt in control
+of the magic.  If I wanted a specific kind of magic to occur, then
+Google would route me to an extremely unfriendly and near worthless
+Ruby on Rails wiki.  I often had to guess how things work by tweaking
+code found on peoples' blogs or by trial and error after not
+understanding the Rails API documentation.  Nowadays, I'm very
+comfortable with getting around in Rails and all it's plugins.  Here's
+how I go about hunting down a problem.</p><p>When a bit of magic goes wrong, here's the order of how I look for
+things:</p><ul>
+<li>Search within the current file for the method definition.</li>
+<li>Search Google to see if it's a documented Rails feature.</li>
+<li>Search Google to see if it's a common Rails-y idiom.</li>
+<li>
+<a href="http://petdance.com/ack/">ack</a> for the method name in the apps/
+subdirectory and see how it's used elsewhere.</li>
+<li>Search for include statements that could have mixed it into this
+file only.</li>
+<li>Skim config/environment.rb and/or config/initializers (Rails 2.x)
+for potential mixins.</li>
+<li>ack the method in vendor/plugins to see if it came from a plugin.</li>
+</ul><p>Sometimes, I'm not so lucky and the method name is dynamically
+generated.  For cases like these, I just ack for some substring of the
+method that I see being used by other files.</p><p>The checklist I outlined is far from a complete list of where I look
+for mystical Rails problems.  This list is also not always in order
+either.  At some point, I just became good at deciding where to start
+looking.  Part of that skill comes from practice, but it really helps
+to encourage your sense of curiosity and dig into the code as well.  I
+find myself reading Rails code and plugins code even when I understand
+the documentation.  Reading the source has taught me all kinds of
+Ruby idioms and deepened my understanding of certain libraries.</p><p>If you're coming from a language or framework that has fantastic and
+comprehensive documentation, don't forget to read the source every now
+and then.  Even with complete documentation, it's important to keep up
+with your framework and language's community to maximize what they can
+do.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Where to Find Things in Rails';
+  var disqus_identifier = '/posts/2008/10/13/where-to-find-things-in-rails';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

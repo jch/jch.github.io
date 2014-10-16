@@ -1,1 +1,1 @@
-Sitemap: http://localhost:3000/sitemap_index.xml.gz
+Sitemap: http://www.whatcodecraves.com/sitemap_index.xml.gz

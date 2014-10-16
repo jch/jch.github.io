@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Subversion for the Lazy
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Subversion for the Lazy</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I've been asked about subversion enough times to justify writing this
+quick and dirty article to save me future time.  Read this guide if
+you absolutely need to get subversion working ASAP.  Otherwise I
+highly recommend going through the <a href="http://svnbook.red-bean.com/">svn
+book</a> for more background information
+and advanced usage.</p><h2>Bare Minimum Background</h2><p>You will NOT be able to do anything right in subversion unless you
+understand WHY it exists.  Subversion might be a pain in the ass, but
+that wasn't why it was created.  Subversion is <a href="http://en.wikipedia.org/wiki/Revision_control">version control
+software</a> that is
+supposed to help programmers organize their code.  If you use it
+correctly, it'll fix all of the following problems:</p><ul>
+<li>taking notes about the changes you were working on.</li>
+<li>going backwards in time to an older non-broken copy of a file.</li>
+<li>merging changes from multiple programmers on the same file.</li>
+</ul><p>This all starts with a subversion <span class="repository-address">repository</span>.  Think of the repo as
+the original copy of your files.  Instead of making changes on the
+original copy, you <span class="command">checkout</span> a <span class="arg1">working copy</span> and make changes to that.  When
+you're satisfied with the changes you made in your working copy, you
+<em>commit</em> the changes back to the repository.  Here is the absolute
+simplest case of using svn:</p><style type="text/css">
+  .command { color: #63831F }
+  .repository-address { color: #FD6A08 }
+  .arg1 { color: #6F86C0 }
+
+  .subversion-command { margin-left: 20px; }
+</style><h3>Checkout a Working Copy</h3><pre><code>svn checkout svn+ssh://address.to.subversion/repository myworkingcopy
+</code></pre><p>The <span class="command">'checkout'</span> command makes a copy of
+the <span class="repository-address">repository</span> and puts it
+into a folder named <span class="arg1">myworkingcopy</span>.</p><h3>Make Your Changes</h3><p>Edit any of the files in your working copy.  These changes will only
+be in your working copy until you commit them back to the <span class="repository-address">repository</span>.  This means that if you
+make changes, and <em>another</em> person does a fresh checkout, they will
+<em>not</em> see your changes.  If you decide to create any new files in the
+working copy, you need to let svn know with the 'svn add' command.</p><pre><code>svn add new_file1.txt new_file2.java new_file3.avi
+</code></pre><p>You can add any number of arbitrary new files.</p><h3>Commit Your Changes</h3><p>Before you commit, you want to double check the changes you made.
+First type:</p><pre><code>svn status
+</code></pre><p>This lets you know what's being committed.  'M' means modified, 'A'
+means added, and '?' means it's a new file that hasn't been added.
+Read the last section for adding.</p><p>When you're happy with the files to be committed, type</p><pre><code>svn commit
+</code></pre><p>This will bring up your editor to type a note about what the changes
+in this commit are.  If it says that no editor is set, google how to
+set EDITOR in bash.  After the commit succeeds, anyone else who does a
+fresh checkout or an 'svn update' will get the changes you just
+committed.</p><h3>Pulling Changes from the Repository</h3><p>If multiple programmers are using the same <span class="repository-address">repository</span>, then at some point
+you'll have to pull changes from other programmers.  Instead of doing
+a fresh checkout every time, simply run</p><pre><code>svn update
+</code></pre><p>to bring in all the changes from the remote repository.  It's a good
+idea to get in the habit of updating before you make your changes
+because otherwise you'll have to do unnecessary merging.  Read about
+merging in the svn redbook.</p><h3>Cheatsheet</h3><p>To summarize:</p><pre><code>svn checkout http://svn.somehost.com/path/to/repository my_own_copy
+cd my_own_copy
+(edit the files in my_own_copy)
+svn add my_own_copy/new_file1.txt
+svn status
+svn commit
+</code></pre><h3>Common Issues</h3><p>If svn ever says, '.' is not a working directory, then it means you
+are not currently in a <span class="arg1">working copy</span>.  The
+working copy is what you named the folder when you originally checked
+it out.  See section about 'checking out'.</p><p><em>Never</em> mix and match folders from different working copies.  If you
+want to use mv, or cp, or copies files in and out of the working
+folder, read about 'svn copy' and 'svn move'.</p><p>If you try to add a folder, and it says it's already been added, then
+you probably meant to add the files within the folder.  Simply do a
+'svn add -R folder_name' to do a recursive add of all files in the
+folder.</p><p>All subversion commands start with 'svn'.  To get a list of all
+commands, type 'svn help'.  To get help on a command foo, do 'svn help
+foo'.</p><p>If you're on a Mac and you suck at Terminal, then go get
+<a href="http://www.apple.com/downloads/macosx/development_tools/svnx.html">svnX</a>.
+If you're on windows, get <a href="http://tortoisesvn.tigris.org">Tortoise
+SVN</a>.</p><h3>Final Hints</h3><p>This guide is for lazy people who won't spend 20 minutes to read and
+understand the subversion guide.  I guarantee you'll save hours and
+hours of headache if you just take the time to learn it properly.
+This is the bare minimum to get started, and if you still have
+questions after this, go and read the <a href="http://svnbook.red-bean.com/">svn red
+book</a>.  Learn about merging, learn about
+diff's, and learn how version control works.  You'll not only help
+yourself in the long run, but you'll save the people you work with
+lots of time too.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Subversion for the Lazy';
+  var disqus_identifier = '/posts/2008/11/07/subversion-for-the-lazy';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

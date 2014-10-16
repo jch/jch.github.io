@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Rails Webapp Engineering
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Rails Webapp Engineering</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>The day after I came back from Australia, I started my new job at
+<a href="http://www.coupa.com">Coupa Software</a>.  I'm absolutely loving it at
+the moment because of the awesome people and the amount of software
+I'm learning.  Here's just a few that I've picked up in my first week
+that I'd like to jot down.</p><h2>Skinny Controllers, Fat Models</h2><p>Here's <a href="http://weblog.jamisbuck.org/2006/10/18/skinny-controller-fat-model">one
+article</a>
+about it.  It really <em>really</em> helps out with testing.</p><h2>Association</h2><p><a href="http://api.rubyonrails.org/classes/ActiveRecord/Aggregations/ClassMethods.html#M001262">composed_of</a></p><ul>
+<li>cmd-k clears terminal window</li>
+<li>rake stats</li>
+<li><p>script/spec for an individual test</p></li>
+<li><p><a href="http://api.rubyonrails.org/classes/ActionController/Streaming.html">send_data, send_file</a></p></li>
+<li><p>render_to_string - returns string, use with send_data</p></li>
+<li>
+<p><a href="http://www.ruby-doc.org/core/classes/Enumerable.html#M001147">Enumerable:inject</a></p>
+
+<ul>
+<li>same as Scheme accumulator I used in 61A</li>
+</ul>
+</li>
+<li>
+<p><a href="http://ruby-pdf.rubyforge.org/pdf-writer/doc/classes/PDF/SimpleTable.html">PDF::SimpleTable</a></p>
+
+<ul>
+<li>really really easy to use reporter generator.</li>
+</ul>
+</li>
+<li><p>request.xhr? - if request is ajax-y</p></li>
+</ul><h2>Getting All Tables</h2><pre><code class="ruby">ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+connection = ActiveRecord::Base.connection
+
+options[:tables] ||= connection.tables.reject { |t| %w(schema_info
+sessions).include?(t) }
+</code></pre>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Rails Webapp Engineering';
+  var disqus_identifier = '/posts/2008/07/04/rails-web-engineering';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

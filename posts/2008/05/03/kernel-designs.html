@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Kernel Designs
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Kernel Designs</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>I really enjoyed my introductory operating systems class at Berkeley.
+The class focused on classic high level OS concepts like process
+models, virtual memory, concurrency, and more.  To go along with the
+material, teams of 4 formed to implement components in a toy OS called
+<a href="http://www.cs.washington.edu/homes/tom/nachos/">Nachos</a>.  The purpose
+of this was to keep students focused on the concepts rather than wade
+through the quagmire that is x86 assembly.</p><p>I was very proud of the finished project.  We wrote basic processes
+and threads with priorities, memory manangement, system calls, and a C
+chat program.  All of this could be booted up and ran on the virtual
+'Machine' object that emulated a MIPs architecture machine.</p><p>Unfortunately, I did not follow up with more advanced topics after the
+class, and while those high level concepts are solid fundamentals, I
+sorely wish to see what designs have been tried in practice, along
+with their benefits and drawbacks.  Rather than dive blindly into the
+source of popular open source kernels from Linux and BSD, I plan to
+start by reading some research papers on kernel design.  Hopefully
+this will refresh my memory about some key terms while letting me
+survey what's available.</p><h2>Mach Microkernel</h2><p>The Mach kernel is a microkernel developed by CMU in the eighties to
+address issues with multiprocessors and networked environments, and
+the growing complexity of BSD systems.</p><p>BSD began with a very clean and simple abstraction of files to model
+major components such as devices and memory.  Using files allowed for
+very natural manipulation of these resources with pipes and simple
+utilities.  Unfortunately, this abstraction did not fit later desired
+features.  This lead to adding orthogonal abstractions for different
+tasks.  Mach tries to bring back a clean uniform interface with a
+objected-oriented abstraction.  The 4 basic abstractions are:</p><ul>
+<li><p>task - execution environment.  Think of this as a basic container
+for everything needed to run a program.  Things like virtual memory
+address space, file descriptors, threads, capabilities and other
+resources.  Example messages: fork, allocate (memory)</p></li>
+<li><p>thread - basic unit of computation.  Similar to threads in processes
+for Unix.  Example messages: destroy, suspend, resume.</p></li>
+<li><p>port - communication channel.  A way to reference other tasks and
+threads.  An object sends a 'message' to another object through a
+port on the receiving object.  Messages are queued up in ports.
+Think classic Smalltalk and Objective-C style message passing.</p></li>
+<li><p>message - actions and data between tasks and threads.</p></li>
+</ul><p>The emphasis on separating tasks and threads seems like a big idea of
+the paper.  I originally thought that Unix had multiple threads per
+process, but from the paper, it sounds like at that time Unix used
+very expensive forks and hacks in order to achieve concurrency.  A
+great example they used for supporting the task/thread abstraction is
+machines with <em>N</em> processors.  Instead of creating <em>N</em> heavy weight
+processes with 1 thread each, Mach would create 1 heavy weight task to
+describe what's needed to run, and <em>N</em> relatively lightweight threads
+to take advantage of the concurrency.</p><h2>Virtual Memory</h2><p>The abstraction for virtual memory allows Mach to be machine
+independent.  Each task holds it's own 'address map' of what memory it
+owns.  This is the same as the basic concept I learned in class.  The
+maps map from address to either virtual memory (VM) objects, or to
+'shared maps'.  The 'shared maps' are a way for tasks to share memory.
+VM objects are either pages that have already been fetched, or
+instructions of where to fetch the page if it hasn't been fetched.
+Pages themselves have attributes that specify their current status and
+properties.</p><h2>Interprocess Communication</h2><p>BSD sockets are simply streams of bytes left up to the application to
+interpret.  Mach's port/message abstraction provides uniform
+interprocess communication.  There is no difference between two
+processes on the same host talking, verus two processes on different
+network hosts talking.  On top of that, the port/message mechanism
+lets you add meaning and stricter checking on the data that is passed
+around.  Capabilites of who can send and receive what can also be
+enforced.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Kernel Designs';
+  var disqus_identifier = '/posts/2008/05/03/kernel-designs';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

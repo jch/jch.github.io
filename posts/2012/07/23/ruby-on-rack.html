@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Ruby on Rack
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Ruby on Rack</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Rack is a simple and flexible library for building Ruby web applications and
+web frameworks. It powers frameworks like Rails and Sinatra, and can be used
+to build custom reusable components called Rack middleware. If you develop web
+apps with Ruby, you're likely using Rack even if you're unaware of it. While
+it's typically used to build low-level abstractions close to HTTP, knowing how
+to use it leads to more modular designs and allows you to leverage a large
+list of existing Rack components. In this post, I introduce what Rack is step
+by step, and point towards some useful applications in the wild.</p><p>Rack <a href="http://chneukirchen.org/blog/archive/2007/02%0A/introducing-rack.html">was released in 2007</a> by Christian Neukirchen. The <a href="http://rack.rubyforge.org/doc/README.html">project
+README</a> starts with:</p><blockquote>
+<p>Rack provides a minimal, modular and adaptable interface for developing web
+applications in Ruby. By wrapping HTTP requests and responses in the
+simplest way possible, it unifies and distills the API for web servers, web
+frameworks, and software in between (the so-called middleware) into a single
+method call.</p>
+</blockquote><p>Confused? Don't worry, we'll go over each part individually.</p><blockquote>
+<p>By wrapping HTTP requests and responses in the simplest way possible...</p>
+</blockquote><p>Stepping back from Ruby, what is the 'simplest way' to think about an HTTP
+request and response? Without knowing the language or framework an application
+is using, the perspective from a webapp looks like:</p><pre><code>HTTP Request -&gt; Webapp -&gt; HTTP Response
+</code></pre><p>An HTTP request has a method like GET or POST, a server host and port, some
+uri resource path, and optionally a query string.</p><pre><code>GET /posts?page=2     # method, resource uri, query string
+Accept: 'text/html'   # one or more HTTP headers...
+Cookie: 'foo=bar'
+X-Custom: 'value'
+</code></pre><p>The web application's job is to takes this information and generate a HTTP
+response like:</p><pre><code>200 OK
+Content-Type: 'text/html'
+Content-Length: 75
+&lt;html&gt;
+  &lt;body&gt;Hello!&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><p>Without knowing <strong>how</strong> the response was generated, the parts of an HTTP
+response are the same independent of language and framework. The <code>200</code> <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">status
+code</a> indicates a
+successful response. Additionally, <a href="http://en.wikipedia.org/wiki/List_of_HTTP_header_fields">HTTP header
+fields</a> describe what
+the response is.</p><p>Rack wraps the request and response information into one large hash called the
+<strong>environment hash</strong>. Rack passes this <code>env</code> hash to your application and
+expects a return value with 3 parts:</p><ul>
+<li>
+<strong>status</strong>  - an HTTP status code</li>
+<li>
+<strong>headers</strong> - a hash of response headers. e.g. <code>Content-Type</code>, <code>Content-Length</code>
+</li>
+<li>
+<strong>bodies</strong>  - an array-like object that responds to <code>#each</code> and yields strings of
+            response content</li>
+</ul><blockquote>
+<p>[rack] unifies and distills the API for web servers, web frameworks ... into
+a single method call</p>
+</blockquote><p>The only entry point that a Rack component must implement is a method named
+<code>#call</code> that takes the <code>env</code> hash as its only argument. For example, the
+following is a valid Rack application:</p><pre><code class="ruby">class MyApp
+  def call(env)
+    # env has request/response information
+    puts env['PATH_INFO']
+    puts env['HTTP_ACCEPT']
+
+    # return status, headers, and response bodies.
+    # note that multiple response bodies will be concatenated.
+    [200, {'Content-Type' =&gt; 'text/html'}, ['Hello!']]
+  end
+end
+</code></pre><p>As an application developer, you can think in terms of the <code>env</code> hash instead
+of parsing out all the HTTP values manually. The response <code>MyApp</code> generates is
+returned in the last line as an array, and has the status code, headers, and
+list of response bodies.</p><p>Rack also provides an object-oriented interface to access request information
+and building responses. <code>MyApp</code> can also be written as:</p><pre><code class="ruby">class MyApp
+  def call(env)
+    request  = Rack::Request.new(env)
+    request.get?     # is the request a GET request?
+    request.params   # query parameters
+    request.cookies  # yummy
+
+    # do stuff with `request`...
+
+    response = Rack::Response.new
+    response['Content-Type'] = 'text/html'
+    response.write 'Hello!'
+
+    response.finish  # converts object into rack expected response
+  end
+end
+</code></pre><p>We say something is <strong>rackable</strong> when it responds to a method <code>#call</code> that
+takes one argument (the <code>env</code> hash), and returns a rack compatible response.
+For really simple Rack components, a common shortcut is to use a
+<a href="http://www.robertsosinski.com/2008/12/21/understanding-ruby-blocks-%0Aprocs-and-lambdas/">lambda</a> to define an anonymous endpoint. Because lambdas and procs
+respond to <code>#call</code>, it fits the Rack requirement.</p><pre><code class="ruby">lambda {|env|
+  [200, {'Content-Type' =&gt; 'text/plain'}, ['This is a valid rack app']]
+}
+</code></pre><p>See the documentation for
+<a href="http://rack.rubyforge.org/doc/classes/Rack/Request.html">Rack::Request</a> and
+<a href="http://rack.rubyforge.org/doc/classes/Rack/Response.html">Rack::Response</a> for
+details. The <a href="http://rack.rubyforge.org/doc/SPEC.html">Rack specification</a> has
+a full listing of what's available in the environment hash.</p><p>Now that we've seen what Rack is, let's explore the benefits from implementing
+this contract.</p><h2>Application Server Independence</h2><p>An application server is a library responsible for handling the plumbing of
+HTTP. It takes care of things like binding to a port, listening for
+connections, parsing headers, and constructing responses. Sometimes they are a
+collection of tools each responsible for one part of serving a HTTP request,
+other times, they may be one monolithic tool that handles all parts of the
+HTTP lifecycle. Each app server has different features, allowing you to choose
+one that's right for your needs.</p><p>Rack makes it easy to switch between app servers without touching your
+application code. For example, to serve our sample application with the
+builtin Ruby HTTP server WEBrick:</p><pre><code class="ruby">require 'rack'
+
+class MyApp
+  def call(env)
+    [200, {'Content-Type' =&gt; 'text/html'}, ['hello']]
+  end
+end
+
+Rack::Handler::WEBrick.run(MyApp.new, {:Port =&gt; 3000})
+</code></pre><p>If you wanted to use a different app server, for example Thin, then you can
+change the last line to:</p><pre><code class="ruby">Rack::Handler::Thin.run(MyApp.new, {:Port =&gt; 3000})
+</code></pre><p>Both of the above files can be directly run from the command line. See the
+<a href="http://rack.rubyforge.org/doc/classes/Rack/Handler.html">Rack::Handler
+documentation</a> for
+details.</p><h2>Middleware Architecture</h2><p><strong>Rack middleware</strong> is a Rack component that manipulates the environment hash
+before invoking another Rack component's <code>#call</code> method. Middleware can be
+used to modify a request before an application sees it, or modify a response
+generated by an application. This is useful for building shared filters that
+are independent of the underlying application. For example, to filter the word
+'truck' from all response bodies:</p><pre><code class="ruby">class ProfanityFilter
+  # Middleware need to accept a downstream Rack component
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    # call underlying application, returning the standard rack response
+    # @app is always initialized as the `next` rack component to call
+    status, headers, bodies = @app.call(env)
+
+    # modify response bodies in place
+    bodies.map! {|body| body.gsub! /truck/, ''}
+
+    # return a valid rack response
+    [status, headers, bodies]
+  end
+end
+</code></pre><p>This middleware is an example of a middleware that modifies the response
+generated by a downstream application. Like other Rack components, it also
+uses <code>#call</code> as it's entry point. In addition to this, its first constructor
+argument has to be another Rack component. The convention is to save this
+argument in an instance variable called <code>@app</code>. Middleware can determine when
+it wants to call the downstream app, and what to do with the app's response.</p><p>By having this stackable chain of middleware components feeding into each
+other and manipulating each others' inputs and responses, it makes it possible
+to compose application behavior in separate reusable components rather than a
+single fat blob of code.</p><h2>Composing Middleware</h2><p>Rack comes builtin with a utility object for composing middlewares and
+applications together called <a href="http://m.onkey.org/ruby-on-rack-2-the-builder">Rack::Builder</a>. For example the following wraps the <code>ProfanityFilter</code>
+middleware around the <code>MyApp</code> application:</p><pre><code class="ruby">app = Rack::Builder.new do
+  use ProfanityFilter
+  run MyApp
+end
+
+Rack::Handler::WEBrick.run(MyApp.new, {:Port =&gt; 3000})
+</code></pre><p>To further remove boilerplate code, Rack comes with a convenience executable
+called <code>rackup</code> that allows you to swap out servers without any code. When run
+without arguments, <code>rackup</code> looks for a file named <code>config.ru</code> to configure a
+<code>Rack::Builder</code> instance:</p><pre><code class="ruby"># sample 'config.ru' evaluated within a Rack::Builder instance
+use ProfanityFilter
+run MyApp
+</code></pre><p>Then to run the application from the commandline:</p><pre><code>&gt; rackup config.ru
+&gt; rackup -s thin -p 4000  # use thin as a server and run on port 4000
+</code></pre><p>Any additional arguments passed to <code>use</code> will be passed to the contructor of
+the middleware. Remember that the first argument of a middleware is always the
+downstream Rack component:</p><pre><code class="ruby"># extra arguments are passed into the middleware constructor
+use Rack::Session::Cookie, :key =&gt; 'rack.session'
+</code></pre><h2>Adding Functionality via Middleware</h2><p>Multiple Rack components can manipulate the environment hash serially without
+knowing what other rack components are being used. Each component run after
+the last, and its own response is passed back to the component above it.
+Sometimes a middleware will inject additional functionality into the
+environment hash for downstream components to use. One example is
+<a href="http://rack.rubyforge.org/doc/classes/Rack/Session/Cookie.html">Rack::Session::Cookie</a>, a middleware that adds a <code>env['rack.session']</code>
+object for downstream apps to use.</p><pre><code class="ruby">use Rack::Session::Cookie
+
+run lambda {|env|
+  # Rather than manipulating cookies ourselves, the upstream middleware gave
+  # us a helper object to set and read cookies
+
+  puts env['rack.session']  # read what's in our session
+  env['rack.session']['some_key'] = 'some_value'  # written to cookie for us
+}
+</code></pre><p>Because the environment hash is a plain old Ruby hash, you can decorate it
+with any functionality you want. Typically the convention is to use string
+keys and to namespace the key by the project name. For example, <a href="https://github.com/intridea/omniauth">OmniAuth</a>
+is a Rack library that allows applications to plugin different authentication
+providers. When authentication completes, the relevant auth information is
+given in an <code>env['omniauth.auth']</code> hash. The values don't have to be Ruby
+primitive objects either. In <a href="https://github.com/intridea/rack-stream">Rack::Stream</a>, a library for building
+streaming Ruby webapps, <code>env['stream.app']</code> is a <a href="https://github.com/intridea/rack-stream/blob/master/lib/rack/stream/app.rb">Rack::Stream::App</a>
+instance that has callable methods and features that can be used downstream.
+The contract of what's made available downstream is up to individual
+libraries, but the separate between each layer helps keep the components
+separate and well factored.</p><h3>Rails on Rack</h3><p>Rails is one of the best examples of a complex chain of middleware in action.
+In fact, if you generate a bare Rails app, and run <code>rake middleware</code>, you'll
+see:</p><pre><code>&gt; rake middleware
+
+use ActionDispatch::Static
+use Rack::Lock
+use #&lt;ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x007f8424bd1a50&gt;
+use Rack::Runtime
+use Rack::MethodOverride
+use ActionDispatch::RequestId
+use Rails::Rack::Logger
+use ActionDispatch::ShowExceptions
+use ActionDispatch::DebugExceptions
+use ActionDispatch::RemoteIp
+use ActionDispatch::Reloader
+use ActionDispatch::Callbacks
+use ActiveRecord::ConnectionAdapters::ConnectionManagement
+use ActiveRecord::QueryCache
+use ActionDispatch::Cookies
+use ActionDispatch::Session::CookieStore
+use ActionDispatch::Flash
+use ActionDispatch::ParamsParser
+use ActionDispatch::Head
+use Rack::ConditionalGet
+use Rack::ETag
+use ActionDispatch::BestStandardsSupport
+run MyApp::Application.routes
+</code></pre><p>Each item in this list processes an incoming environment hash and calls the
+Rack component under it in turn. What do all these entries have in common?
+They all respond to <code>#call</code>, and they all follow the Rack specification.</p><p>The final entry, <code>MyApp::Application.routes</code>, is the routes defined by
+<code>config/routes.rb</code> and is an <code>ActionDispatch::Routing::RouteSet</code> object that
+maps path info to controller actions. Each Rails controller action is a Rack
+endpoint in itself. You can verify this by running the following in a <code>rails
+console</code>:</p><pre><code># assuming a controller named `MyController` with an `index` action:
+&gt; rails console
+&gt; MyController.action(:show)
+#&lt;Proc:0x007ff1ed33bfd0@/Users/jch/.rvm/gems/ruby-1.9.3-p194/gems/actionpack-3.2.6/lib/action_controller/metal.rb:245&gt;
+</code></pre><p>You can see that fetching an action by name returns a <code>Proc</code> object, which
+responds to <code>#call</code>.</p><p>For additional Rails specific tips and information on Rack, check out the
+Rails guide <a href="http://guides.rubyonrails.org/rails_on_rack.html">Rails on
+Rack</a>.</p><h2>Interesting Rack Projects</h2><ul>
+<li>
+<a href="https://github.com/brynary/rack-test/">Rack::Test</a> - test rack middleware and apps. Used by other test frameworks.</li>
+<li>
+<a href="http://tomayko.com/writings/rack-cache-announce">Rack::Cache</a> - one of my
+favorites. Teaches you how HTTP caching works, and a very useful middleware.
+Also checkout <a href="https://github.com/jch%0A/activesupport-cascadestore">activesupport-cascadestore</a>.</li>
+<li>
+<a href="https://github.com/cyu/rack-cors">Rack::Cors</a> - cross origin resource sharing. Lets you do cross-domain ajax</li>
+<li>
+<a href="https://github.com/ddollar/rack-profile">Rack::Profile</a> - use ruby's profiler to see what's slow</li>
+<li>
+<a href="https://github.com/rack/rack-contrib/">rack-contrib</a> - whole bunch of useful middlewares</li>
+<li><a href="https://github.com/achiu/rack-recaptcha">Rack::Recaptcha</a></li>
+<li>
+<a href="https://github.com/jtrupiano/rack-rewrite">Rack::Rewrite</a> - rewrite incoming urls</li>
+<li><a href="https://www.ruby-toolbox.com/search?utf8=%E2%9C%93&amp;q=rack-">Ruby Toolbox Rack Projects</a></li>
+</ul><h2>Resources</h2><ul>
+<li>
+<a href="http://chneukirchen.org/blog/archive/2007/02%0A/introducing-rack.html">Introducing Rack</a> - rack's author Christian Neukirchen explains the
+rationale behind writing rack.</li>
+<li>Railscasts has a <a href="http://railscasts.com/episodes/151-rack-middleware">Rack Middleware
+screencast</a>.</li>
+<li><a href="http://guides.rubyonrails.org/rails_on_rack.html">Rails on Rack</a></li>
+</ul>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Ruby on Rack';
+  var disqus_identifier = '/posts/2012/07/23/ruby-on-rack';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

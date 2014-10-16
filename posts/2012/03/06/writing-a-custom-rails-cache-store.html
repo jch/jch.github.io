@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Writing a Custom Rails Cache Store
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Writing a Custom Rails Cache Store</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>When you use Rails built-in helpers for page, action, and fragment caching, the cached data is stored into an instance of ActiveSupport::Cache::Store. But while the interface for using the cache stores are the same, each cache store implementation has different performance characteristics and are suited for different jobs. In this post, I'll cover what cache stores are available with Rails by default, how to tune them, and how to write your own custom cache store.</p><h2>Grabbing the Code</h2><p>If you want to follow along in the code, I recommend cloning the <a href="https://github.com/rails/rails/">Rails repository</a>. The cache related code I'm covering all live within <a href="https://github.com/rails/rails/blob/master/activesupport/lib/active_support/cache.rb">activesupport/lib/cache.rb</a> and <a href="https://github.com/rails/rails/tree/master/activesupport/lib/active_support/cache">activesupport/lib/cache</a> folder. The corresponding tests live in <a href="https://github.com/rails/rails/blob/master/activesupport/test/caching_test.rb">activesupport/test/caching_test.rb</a>.</p><h2>Introducing the Abstract Store</h2><p>All cache store implementations inherit from an abstract store named <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html">ActiveSupport::Cache::Store</a>. This class defines the public interface that's used by Rails to do caching. The three basic operations are read, write, and delete. Here's a simple example you can run in irb:</p><pre><code class="ruby">require 'activesupport'
+cache = ActiveSupport::Cache.lookup_store(:memory_store)
+cache.read('foo')
+=&gt; nil
+cache.write('foo', 'bar')
+cache.read('foo')
+=&gt; 'bar'
+cache.delete('foo')
+cache.read('foo')
+=&gt; nil
+</code></pre><p>After requiring activesupport, we ask for an instance of a MemoryStore (we'll cover the different store types later in this post). The interface for read, write, and delete are self explanatory. You can also <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html">customize the behavior</a> of these actions.</p><h2>Store Implementations</h2><p>The concrete store implementations are well documented, so I'll introduce them briefly here and leave the details to the documentation.</p><ul>
+<li><p><strong>MemoryStore</strong> - a cache store that stores data in a plain-old Ruby hash. As an added feature, it keeps track of cache access and cache size, and will prune the cache when it hits a customizable max size.</p></li>
+<li><p><strong>FileStore</strong> - a cache store that stores data on the filesystem. It also caches multiple read calls within the same block in memory to decrease I/O.</p></li>
+<li><p><strong>MemCacheStore</strong> - the big daddy of cache stores. Backed by memcached, this store allows you to specify multiple memcached servers and load balances between them.</p></li>
+<li><p><strong>NullStore</strong> - Interesting cache store that does nothing. That's right, if you look at <a href="https://github.com/rails/rails/blob/master/activesupport/lib/active_support/cache/null_store.rb">its implementation</a>, it's just a bunch of empty methods. It's perfect for use as a mock cache store for testing, or as a template for writing your own cache store.</p></li>
+</ul><h2>Rails Initialization</h2><p>By default, Rails 3 will initialize a FileStore that you can reference through <code>Rails.cache</code>. This cache is used internally by Rails to cache classes, pages, actions, and fragments. If you want to change which cache store is used, you can configure it in your application.rb</p><pre><code># use a MemoryStore cache with a max size of 512 megabytes
+config.cache_store = [:memory_store, {:size =&gt; 536870912}]
+</code></pre><p>In production mode, Rails will also insert <a href="http://rtomayko.github.com/rack-cache/">Rack::Cache</a> to the top of the middleware stack and use Rails.cache as its storage. Note that even though Rack::Cache's heap storage does not bound the size of its cache, if you use ActiveSupport's MemoryStore, the least recently used entries will be pruned from the cache when it hits your specified limit. So if you <a href="http://tomayko.com/writings/things-caches-do">set correct cache headers</a>, Rack::Cache will pick them and cache your responses.</p><h2>Writing A Custom Cache Store</h2><p>The default cache stores are a perfect fit for most situations, but if you do need to write a custom cache store, rest assured that it's easy to do.</p><p>The three main methods to override are:</p><pre><code class="ruby"># Read an entry from the cache implementation. Subclasses must implement this method.
+def read_entry(key, options) # :nodoc:
+  raise NotImplementedError.new
+end
+
+# Write an entry to the cache implementation. Subclasses must implement this method.
+def write_entry(key, entry, options) # :nodoc:
+  raise NotImplementedError.new
+end
+
+# Delete an entry from the cache implementation. Subclasses must implement this method.
+def delete_entry(key, options) # :nodoc:
+  raise NotImplementedError.new
+end
+</code></pre><p>These methods are then used by the public interface methods. There are a few methods you can optionally implement, but your cache will work with just the three listed above.</p><p>For a client project, I wrote a write-through cache store called <a href="https://github.com/jch/activesupport-cascadestore">CascadeCache</a> that chains multiple cache stores together. For example, here's one possible configuration:</p><pre><code class="ruby">config.cache_store = [:cascade_store, {
+  :stores =&gt; [
+    [:memory_store, :size =&gt; 5.megabytes],
+    [:memcache_store, 'somehost:11211']
+  ]
+}]
+</code></pre><p>The behavior of this cache store is to return the first hit from the list of caches. This allows the app to have a small low-latency MemoryStore in front of a MemCacheStore. If something can't be found in the MemoryCache, then we fall back to MemCache. When writing to the cache, entries are written through to both underlying cache stores. The primary reason for doing this wasn't because MemCache store was slow, but as an extra backup cache in case MemCache became temporarily unavailable (actually happened in production).</p><p>I'm hoping CascadeCache makes it upstream into ActiveSupport, but in the meantime, I've packaged it up as a <a href="https://github.com/jch/activesupport-cascadestore">separate gem</a>. For another example of a custom cache implementation, check out <a href="https://github.com/jodosha/redis-store">redis-store</a>. It includes an ActiveSupport compatible cache.</p><p>Caching is a tricky beast. On top of deciding what to cache and when to expire, the underlying cache store can affect your app's performance. Choose the cache store that best fits your needs, use a hybrid CascadeCache, or write your own. Good luck and happy tuning!</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Writing a Custom Rails Cache Store';
+  var disqus_identifier = '/posts/2012/03/06/writing-a-custom-rails-cache-store';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>

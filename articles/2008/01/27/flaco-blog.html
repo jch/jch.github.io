@@ -5,7 +5,7 @@
 <title>
 Flaco Blog
 </title>
-<link href="../../../../assets/application-1b6070a43c3e8d37df5eb4ad2c23b344.css" media="all" rel="stylesheet" type="text/css" />
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-2747647-1']);
@@ -161,13 +161,13 @@ like the idea of turning on SSI's because each page load would require
 Apache to scan for SSI directives.</p><p>Pre-generating and Flattening out dyanmic content will only get me so
 far.  Hopefully it'll be far enough :)</p><h2>Performance</h2><p>Performance-wise, I want this system to be fast.  How fast?  Here are
 my design goals:</p><table>
-  <tr>
-    <th>Operation</th>
+<tr>
+<th>Operation</th>
 <th>Running Time</th>
 <th>Storage</th>
   </tr>
-  <tr>
-    <td>View an article</td>
+<tr>
+<td>View an article</td>
     <td>O(1) - as fast as it takes to serve a static page</td>
     <td>O(2n + m) - where n is the number of words in an article.
     Each article will be kept in both Markdown and XHTML format.  The
@@ -175,13 +175,13 @@ my design goals:</p><table>
     insignificant.  I'm trading off a bit of storage for best-case
     speed.</td>
   </tr>
-  <tr>
-    <td>Write an article</td>
+<tr>
+<td>Write an article</td>
     <td>O(1) - Emacs ftw!</td>
     <td>N/A</td>
   </tr>
-  <tr>
-    <td>Publish articles</td>
+<tr>
+<td>Publish articles</td>
     <td>O(n) - where n is the number of articles to publish.  The
     script uses 'GNU find' and command line options to only publish
     and generate needed content</td>
@@ -257,7 +257,7 @@ pages are being rebuilt, rather than all index pages.</p></li>
 <li>2008-05-03: pagination! atom feed!</li>
 </ul>
 </div>
-<script src="../../../../assets/post-6db30d9cd8415ddc540433d54a06699e.js" type="text/javascript"></script>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
 <script>
   //<![CDATA[
     hljs.initHighlightingOnLoad();
@@ -286,7 +286,7 @@ pages are being rebuilt, rather than all index pages.</p></li>
 <script type="text/javascript">
   var disqus_shortname  = 'whatcodecraves';
   var disqus_title      = 'Flaco Blog';
-  var disqus_identifier = '/articles/2008/01/27/flaco-blog';
+  var disqus_identifier = '/posts/2008/01/27/flaco-blog';
 
 
   /* * * DON'T EDIT BELOW THIS LINE * * */

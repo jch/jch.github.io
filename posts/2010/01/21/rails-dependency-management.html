@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<title>
+Rails Dependency Management
+</title>
+<link href="../../../../assets/application-d2f36cb0fed8eb4314e72d8f93f02530.css" media="all" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2747647-1']);
+  _gaq.push(['_setSiteSpeedSampleRate', 100]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+<body class='container-fluid'>
+<div class='full-width' id='wcc'>
+<div id='header'>
+<a href="../../../../index.html">whatcodecraves.com</a>
+</div>
+
+<div id='main'>
+<div id="carbonads-container">
+  <div class="carbonad">
+    <div id="azcarbon"></div>
+      <script type="text/javascript">
+        var z = document.createElement("script");
+        z.type = "text/javascript";
+        z.async = true;
+        z.src = "http://engine.carbonads.com/z/17311/azcarbon_2_1_0_VERT";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(z, s);
+      </script>
+    </div>
+  </div>
+<div class='post'>
+<h1>Rails Dependency Management</h1>
+<a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+<a href="https://twitter.com/share" class="twitter-share-button" data_via="whatcodecraves">Tweet</a>
+<div class='g-plus' data-action='share' data-annontation='bubble'></div>
+<p>Rails has two methods of adding external libraries to a project,
+<a href="http://docs.rubygems.org/">rubygems</a> and
+<a href="http://guides.rubyonrails.org/plugins.html">plugins</a>.  There are also
+different ways to manage these external libraries.  Here are some
+conventions I've picked up over the years for managing dependencies in
+development and deployment as painless and maintainable as possible.</p><h2>Rubygems</h2><p>I prefer using gems over plugins whenever possible because they are
+easily shared between different applications, and are versioned.
+Multiple versions of the same gem can be installed on the same box,
+and it's up to the application to specify which version it wants to
+use.  This is great if you have older apps that aren't ready to go up
+to a newer version living in the same environment as apps who are
+already using a newer version of the same library.</p><ul>
+<li><a href="http://ryandaigle.com/articles/2008/4/1/what-s-new-in-edge-rails-gem-dependencies">Ryan's Scraps introduction</a></li>
+<li><a href="http://railscasts.com/episodes/110-gem-dependencies">Railscast</a></li>
+<li><a href="http://api.rubyonrails.org/classes/Rails/Configuration.html#M002537">Rails API documentation</a></li>
+<li><a href="http://docs.rubygems.org/">Rubygems documentation</a></li>
+</ul><h3>Gem Bundler</h3><p>In addition to installing gem dependencies on production boxen by
+hand, there's an interesting new kid on the block called
+<a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/">Bundler</a>.
+The idea is you declare what gems and versions belong with a Rails
+application in a Gemfile which is used by the 'gem bundle' command to
+freeze those gems into vendor/gems.  To 'freeze' a library in
+Rails-speak is to copy that library into the vendor directory; It
+offers the same tradeoffs as
+<a href="http://en.wikipedia.org/wiki/Static_library">static-linking</a> and
+<a href="http://en.wikipedia.org/wiki/Dynamic_link_library">dynamic-linking</a>.</p><ul>
+<li><a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/">Yehuda Katz introduction</a></li>
+<li><a href="http://docs.heroku.com/gems">Heroku docs</a></li>
+</ul><p>I use a combination of Bundler and Rail's builtin 'config.gem' on
+Heroku.  For every gem that is already available on the hosts, I use
+'config.gem' and use the existing shared gem to avoid wasting space
+with freezing gems.  For gems that are not available on the box, I
+have a Gemfile that Bundler uses to freeze gems on every deploy.  I
+get the benefit of static-linking for gems aren't available on the
+local host, but also get the benefit saving space with
+dynamic-linking.</p><h2>Plugins</h2><p>Originally I thought of gems as general purpose ruby libraries, and
+'plugins' as ruby libraries that are only useful within a Rails
+application.  That distinction isn't very useful practically.  Even if
+a shared library is only useful within a Rails app, I still prefer to
+use a gem because gems are versioned and have tools to maintain and
+manipulate them.  Luckily many Rails plugins usually offer themselves
+as both a tradition plugin that gets frozen in vendor/plugins, or as a
+gem dependency.</p><p>One plugin nasty plugin habit I had to get rid of was the urge to
+'script/generate plugin' whenever I wasn't sure where to put a certain
+chunk of modular code.  Before you do this, remember that plugins are
+supposed to be resuable in <em>any</em> Rails app.  If your plugin can't be
+decoupled from your Rails project and dropped into a fresh one, then
+it probably belongs in 'lib' and not 'vendor/plugins'.</p><ul>
+<li>
+<a href="http://ryandaigle.com/articles/2007/2/23/what-s-new-in-edge-rails-stop-littering-your-evnrionment-rb-with-custom-initializations">Ryan's Scraps rails
+initializers</a>
+are useful for requiring extra libraries you have in 'lib' instead
+of 'vendor/plugins'</li>
+<li>
+<a href="http://errtheblog.com/posts/3-organize-your-models">Err the Blog load_paths
+example</a>. It's
+good to understand how
+<a href="http://api.rubyonrails.org/classes/Rails/Configuration.html">config.load_paths</a>
+work so you can organize where you put your shared code.</li>
+</ul><h2>Avoid Dependencies</h2><p>Probably the most important lesson I've learned is to not get too
+trigger happy with adding new external libraries.  There are a lot of
+good libraries out there, but plenty of bad ones too.  Before you
+marry yourself to a particular library, research it thoroughly; Is it
+actively maintained?  Are there lots of complaints about it in the
+blogosphere?  Are there tests?  Does the code look well written?  Is
+there documentation?</p><p>and most importantly of all...</p><p><strong>Do I actually need this functionality?</strong></p><p>I've been burned plenty of times for installing something new and
+shiny and then ditching it later because it was much more than I
+needed.  Just like it's more elegant to write less code, more
+concisely; The same principle applies when introducing new
+dependencies to your application.</p>
+</div>
+<script src="../../../../assets/post-6546d1eaa44666cb1ab3152c118eceec.js" type="text/javascript"></script>
+<script>
+  //<![CDATA[
+    hljs.initHighlightingOnLoad();
+  //]]>
+</script>
+<script type='text/javascript'>
+  // HackerNews
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = '//hnbutton.appspot.com/static/hn.js';
+    s.parentNode.insertBefore(g, s);
+  }(document, 'script'));
+
+  // Twitter
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  // Google Plus
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+  var disqus_shortname  = 'whatcodecraves';
+  var disqus_title      = 'Rails Dependency Management';
+  var disqus_identifier = '/posts/2010/01/21/rails-dependency-management';
+
+
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+</div>
+<div id='footer'>
+<p>
+Copyright Jerry Cheung 2007 - 2014 &nbsp;&nbsp;
+<a href="https://github.com/jch/whatcoderaves.com">Source for this blog</a>
+</p>
+</div>
+</div>
+</body>
+</html>
