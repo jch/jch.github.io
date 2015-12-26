@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd )"
+bootstrap_branch='v4-dev'
+
+if [[ $1 = '--clean' ]]; then
+  rm -rf "$root_path/bootstrap" || true
+fi
+
+echo "Setup bootstrap, using branch $bootstrap_branch"
+if ! grep 'v4.' "$root_path/bootstrap/css/bootstrap.css" ; then
+  rm -rf "$root_path/bootstrap" || true
+  mkdir -p "$root_path/bootstrap"
+  set -x
+  curl -L -s "https://github.com/twbs/bootstrap/archive/$bootstrap_branch.zip" \
+    | tar -xzvf- --strip-components 2 --exclude='docs' -C "$root_path/bootstrap" '*/dist'
+fi
