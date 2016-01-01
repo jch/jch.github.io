@@ -35,12 +35,10 @@ while getopts ':vs:o:' flag; do
 done
 shift $(($OPTIND - 1))
 
-log "src_dir: $src_dir"
-log "output_dir: $output_dir"
+log "publishing to '$output_dir' from '$src_dir'"
 
 [[ $# -gt 0 ]] && actions="$@" || actions='posts index'
 for a in $actions; do
-  # echo $a
-  # log "publishing $a"
+  log "running publish_$a"
   publish_$a
 done
