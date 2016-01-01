@@ -8,18 +8,24 @@ function setup {
 
 @test "publish" {
   touch "$BATS_TMPDIR/src/new_file.md"
-  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts"
+  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
   [[ -f "$BATS_TMPDIR/posts/new_file.html" ]]
 }
 
 @test "publish skips files older than output directory" {
-  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts"
+  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
   [[ ! -f "$BATS_TMPDIR/posts/file.html" ]]
 }
 
 @test "publish updates when file is modified" {
   touch "$BATS_TMPDIR/src/old_file.md"
-  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts"
+  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
 
   [[ -f "$BATS_TMPDIR/posts/old_file.html" ]]
+}
+
+@test "publish generates index" {
+  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
+
+  [[ -f "$BATS_TMPDIR/index.html" ]]
 }

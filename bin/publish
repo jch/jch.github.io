@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# publish [-v] [-s] [-o] [actions]
+# publish [-v] [-s] [-o] [-r] [actions]
 #
 # -v verbose
-# -s source directory of markdown posts to publish. Defaults to `src`
-# -o output directory of published html posts. Defaults to `posts`
+# -s source directory of markdown posts to publish. Defaults 'src'
+# -o output directory of published html posts. Defaults 'posts'
+# -r root   directory of published blog. The index page will be generated here. Default: '.'
 #
 # `actions` set which publish_* scripts to execute. Defaults to `posts index`
 #
@@ -18,6 +19,7 @@ set -a
 verbose=
 src_dir='src'
 output_dir='posts'
+root_dir='.'
 
 function log() {
   local message=$1
@@ -26,11 +28,12 @@ function log() {
 }
 set +a
 
-while getopts ':vs:o:' flag; do
+while getopts ':vs:o:r:' flag; do
   case "$flag" in
     v) verbose=1 ;;
     s) src_dir="${OPTARG}" ;;
     o) output_dir="${OPTARG}" ;;
+    r) root_dir="${OPTARG}" ;;
   esac
 done
 shift $(($OPTIND - 1))
