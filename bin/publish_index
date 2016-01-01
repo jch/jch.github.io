@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require "open3"
+
+titles_by_href = {}
+src_files = `find #{ENV["src_dir"]} -type f | sort -r`
+post_list_items = []
+src_files.each_line do |path|
+  title = `head -n1 < #{path}`.gsub(/^[\s#]+/, "").chomp
+  href = path.gsub(ENV["src_dir"], ENV["output_dir"]).gsub(/md$/, "html").chomp
+  post_list_items << %Q(<li><a href="#{href}">#{title}</a></li>)
+end
+
+# puts post_list_items.join("\n")
+
+stdin, stdout, stderr, thread = Open3.popen3("jsg_layout layout.html")
+stdin.puts post_list_items.join("\n")
+stdin.close
+File.open("index.html", "w") { |fh| fh.puts(stdout.read) }
+exit thread.value.exitstatus
