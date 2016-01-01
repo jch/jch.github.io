@@ -1,10 +1,19 @@
 #!/bin/bash
+#
+# publish [-v] [-s] [-o]
+#
+# -v verbose
+# -s source directory of markdown posts to publish. Defaults to `src`
+# -o output directory of published html posts. Defaults to `posts`
+#
+# Markdown documents modified more recently than the output directory are
+# published. To force a publish, `touch src/file-to-publish.md`
+#
 set -e
 
 verbose=
 src_dir='src'
 output_dir='posts'
-last_published=$(stat -f '%m' "$output_dir")
 
 while getopts ':vs:o:' flag; do
   case "$flag" in
