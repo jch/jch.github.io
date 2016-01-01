@@ -1,4 +1,4 @@
-# Tips of the Day #
+# Tips of the Day
 
 * deleting remote git tags
 

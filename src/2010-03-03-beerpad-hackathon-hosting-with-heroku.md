@@ -1,4 +1,4 @@
-# Beerpad Hackathon: Hosting with Heroku #
+# Beerpad Hackathon: Hosting with Heroku
 
 When I started [planning out
 Beerpad](/articles/2010/02/27/hackathon-beerpad), I wanted to focus on

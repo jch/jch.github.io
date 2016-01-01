@@ -1,4 +1,4 @@
-# Emacs Refactoring #
+# Emacs Refactoring
 
 While I waited for Coupa customers to be upgraded, I decided to clean
 up my .emacs config file.  My .emacs was never a pretty thing to

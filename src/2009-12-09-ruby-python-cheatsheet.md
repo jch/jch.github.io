@@ -1,4 +1,4 @@
-# Ruby Python Cheatsheet #
+# Ruby Python Cheatsheet
 
 Some equivalents for my reference:
 

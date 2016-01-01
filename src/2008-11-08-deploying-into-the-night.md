@@ -1,4 +1,4 @@
-# Deploying into the Night #
+# Deploying into the Night
 
 Yesterday was an emotional roller coaster of brutality and
 awesomeness, mixed with a good share of productivity.  The day started

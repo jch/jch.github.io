@@ -1,4 +1,4 @@
-# How to Make an API for a Rails App #
+# How to Make an API for a Rails App
 
 I've come across the same problem in my personal projects and also at
 work.  You have an existing Rails app that has some authentication and

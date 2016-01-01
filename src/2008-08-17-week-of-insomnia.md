@@ -1,4 +1,4 @@
-# Week of Insomnia #
+# Week of Insomnia
 
 Contrary to what you might think, I think insomnia's fantastic.  It
 puts me in this limbo state where my mind feels like lead and I suck

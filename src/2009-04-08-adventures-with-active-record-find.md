@@ -1,4 +1,4 @@
-# Adventures with ActiveRecord find #
+# Adventures with ActiveRecord find
 
 Retrieving records from the database and mapping the results into
 ActiveRecord models are a big part of every Rails app.  A large

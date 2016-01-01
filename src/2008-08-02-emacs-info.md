@@ -1,4 +1,4 @@
-# Emacs Info #
+# Emacs Info
 
 Just a quick cheatsheet of how to get around in Info mode in Emacs.
 

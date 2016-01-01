@@ -1,4 +1,4 @@
-# Fuzz Testing and Being a Dick #
+# Fuzz Testing and Being a Dick
 
 I really couldn't help myself with this one.  Someone gave me the
 privledge to play around with their pet project, and the first thing I

@@ -1,4 +1,4 @@
-# Ruby Postgresql Gem Cleanup #
+# Ruby Postgresql Gem Cleanup
 
 I ran into some trouble with getting a good native postgresql driver
 installed.  Here are some links and resources I found to be useful.  I

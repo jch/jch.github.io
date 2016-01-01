@@ -1,4 +1,4 @@
-# OS X GUI Tool 'HTTP Client' #
+# OS X GUI Tool 'HTTP Client'
 
 Kyle sent out this [amazing tool](http://ditchnet.org/httpclient/) for
 testing and debugging at the HTTP level.  This would've been a

@@ -1,4 +1,4 @@
-# Another .irbrc Jewel #
+# Another .irbrc Jewel
 
 A while back, I discovered the magical
 [.irbrc](http://giantrobots.thoughtbot.com/2008/12/23/script-console-tips).

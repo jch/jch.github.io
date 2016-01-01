@@ -1,4 +1,4 @@
-# Multiple Gmail Accounts on OSX Done Right #
+# Multiple Gmail Accounts on OSX Done Right
 
 I learned this tip from Seggy and I've explained it to several people
 already. If you've fallen in love with Gmail's web interface, then

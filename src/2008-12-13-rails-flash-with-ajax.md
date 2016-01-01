@@ -1,4 +1,4 @@
-# Rails Flash with Ajax #
+# Rails Flash with Ajax
 
 One small annoyance about working with the
 [flash](http://api.rubyonrails.org/classes/ActionController/Flash.html)

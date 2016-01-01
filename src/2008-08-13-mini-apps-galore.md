@@ -1,4 +1,4 @@
-# Mini-apps Galore! #
+# Mini-apps Galore!
 
 I'm warming up to the idea of using small webapps that do _less_.
 Instead of full blown behemoth applications that take a lot of time to

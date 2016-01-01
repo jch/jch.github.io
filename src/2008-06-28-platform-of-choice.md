@@ -1,4 +1,4 @@
-# Platform of Choice #
+# Platform of Choice
 
 I kept some rants and notes to myself a while back about what I
 thought about some of the operating systems I've used and currently

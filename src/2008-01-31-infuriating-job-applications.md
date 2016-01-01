@@ -1,4 +1,4 @@
-# Infuriating Job Applications #
+# Infuriating Job Applications
 
 Spring is in the air, but instead of allergies, I'm seeing my peers
 being hit hard by job anxieties.  Thanks to this gloomy weather, I've

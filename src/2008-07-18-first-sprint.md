@@ -1,4 +1,4 @@
-# First Sprint #
+# First Sprint
 
 Today at work, I sat in my first [planning
 poker](http://en.wikipedia.org/wiki/Planning_poker) meeting.  This was

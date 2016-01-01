@@ -1,4 +1,4 @@
-# Debian/Ubuntu Specific Rails with Postgresql #
+# Debian/Ubuntu Specific Rails with Postgresql
 
 I spent the weekend migrating from my shared hosting at Dreamhost over
 to VPS hosting at [SilverRack](http://www.silverrack.com/).  In the

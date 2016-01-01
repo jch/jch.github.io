@@ -1,4 +1,4 @@
-# Customizing Emacs #
+# Customizing Emacs
 
 My editor of choice is eight megs and constantly swapping.  I didn't
 meticulously choose my editor, but rather had one forced upon me

@@ -1,4 +1,4 @@
-# Getting Around in MongoDB #
+# Getting Around in MongoDB
 
 <a href="http://mongodb.com"><img src="/images/mongodb.png" style="float:right;padding-top:10px;padding-left:20px"></a>
 I started working with [MongoDB](http://www.mongodb.org) a few days

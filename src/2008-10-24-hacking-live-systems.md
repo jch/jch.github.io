@@ -1,4 +1,4 @@
-# Hacking Live Systems #
+# Hacking Live Systems
 
 After my evening jog, I hopped onto the QA environment around 11pm
 because I wanted to look something up for another blog post I was

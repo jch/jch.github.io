@@ -1,4 +1,4 @@
-# Picking at Capistrano #
+# Picking at Capistrano
 
 Here is the setup I wanted with [Capistrano](http://www.capify.org/)
 with my [housing app](http://housing.whatcodecraves.com/).  I wanted

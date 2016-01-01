@@ -1,4 +1,4 @@
-# Rails Webapp Engineering #
+# Rails Webapp Engineering
 
 The day after I came back from Australia, I started my new job at
 [Coupa Software](http://www.coupa.com).  I'm absolutely loving it at

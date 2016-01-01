@@ -1,4 +1,4 @@
-# RSpec'ing acts\_as\_state\_machine #
+# RSpec'ing acts_as_state_machine
 
 One of my favorite plugins I've seen so far is
 [acts\_as\_state\_machine](http://agilewebdevelopment.com/plugins/acts\_as\_state\_machine).

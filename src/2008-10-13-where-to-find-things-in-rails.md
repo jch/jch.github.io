@@ -1,4 +1,4 @@
-# Where to Find Things in Rails #
+# Where to Find Things in Rails
 
 When I started learning Rails, I was amazed when all kinds of magical
 things started working.  The problem was that I never felt in control

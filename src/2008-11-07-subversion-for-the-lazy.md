@@ -1,4 +1,4 @@
-# Subversion for the Lazy #
+# Subversion for the Lazy
 
 I've been asked about subversion enough times to justify writing this
 quick and dirty article to save me future time.  Read this guide if

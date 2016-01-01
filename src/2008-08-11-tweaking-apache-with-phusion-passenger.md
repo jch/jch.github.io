@@ -1,4 +1,4 @@
-# Tweaking Apache with Phusion Passenger #
+# Tweaking Apache with Phusion Passenger
 
 Carrying over from weekend cleanup, I started exploring the different
 deployment options available.  Here are some bleak notes as I go

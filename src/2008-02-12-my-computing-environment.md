@@ -1,4 +1,4 @@
-# My Computing Environment #
+# My Computing Environment
 
 It happens to all developers.  You're stuck in a place where you need
 to get dev work done, but you have to use a computer that isn't

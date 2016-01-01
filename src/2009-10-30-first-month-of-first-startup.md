@@ -1,4 +1,4 @@
-# Talking the Startup Talk, Walking the Outspokes Walk: Founders #
+# Talking the Startup Talk, Walking the Outspokes Walk: Founders
 
 It's been a month since I left my job at
 [Coupa](http://www.coupa.com/) and co-founded

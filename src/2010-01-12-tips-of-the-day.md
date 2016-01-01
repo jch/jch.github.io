@@ -1,4 +1,4 @@
-# Tips of the Day #
+# Tips of the Day
 
 * dumping and restoring databases from RDS
 * connecting to Twitter via oauth using python

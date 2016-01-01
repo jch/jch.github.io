@@ -1,4 +1,4 @@
-# Page Caching Gotcha on Heroku #
+# Page Caching Gotcha on Heroku
 
 Andrew noticed that his beer reviews weren't showing up on
 [beerpad](http://beerpad.heroku.com/) after he published them. His reviews

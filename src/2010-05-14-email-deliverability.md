@@ -1,4 +1,4 @@
-# Email Delivery for Webapps #
+# Email Delivery for Webapps
 
 Delivering email is easy.  Having that email actually get received is
 freaking hard.  In this era rife with spammers, if you don't jump

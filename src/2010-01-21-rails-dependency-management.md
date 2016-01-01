@@ -1,4 +1,4 @@
-# Rails Dependency Management #
+# Rails Dependency Management
 
 Rails has two methods of adding external libraries to a project,
 [rubygems](http://docs.rubygems.org/) and

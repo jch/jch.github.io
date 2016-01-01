@@ -1,4 +1,4 @@
-# Rails Tips #
+# Rails Tips
 
 I have started, abandoned, and restarted many pet rails projects.  All
 hype aside, I've collected a fair amount of rails idioms.  Whenever I

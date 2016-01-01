@@ -1,4 +1,4 @@
-# Shoot em up Debugging #
+# Shoot em up Debugging
 
 Debugging is like a video game.  Unfortunately, it's the meanest video
 game you will ever play.  The objective is to destroy bugs, but each

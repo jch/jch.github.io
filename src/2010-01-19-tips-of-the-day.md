@@ -1,4 +1,4 @@
-# Tips of the Day #
+# Tips of the Day
 
 * debugging django SQL problems
 * documenting convention for Rails routes

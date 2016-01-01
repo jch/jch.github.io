@@ -1,4 +1,4 @@
-# Premature Software Testing #
+# Premature Software Testing
 
 I've fallen victim to it a few times now and would like to remind
 myself of the causes and consequences.  Don't get me wrong, I love

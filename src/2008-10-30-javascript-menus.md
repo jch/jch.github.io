@@ -1,4 +1,4 @@
-# Building Webapp Menus #
+# Building Webapp Menus
 
 One feature we're releasing for this sprint is a quick access menu on
 every page for the common day-to-day actions used in Coupa.

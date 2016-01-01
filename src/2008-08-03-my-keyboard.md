@@ -1,4 +1,4 @@
-# My Keyboard #
+# My Keyboard
 
 ... is awesome.  I have the same keyboard at home and at work.  It
 does everything that I want a keyboard to do.  It looks fantastic.  It

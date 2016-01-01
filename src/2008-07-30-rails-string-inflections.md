@@ -1,4 +1,4 @@
-# Rails String Inflections #
+# Rails String Inflections
 
 I've been using
 [constantize](http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/String/Inflections.html#M000488)

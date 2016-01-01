@@ -1,4 +1,4 @@
-# Reaction to 37Signal's Getting Real #
+# Reaction to 37Signal's Getting Real
 
 The gray and wet weather outside put me in an gloomy mood, so I didn't want to write any 'unhappy' code and regret it later.  Instead, I headed to Cup of Joe on the corner of Dizengoff and Gordon to read 37Signal's book 'Getting Real' while enjoying a creamy cappuccino.  Follow the jump for a short book review.
 

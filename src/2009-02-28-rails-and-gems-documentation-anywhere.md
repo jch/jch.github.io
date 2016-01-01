@@ -1,4 +1,4 @@
-# Rails and Gems Documentation Everywhere #
+# Rails and Gems Documentation Everywhere
 
 <img src="/images/mobile-me.png" alt="stick figure of me and macbook"
 style="float:left;padding:0 10px 10px;" /> A great thing about

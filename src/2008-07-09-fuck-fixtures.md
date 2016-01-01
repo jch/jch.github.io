@@ -1,4 +1,4 @@
-# Fuck Fixtures #
+# Fuck Fixtures
 
 When you first start testing a newly created application, fixtures
 might seem very appealing.  They're easy to write, they make sense,

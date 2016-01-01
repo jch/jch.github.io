@@ -1,4 +1,4 @@
-# Coupa and Rails 2 #
+# Coupa and Rails 2
 
 Joy and churchbells this morning here in sunny San Mateo!  David
 smacked down Rails 1.2.3 with a heavy hand and replaced it with the

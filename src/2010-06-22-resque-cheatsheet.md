@@ -1,4 +1,4 @@
-# Resque Cheatsheet #
+# Resque Cheatsheet
 
 <img src="/images/octocat_happy.gif" style="float:left;margin-right:10px" />
 Coded and used by the [Github](http://github.com/) team,

@@ -1,4 +1,4 @@
-# Kernel Designs #
+# Kernel Designs
 
 I really enjoyed my introductory operating systems class at Berkeley.
 The class focused on classic high level OS concepts like process

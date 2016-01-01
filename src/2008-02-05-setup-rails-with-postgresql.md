@@ -1,4 +1,4 @@
-# Setup Rails with Postgresql #
+# Setup Rails with Postgresql
 
 Everytime I set up a Rails project, there are many braindead steps
 that need to be followed.  Instead of doing a web search each time I

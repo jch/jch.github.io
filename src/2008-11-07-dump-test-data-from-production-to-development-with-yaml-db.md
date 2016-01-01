@@ -1,4 +1,4 @@
-# Dump Test Data from Production to Development with yaml_db#
+# Dump Test Data from Production to Development with yaml_db
 
 For [Money app](http://money.whatcodecraves.com/), I ran into a
 problem with the charts drawing ugly x-axis when the datapoints were

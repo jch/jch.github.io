@@ -1,4 +1,4 @@
-# Fixing Common Bundler Problems #
+# Fixing Common Bundler Problems
 
 <img src="/images/gembundler.png" style="float:left" />
 When [bundler](http://gembundler.com/) first came out, I really wanted

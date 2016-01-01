@@ -1,4 +1,4 @@
-# The Software Maintenance Light #
+# The Software Maintenance Light
 
 <!-- image provided by http://www.flickr.com/photos/uscfan/171628111/ -->
 <img src="/images/check_engine.jpg" alt="check engine light"/>

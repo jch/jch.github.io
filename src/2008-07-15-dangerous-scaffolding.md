@@ -1,4 +1,4 @@
-# Dangerous Scaffolding #
+# Dangerous Scaffolding
 
 I did something bad today.  It wasn't bad enough to destroy working
 customer instances, but it was enough to make all the dev team all up

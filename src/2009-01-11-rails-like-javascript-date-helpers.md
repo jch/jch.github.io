@@ -1,4 +1,4 @@
-# Rails-like Javascript Date Helpers #
+# Rails-like Javascript Date Helpers
 
 I'm a fan of
 [ActiveSupport::CoreExtensions::Time::Calculations](http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/Time/Calculations.html).

@@ -1,4 +1,4 @@
-# Flaco Crushers #
+# Flaco Crushers
 
 Originally, this post was titled 'Ruby Markdown Implementations' and
 I was going to talk about

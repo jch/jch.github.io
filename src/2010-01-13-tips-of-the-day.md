@@ -1,4 +1,4 @@
-# Tips of the Day #
+# Tips of the Day
 
 * backspace in GNU screen with Apple Terminal, SSH, and Ubuntu
 * jquery tooltip plugins

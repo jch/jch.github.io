@@ -1,4 +1,4 @@
-# Flaco Blog #
+# Flaco Blog
 
 A while back I was chatting to Arthur and bitching about all the
 various blog systems.  To date, I've tried a wide cross section of

@@ -1,4 +1,4 @@
-# New Beginnings: Starting with Intridea #
+# New Beginnings: Starting with Intridea
 
 <a href="http://intridea.com"><img src="/images/intridea-logo.png" style="float:left; padding-right: 20px; padding-top:10px" /></a>
 Three weeks ago, I started as a full time software developer at

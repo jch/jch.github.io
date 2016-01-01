@@ -1,4 +1,4 @@
-# Messy Ruby Requires #
+# Messy Ruby Requires
 
 At some point in tinkering with a language, you outgrow simple scripts
 and want to organize your code into separate modules that live in

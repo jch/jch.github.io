@@ -1,4 +1,4 @@
-# Ruby Rails Gmail SMTP #
+# Ruby Rails Gmail SMTP
 
 When you want to send a quick email in a ruby script, it's easy to
 send it through Gmail.  You don't have to worry about email

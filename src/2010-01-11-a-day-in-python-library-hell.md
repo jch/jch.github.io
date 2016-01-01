@@ -1,4 +1,4 @@
-# A Day in Python Library Hell #
+# A Day in Python Library Hell
 
 I haven't used python as my main day-to-day language, but I've already
 run into problems with the tools and libraries that has had me pulling

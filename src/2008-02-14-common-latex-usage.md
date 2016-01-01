@@ -1,4 +1,4 @@
-# Common Latex Usage #
+# Common Latex Usage
 
 Since high school, I've used word processors less and less.  I hate
 how slow they load, I hate how annoying and proprietary the formats

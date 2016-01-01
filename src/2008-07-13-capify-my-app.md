@@ -1,4 +1,4 @@
-# Capify my App #
+# Capify my App
 
 After a complete Saturday of vegging out, I decided to accomplish
 something today.  My initial target was to pull Craigslist rental

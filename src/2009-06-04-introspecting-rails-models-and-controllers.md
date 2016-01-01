@@ -1,4 +1,4 @@
-# Introspecting Rails Models and Controllers Callbacks #
+# Introspecting Rails Models and Controllers Callbacks
 
 Once models and controllers grow to a certain size and complexity, it
 gets tricky to figure out what callbacks act upon them.  This is

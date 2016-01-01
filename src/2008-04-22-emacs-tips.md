@@ -1,4 +1,4 @@
-# Emacs Tips #
+# Emacs Tips
 
 Earlier, I wrote a quick into of how to [customize your
 emacs](/articles/2008/02/14/customizing_emacs), but then I realized

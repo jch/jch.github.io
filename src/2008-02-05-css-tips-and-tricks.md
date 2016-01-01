@@ -1,4 +1,4 @@
-# CSS Tips and Tricks #
+# CSS Tips and Tricks
 
 These aren't organized in any way for now.  Maybe when I collect
 enough of them, I'll create a cookbook of some kind.

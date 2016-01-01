@@ -1,4 +1,4 @@
-# Flaco Rewrite #
+# Flaco Rewrite
 
 I've been happily using my own ghetto blog I named [Flaco
 Blog](/articles/2008/01/27/flaco-blog).  The beauty of forcing myself to eat my

@@ -1,4 +1,4 @@
-# Fast Tracked iPhone Development #
+# Fast Tracked iPhone Development
 
 Jumping into a new language, a new framework, and a new set of tools
 is overwhelming!  But the best way to learn is to be utterly crushed
