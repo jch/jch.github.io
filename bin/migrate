@@ -3,7 +3,7 @@
 # Migrate posts from https://github.com/jch/whatcodecraves.com into new format
 #
 # Old: posts/2008/11/14/some-post/index.text
-# New: new-posts/2008-11-14-some-post.md
+# New: src/2008-11-14-some-post.md
 set -e
 
 if [[ -d posts ]] || [[ -d images ]]; then
@@ -24,3 +24,6 @@ for i in $(find posts -type f -name 'index.text'); do
 done
 
 rm -rf posts
+
+# remove trailing `#` from markdown document titles
+find src -type f -name '*.md' | xargs -L1 sed -i.bak -e '1 s/[[:space:]]*#$//g'
