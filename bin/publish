@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+verbose=
+src_dir='src'
+output_dir='posts'
+last_published=$(stat -f '%m' "$output_dir")
+
+while getopts ':vs:o:' flag; do
+  case "$flag" in
+    v) verbose=1 ;;
+    s) src_dir="${OPTARG}" ;;
+    o) output_dir="${OPTARG}" ;;
+  esac
+done
+
+function log() {
+  local message=$1
+
+  [[ $verbose ]] && echo $message || true
+}
+
+log "src_dir: $src_dir"
+log "output_dir: $output_dir"
+
+# publish files newer than the last time $output_dir was modified
+for input_file in $(find $src_dir -type f -mnewer $output_dir); do
+  output_file=$(basename "$input_file")
+  output_file="$output_dir/${output_file%.*}.html"
+  log "publish : $output_file : $input_file"
+  jsg "$input_file" > "$output_file"
+done
+
+# removing a source file removes the published file
+for output_file in $(find $output_dir -type f); do
+  input_file=$(basename "$output_file")
+  input_file="$src_dir/${input_file%.*}.md"
+  if [[ ! -f "$input_file" ]]; then
+    log "remove : $output_file"
+    rm -f "$output_file"
+  fi
+done

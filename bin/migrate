@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Migrate posts from https://github.com/jch/whatcodecraves.com into new format
+#
+# Old: posts/2008/11/14/some-post/index.text
+# New: new-posts/2008-11-14-some-post.md
+set -e
+
+if [[ -d posts ]] || [[ -d images ]]; then
+  echo 'posts/ and images/ already exist. Not migrating.' >&2
+  exit 1
+fi
+
+curl -L -s 'https://github.com/jch/whatcodecraves.com/archive/master.zip' \
+  | tar -xzvf- --strip-components 1 'whatcodecraves.com-master/posts' 'whatcodecraves.com-master/public/images'
+
+[[ ! -d images ]] && mv public/images images
+rm -rf public
+
+mkdir -p src
+for i in $(find posts -type f -name 'index.text'); do
+  new_name=$(echo $i | sed -e 's![_/]!-!g' -e 's!-index.text!.md!' -e 's!posts-!src/!')
+  cp $i $new_name
+done
+
+rm -rf posts
