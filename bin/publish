@@ -22,9 +22,14 @@ output_dir='posts'
 root_dir='.'
 
 function log() {
-  local message=$1
+  local long=$1
+  local short=$2
 
-  [[ $verbose ]] && echo $message || true
+  if [[ $verbose ]]; then
+    echo $long
+  else
+    [[ -n "$short" ]] && echo $short || true
+  fi
 }
 set +a
 

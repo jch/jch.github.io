@@ -3,11 +3,12 @@ set -e
 
 log "last published at $(stat -f '%Sm' $output_dir)"
 
-# publish files newer than the last time $output_dir was modified
-for input_file in $(find $src_dir -type f -mnewer $output_dir); do
+# publish files newer than the last time $output_dir was modified. Publish more
+# recent entries first in case API fails
+for input_file in $(find $src_dir -type f -mnewer $output_dir | sort -r); do
   output_file=$(basename "$input_file")
   output_file="$output_dir/${output_file%.*}.html"
-  log "publish : $output_file : $input_file"
+  log "+$output_file <- $input_file", "+$output_file"
   jsg "$input_file" > "$output_file"
 done
 
@@ -16,7 +17,7 @@ for output_file in $(find $output_dir -type f); do
   input_file=$(basename "$output_file")
   input_file="$src_dir/${input_file%.*}.md"
   if [[ ! -f "$input_file" ]]; then
-    log "remove : $output_file"
+    log "-$output_file"
     rm -f "$output_file"
   fi
 done
