@@ -10,8 +10,15 @@ src_files.each_line do |path|
   post_list_items << %Q(<li><a href="#{href}">#{title}</a></li>)
 end
 
+content = <<-CONTENT
+<h1>Writing</h1>
+<ul class="list-unstyled posts">
+  #{post_list_items.join("\n")}
+</ul>
+CONTENT
+
 stdin, stdout, stderr, thread = Open3.popen3("jsg_layout layout.html")
-stdin.puts post_list_items.join("\n")
+stdin.puts content
 stdin.close
 File.open("#{ENV['root_dir']}/index.html", "w") { |fh| fh.puts(stdout.read) }
 exit thread.value.exitstatus

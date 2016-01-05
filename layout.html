@@ -6,28 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <style>
+      body {
+        font-family: 'Lora', serif;
+        font-size: 1.2em;
+        padding: 2em 1em;
+      }
+
+      pre, code {
+        font-family: 'Inconsolata', monospace;
+      }
+
+      header {
+        margin-bottom: 1.5em;
+      }
+
+      header .home {
+        font-weight: bold;
+      }
+
+      .posts li {
+        margin-bottom: 0.3em;
+      }
+    </style>
   </head>
   <body>
     <div class="container" role="banner">
       <header>
-        <a href="/">Jerry Cheung</a>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/posts">Writing</a>
+        </nav>
       </header>
 
-      <h1>Projects</h1>
-      <dl>
-        <dt><a href="https://github.com/jch/html-pipeline">html-pipeline</a></dt>
-        <dd>HTML processing filters and utilities</dd>
-        <dt><a href="https://github.com/jch/personal-finance">personal-finance</a></dt>
-        <dd>Guide and notes for personal finance</dd>
-      </dl>
-
-      <h1>Writing</h1>
-      <ul class="list-unstyled">
-        <!-- #content -->
-      </ul>
+      <!-- #content -->
     </div>
+
     <!-- jQuery first, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
