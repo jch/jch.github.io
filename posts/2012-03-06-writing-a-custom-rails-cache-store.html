@@ -1,4 +1,32 @@
-<h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
 <a id="user-content-writing-a-custom-rails-cache-store" class="anchor" href="#writing-a-custom-rails-cache-store" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing a Custom Rails Cache Store</h1>
 
 <p>When you use Rails built-in helpers for page, action, and fragment caching, the cached data is stored into an instance of ActiveSupport::Cache::Store. But while the interface for using the cache stores are the same, each cache store implementation has different performance characteristics and are suited for different jobs. In this post, I'll cover what cache stores are available with Rails by default, how to tune them, and how to write your own custom cache store.</p>
@@ -87,3 +115,10 @@ config.cache_store = [:memory_store, {:size =&gt; 536870912}]
 <p>I'm hoping CascadeCache makes it upstream into ActiveSupport, but in the meantime, I've packaged it up as a <a href="https://github.com/jch/activesupport-cascadestore">separate gem</a>. For another example of a custom cache implementation, check out <a href="https://github.com/jodosha/redis-store">redis-store</a>. It includes an ActiveSupport compatible cache.</p>
 
 <p>Caching is a tricky beast. On top of deciding what to cache and when to expire, the underlying cache store can affect your app's performance. Choose the cache store that best fits your needs, use a hybrid CascadeCache, or write your own. Good luck and happy tuning!</p>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>

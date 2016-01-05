@@ -1,4 +1,32 @@
-<h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
 <a id="user-content-and-you-thought-render-farms-were-just-for-pixar" class="anchor" href="#and-you-thought-render-farms-were-just-for-pixar" aria-hidden="true"><span class="octicon octicon-link"></span></a>And You Thought Render Farms Were Just For Pixar!</h1>
 
 <p>Rails views are typically rendered after some controller action is executed. But the code that powers Rails controllers is flexible and extensible enough to create custom rendering objects that can reuse views and helpers, but live outside of web request processing. In this post, I'll cover what a Rails controller is and what it's composed of. I'll also go over how to extend it to create your own custom renderers, and show an example of how you can render views in your background jobs and push the results to your frontend.</p>
@@ -113,3 +141,10 @@ renderer.execute</pre></div>
 <a id="user-content-summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
 <p>Rails ActionControllers are specific to HTTP, but its abstract parent class can be used to construct objects for generic controller objects for coordinating actions outside of an HTTP context. Custom controller objects can be composed with the available mixins to add common functionality such as rendering. These custom controllers can also share code with existing Rails applications DRY up templates and helpers.</p>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>
