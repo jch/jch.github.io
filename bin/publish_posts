@@ -9,7 +9,7 @@ for input_file in $(find $src_dir -type f -mnewer $output_dir | sort -r); do
   output_file=$(basename "$input_file")
   output_file="$output_dir/${output_file%.*}.html"
   log "+$output_file <- $input_file", "+$output_file"
-  jsg "$input_file" > "$output_file"
+  jsg -l layout.html "$input_file" > "$output_file"
 done
 
 # removing a source file removes the published file
