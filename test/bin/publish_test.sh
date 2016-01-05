@@ -27,5 +27,5 @@ function setup {
 @test "publish generates index" {
   bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
 
-  [[ -f "$BATS_TMPDIR/index.html" ]]
+  [[ -f "$BATS_TMPDIR/posts/index.html" ]]
 }
