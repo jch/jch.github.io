@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cat <<PROJECTS | jsg_layout layout.html > $root_dir/projects/index.html
+<h1>Projects</h1>
+<dl>
+  <dt><a href="https://github.com/jch/html-pipeline">html-pipeline</a></dt>
+  <dd>HTML processing filters and utilities</dd>
+  <dt><a href="https://github.com/jch/personal-finance">personal-finance</a></dt>
+  <dd>Guide and notes for personal finance</dd>
+</dl>
+PROJECTS
