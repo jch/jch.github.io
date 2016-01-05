@@ -6,11 +6,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <style>
+      body {
+        font-family: 'Lora', serif;
+        font-size: 1.2em;
+        padding: 2em 1em;
+      }
+
+      pre, code {
+        font-family: 'Inconsolata', monospace;
+      }
+
+      header {
+        margin-bottom: 1.5em;
+      }
+
+      header .home {
+        font-weight: bold;
+      }
+
+      .posts li {
+        margin-bottom: 0.3em;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>Writing</h1>
+<ul class="list-unstyled posts">
+  <li><a href="posts/2016-01-02-building-reusable-ruby-scripts.html">Building reusable Ruby scripts</a></li>
+<li><a href="posts/2013-05-17-protecting-resque-server.html">Protecting Resque::Server</a></li>
+<li><a href="posts/2013-05-09-interview-your-libraries.html">Interview your libraries</a></li>
+<li><a href="posts/2013-03-05-ruby-incompatible-encoding.html">Ruby Incompatible Encoding Errors</a></li>
+<li><a href="posts/2012-07-23-ruby-on-rack.html">Ruby on Rack</a></li>
+<li><a href="posts/2012-07-05-blogging-reboot-lessons-learned.html">Blog Reboot, Lessons Learned</a></li>
+<li><a href="posts/2012-06-14-and-you-thought-render-farms-were-just-for-pixar.html">And You Thought Render Farms Were Just For Pixar!</a></li>
+<li><a href="posts/2012-05-24-building-streaming-rest-apis-with-ruby.html">Building Streaming REST APIs with Ruby</a></li>
+<li><a href="posts/2012-03-22-define-custom-callbacks-for-activerecord-and-more.html">Define Custom Callbacks for ActiveRecord and More</a></li>
+<li><a href="posts/2012-03-12-real-web-performance-for-users-not-robots.html">Real Web Performance for Users, not Robots</a></li>
+<li><a href="posts/2012-03-12-faraday-one-http-client-to-rule-them-all.html">Faraday: One HTTP Client to Rule Them All</a></li>
+<li><a href="posts/2012-03-06-writing-a-custom-rails-cache-store.html">Writing a Custom Rails Cache Store</a></li>
+<li><a href="posts/2012-02-29-pry-productivity-from-your-code.html">Pry Productivity From Your Code</a></li>
+<li><a href="posts/2012-02-28-balancing-pain-and-happiness.html">Balancing Pain and Happiness</a></li>
+<li><a href="posts/2012-01-24-prototyping-with-compass-and-serve.html">Prototyping with Compass and Serve</a></li>
+<li><a href="posts/2012-01-11-hunting-down-execution-order-test-failures.html">Hunting Down Execution Order Test Failures</a></li>
+<li><a href="posts/2012-01-11-backbonejs-sessions-and-authentication.html">Backbone.js: Sessions and Authentication</a></li>
+<li><a href="posts/2011-12-19-useful-libraries-rake-pipeline-and-spade.html">Useful Libraries: Rake::Pipeline and Spade</a></li>
+<li><a href="posts/2011-12-01-planning-a-big-data-migration.html">Planning a Big Data Migration</a></li>
+<li><a href="posts/2011-11-30-grape-api-versioning.html">Behind the Curtain: Grape API Versioning</a></li>
+<li><a href="posts/2011-11-23-developers-what-are-you-thankful-for.html">Developers, what are you thankful for?</a></li>
+<li><a href="posts/2011-11-21-scrappy-guide-to-prelaunch-bootstrapping.html">The Scrappy Guide to Pre-Launch Bootstrapping</a></li>
+<li><a href="posts/2011-11-21-project-readme-y-u-no-have.html">PROJECT README, Y U NO HAVE?</a></li>
+<li><a href="posts/2011-06-01-rubies-to-prevent-devops-mayhem.html">Rubies to Prevent Devops Mayhem</a></li>
+<li><a href="posts/2011-04-08-nodejs-jumpstart.html">Node.js Jumpstart</a></li>
+<li><a href="posts/2011-01-11-my-web-development-toolbox-2010-edition.html">My Web Development Toolbox, 2010 Edition</a></li>
+<li><a href="posts/2011-01-05-modular-cocoa-interfaces.html">Modular Cocoa Interfaces</a></li>
+<li><a href="posts/2010-08-12-fixing-common-bundler-problems.html">Fixing Common Bundler Problems</a></li>
+<li><a href="posts/2010-06-22-resque-cheatsheet.html">Resque Cheatsheet</a></li>
+<li><a href="posts/2010-06-14-starting-at-intridea.html">New Beginnings: Starting with Intridea</a></li>
+<li><a href="posts/2010-06-11-getting-around-in-mongodb.html">Getting Around in MongoDB</a></li>
+<li><a href="posts/2010-05-14-email-deliverability.html">Email Delivery for Webapps</a></li>
+<li><a href="posts/2010-03-03-beerpad-hackathon-hosting-with-heroku.html">Beerpad Hackathon: Hosting with Heroku</a></li>
+<li><a href="posts/2010-03-01-reaction-to-37signals-getting-real.html">Reaction to 37Signal's Getting Real</a></li>
+<li><a href="posts/2010-02-27-hackathon-beerpad.html">Hackathon creation: Beerpad</a></li>
+<li><a href="posts/2010-02-24-page-caching-gotcha-on-heroku.html">Page Caching Gotcha on Heroku</a></li>
+<li><a href="posts/2010-01-21-rails-dependency-management.html">Rails Dependency Management</a></li>
+<li><a href="posts/2010-01-19-tips-of-the-day.html">Tips of the Day</a></li>
+<li><a href="posts/2010-01-14-tips-of-the-day.html">Tips of the Day</a></li>
+<li><a href="posts/2010-01-13-tips-of-the-day.html">Tips of the Day</a></li>
+<li><a href="posts/2010-01-12-tips-of-the-day.html">Tips of the Day</a></li>
+<li><a href="posts/2010-01-11-ruby-rails-gmail-smtp.html">Ruby Rails Gmail SMTP</a></li>
+<li><a href="posts/2010-01-11-a-day-in-python-library-hell.html">A Day in Python Library Hell</a></li>
+<li><a href="posts/2009-12-09-ruby-python-cheatsheet.html">Ruby Python Cheatsheet</a></li>
+<li><a href="posts/2009-10-30-first-month-of-first-startup.html">Talking the Startup Talk, Walking the Outspokes Walk: Founders</a></li>
+<li><a href="posts/2009-06-09-rails-application-maintenance.html">The Software Maintenance Light</a></li>
+<li><a href="posts/2009-06-04-introspecting-rails-models-and-controllers.html">Introspecting Rails Models and Controllers Callbacks</a></li>
+<li><a href="posts/2009-04-14-ruby-postgresql-gem-cleanup.html">Ruby Postgresql Gem Cleanup</a></li>
+<li><a href="posts/2009-04-10-fast-tracked-iphone-development.html">Fast Tracked iPhone Development</a></li>
+<li><a href="posts/2009-04-08-adventures-with-active-record-find.html">Adventures with ActiveRecord find</a></li>
+<li><a href="posts/2009-03-17-rails-2.2.2-chicken-and-egg-migrations-headache.html">Rails 2.2.2 Chicken and Egg Migrations Headache</a></li>
+<li><a href="posts/2009-02-28-rails-and-gems-documentation-anywhere.html">Rails and Gems Documentation Everywhere</a></li>
+<li><a href="posts/2009-02-18-another-irbrc-jewel.html">Another .irbrc Jewel</a></li>
+<li><a href="posts/2009-02-11-multiple-gmail-accounts-on-osx-done-right.html">Multiple Gmail Accounts on OSX Done Right</a></li>
+<li><a href="posts/2009-02-06-emacs-refactoring.html">Emacs Refactoring</a></li>
+<li><a href="posts/2009-01-11-rails-like-javascript-date-helpers.html">Rails-like Javascript Date Helpers</a></li>
+<li><a href="posts/2008-12-13-rails-flash-with-ajax.html">Rails Flash with Ajax</a></li>
+<li><a href="posts/2008-12-08-osx-gui-tool-httpclient.html">OS X GUI Tool 'HTTP Client'</a></li>
+<li><a href="posts/2008-11-25-how-to-make-an-api-for-a-rails-app.html">How to Make an API for a Rails App</a></li>
+<li><a href="posts/2008-11-08-deploying-into-the-night.html">Deploying into the Night</a></li>
+<li><a href="posts/2008-11-07-subversion-for-the-lazy.html">Subversion for the Lazy</a></li>
+<li><a href="posts/2008-11-07-dump-test-data-from-production-to-development-with-yaml-db.html">Dump Test Data from Production to Development with yaml_db</a></li>
+<li><a href="posts/2008-10-30-javascript-menus.html">Building Webapp Menus</a></li>
+<li><a href="posts/2008-10-24-hacking-live-systems.html">Hacking Live Systems</a></li>
+<li><a href="posts/2008-10-13-where-to-find-things-in-rails.html">Where to Find Things in Rails</a></li>
+<li><a href="posts/2008-09-16-coupa-and-rails2.html">Coupa and Rails 2</a></li>
+<li><a href="posts/2008-08-17-week-of-insomnia.html">Week of Insomnia</a></li>
+<li><a href="posts/2008-08-13-mini-apps-galore.html">Mini-apps Galore!</a></li>
+<li><a href="posts/2008-08-12-picking-at-capistrano.html">Picking at Capistrano</a></li>
+<li><a href="posts/2008-08-11-tweaking-apache-with-phusion-passenger.html">Tweaking Apache with Phusion Passenger</a></li>
+<li><a href="posts/2008-08-10-debian-ubuntu-specific-rails-with-postgresql.html">Debian/Ubuntu Specific Rails with Postgresql</a></li>
+<li><a href="posts/2008-08-07-messy-ruby-requires.html">Messy Ruby Requires</a></li>
+<li><a href="posts/2008-08-06-flaco-crusher.html">Flaco Crushers</a></li>
+<li><a href="posts/2008-08-05-flaco-rewrite.html">Flaco Rewrite</a></li>
+<li><a href="posts/2008-08-03-my-keyboard.html">My Keyboard</a></li>
+<li><a href="posts/2008-08-02-emacs-info.html">Emacs Info</a></li>
+<li><a href="posts/2008-07-30-rails-string-inflections.html">Rails String Inflections</a></li>
+<li><a href="posts/2008-07-24-rspecing-acts-as-state-machine.html">RSpec'ing acts_as_state_machine</a></li>
+<li><a href="posts/2008-07-18-first-sprint.html">First Sprint</a></li>
+<li><a href="posts/2008-07-15-dangerous-scaffolding.html">Dangerous Scaffolding</a></li>
+<li><a href="posts/2008-07-13-capify-my-app.html">Capify my App</a></li>
+<li><a href="posts/2008-07-09-fuck-fixtures.html">Fuck Fixtures</a></li>
+<li><a href="posts/2008-07-04-rails-web-engineering.html">Rails Webapp Engineering</a></li>
+<li><a href="posts/2008-06-28-platform-of-choice.html">Platform of Choice</a></li>
+<li><a href="posts/2008-06-11-fuzz-testing-and-being-a-dick.html">Fuzz Testing and Being a Dick</a></li>
+<li><a href="posts/2008-05-20-my-perl.html">my $perl;</a></li>
+<li><a href="posts/2008-05-03-kernel-designs.html">Kernel Designs</a></li>
+<li><a href="posts/2008-04-22-emacs-tips.html">Emacs Tips</a></li>
+<li><a href="posts/2008-03-12-rails-tips.html">Rails Tips</a></li>
+<li><a href="posts/2008-03-10-premature-software-testing.html">Premature Software Testing</a></li>
+<li><a href="posts/2008-02-14-customizing-emacs.html">Customizing Emacs</a></li>
+<li><a href="posts/2008-02-14-common-latex-usage.html">Common Latex Usage</a></li>
+<li><a href="posts/2008-02-12-my-computing-environment.html">My Computing Environment</a></li>
+<li><a href="posts/2008-02-05-setup-rails-with-postgresql.html">Setup Rails with Postgresql</a></li>
+<li><a href="posts/2008-02-05-css-tips-and-tricks.html">CSS Tips and Tricks</a></li>
+<li><a href="posts/2008-01-31-infuriating-job-applications.html">Infuriating Job Applications</a></li>
+<li><a href="posts/2008-01-27-flaco-blog.html">Flaco Blog</a></li>
+<li><a href="posts/2008-01-26-shoot-em-up-debugging.html">Shoot em up Debugging</a></li>
+</ul>
+    </div>
 
     <!-- jQuery first, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

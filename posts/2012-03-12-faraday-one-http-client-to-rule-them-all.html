@@ -1,0 +1,262 @@
+<h1>
+<a id="user-content-faraday-one-http-client-to-rule-them-all" class="anchor" href="#faraday-one-http-client-to-rule-them-all" aria-hidden="true"><span class="octicon octicon-link"></span></a>Faraday: One HTTP Client to Rule Them All</h1>
+
+<p><a href="/images/faraday-cage.jpg" target="_blank"><img align="right" src="/images/faraday-cage.jpg" style="max-width:100%;"></a>
+Faraday is a Ruby HTTP client which allow developers to customize its behavior with middlewares. If you're familiar with <a href="http://rack.rubyforge.org/">Rack</a>, then you'll love Faraday. Rather than re-implement yet another HTTP client, Faraday has adapters for popular libraries like Net::HTTP, excon, patron, and em-http. On top of having a consistent interface between different adapters, Faraday also allows you to manipulate request and responses before and after a request is executed.  This tutorial gives an introduction of common use cases built into Faraday, and also explains how to extend Faraday with custom middleware. The code is well tested and easy to follow, so I recommend browsing the source code to find extra options and features not covered in this tutorial.</p>
+
+<h2>
+<a id="user-content-basics" class="anchor" href="#basics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basics</h2>
+
+<p>Out of the box, Faraday functions like a normal HTTP client with a easy to use interface.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c1">Faraday</span>.get <span class="pl-s"><span class="pl-pds">'</span>http://example.com<span class="pl-pds">'</span></span></pre></div>
+
+<p>Alternatively, you can initialize a <code>Faraday::Connection</code> instance:</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>
+response <span class="pl-k">=</span> conn.get <span class="pl-s"><span class="pl-pds">'</span>http://example.com<span class="pl-pds">'</span></span>
+response.status
+response.body
+
+conn.post <span class="pl-s"><span class="pl-pds">'</span>http://example.com<span class="pl-pds">'</span></span>, <span class="pl-c1">:some_param</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Some Value<span class="pl-pds">'</span></span>
+conn.put  <span class="pl-s"><span class="pl-pds">'</span>http://example.com<span class="pl-pds">'</span></span>, <span class="pl-c1">:other_param</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Other Value<span class="pl-pds">'</span></span>
+conn.delete <span class="pl-s"><span class="pl-pds">'</span>http://example.com/foo<span class="pl-pds">'</span></span>
+<span class="pl-c"># head, patch, and options all work similarly</span></pre></div>
+
+<p>Parameters can be set inline as the 2nd hash argument. To specify headers, add optional hash after the parameters argument or set them through an accessor:</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn.get <span class="pl-s"><span class="pl-pds">'</span>http://example.com<span class="pl-pds">'</span></span>, {}, {<span class="pl-s"><span class="pl-pds">'</span>Accept<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>vnd.github-v3+json<span class="pl-pds">'</span></span>}
+
+conn.params  <span class="pl-k">=</span> {<span class="pl-s"><span class="pl-pds">'</span>tesla<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>coil<span class="pl-pds">'</span></span>}
+conn.headers <span class="pl-k">=</span> {<span class="pl-s"><span class="pl-pds">'</span>Accept<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>vnd.github-v3+json<span class="pl-pds">'</span></span>}</pre></div>
+
+<p>If you have a restful resource you're accessing with a common base url, you can pass in a <code>:url</code> parameter that'll be prefixed to all other calls. Other request options can also be set here.</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>(<span class="pl-c1">:url</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>http://example.com/comments<span class="pl-pds">'</span></span>)
+conn.get <span class="pl-s"><span class="pl-pds">'</span>/index<span class="pl-pds">'</span></span>  <span class="pl-c"># GET http://example.com/comments/index</span></pre></div>
+
+<p>All HTTP verb methods can take an optional block that will yield a <code>Faraday::Request</code> object:</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn.get <span class="pl-s"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span> <span class="pl-k">do </span>|<span class="pl-smi">request</span>|
+  request.params[<span class="pl-s"><span class="pl-pds">'</span>limit<span class="pl-pds">'</span></span>] <span class="pl-k">=</span> <span class="pl-c1">100</span>
+  request.headers[<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span>] <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>application/json<span class="pl-pds">'</span></span>
+  request.body <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>{some: body}<span class="pl-pds">"</span></span>
+<span class="pl-k">end</span></pre></div>
+
+<h3>
+<a id="user-content-file-upload" class="anchor" href="#file-upload" aria-hidden="true"><span class="octicon octicon-link"></span></a>File upload</h3>
+
+<div class="highlight highlight-source-ruby"><pre>payload <span class="pl-k">=</span> { <span class="pl-c1">:name</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Maguro<span class="pl-pds">'</span></span> }
+
+<span class="pl-c"># uploading a file:</span>
+payload <span class="pl-k">=</span> { <span class="pl-c1">:profile_pic</span> =&gt; <span class="pl-c1">Faraday</span>::<span class="pl-c1">UploadIO</span>.<span class="pl-k">new</span>(<span class="pl-s"><span class="pl-pds">'</span>avatar.jpg<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>image/jpeg<span class="pl-pds">'</span></span>) }
+
+<span class="pl-c"># "Multipart" middleware detects files and encodes with "multipart/form-data":</span>
+conn.put <span class="pl-s"><span class="pl-pds">'</span>/profile<span class="pl-pds">'</span></span>, payload</pre></div>
+
+<h3>
+<a id="user-content-authentication" class="anchor" href="#authentication" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authentication</h3>
+
+<p>Basic and Token authentication are handled by <code>Faraday::Request::BasicAuthentication</code> and <code>Faraday::Request::TokenAuthentication</code> respectively. These can be added as middleware manually or through the helper methods.</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn.basic_auth(<span class="pl-s"><span class="pl-pds">'</span>pita<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>ch1ps<span class="pl-pds">'</span></span>)
+conn.token_auth(<span class="pl-s"><span class="pl-pds">'</span>pitach1ps-token<span class="pl-pds">'</span></span>)</pre></div>
+
+<h3>
+<a id="user-content-proxies" class="anchor" href="#proxies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Proxies</h3>
+
+<p>To specify an HTTP proxy:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>(<span class="pl-c1">:proxy</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>http://proxy.example.com:80<span class="pl-pds">'</span></span>)
+<span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>(<span class="pl-c1">:proxy</span> =&gt; {
+  <span class="pl-c1">:uri</span>      =&gt; <span class="pl-s"><span class="pl-pds">'</span>http://proxy.example.com<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">:user</span>     =&gt; <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>,
+  <span class="pl-c1">:password</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>
+})</pre></div>
+
+<h3>
+<a id="user-content-ssl" class="anchor" href="#ssl" aria-hidden="true"><span class="octicon octicon-link"></span></a>SSL</h3>
+
+<p>See the <a href="https://github.com/technoweenie/faraday/wiki/Setting-up-SSL-certificates">Setting up SSL certificates</a> wiki page.</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>(<span class="pl-s"><span class="pl-pds">'</span>https://encrypted.google.com<span class="pl-pds">'</span></span>, <span class="pl-c1">:ssl</span> =&gt; {
+  <span class="pl-c1">:ca_path</span> =&gt; <span class="pl-s"><span class="pl-pds">"</span>/usr/lib/ssl/certs<span class="pl-pds">"</span></span>
+})
+conn.get <span class="pl-s"><span class="pl-pds">'</span>/search?q=asdf<span class="pl-pds">'</span></span></pre></div>
+
+<h2>
+<a id="user-content-faraday-middleware" class="anchor" href="#faraday-middleware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Faraday Middleware</h2>
+
+<p>Like a Rack app, a <code>Faraday::Connection</code> object has a list of middlewares. Faraday middlewares are passed an <code>env</code> hash that has request and response information. Middlewares can manipulate this information before and after a request is executed.</p>
+
+<p>To make this more concrete, let's take a look at a new <code>Faraday::Connection</code>:</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>
+conn.builder
+
+<span class="pl-k">&gt;</span> <span class="pl-c">#&lt;Faraday::Builder:0x00000131239308</span>
+    <span class="pl-smi">@handlers</span><span class="pl-k">=</span>[<span class="pl-c1">Faraday</span>::<span class="pl-c1">Request</span>::<span class="pl-c1">UrlEncoded</span>, <span class="pl-c1">Faraday</span>::<span class="pl-c1">Adapter</span>::<span class="pl-c1">NetHttp</span>]<span class="pl-k">&gt;</span></pre></div>
+
+<p><code>Faraday::Builder</code> is analogus to <code>Rack::Builder</code>. The newly initialized <code>Faraday::Connection</code> object has a middleware <code>Faraday::Request::UrlEncoded</code> in front of an adapter <code>Faraday::Adapter::NetHttp</code>. When a connection object executes a request, it creates a shared <code>env</code> hash, wraps the outer middlewares around each inner middleware, and executes the <code>call</code> method. Also like a Rack application, the adapter at the end of the builder chain is what actually executes the request.</p>
+
+<p>Middlewares can be grouped into 3 types: request middlewares, response middlewares, and adapters. The distinction between the three is cosmetic. The following two initializers are equivalent:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c1">Faraday</span>.<span class="pl-k">new</span> <span class="pl-k">do </span>|<span class="pl-smi">builder</span>|
+  builder.request  <span class="pl-c1">:retry</span>
+  builder.request  <span class="pl-c1">:basic_authentication</span>, <span class="pl-s"><span class="pl-pds">'</span>login<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>pass<span class="pl-pds">'</span></span>
+  builder.response <span class="pl-c1">:logger</span>
+  builder.adapter  <span class="pl-c1">:net_http</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c1">Faraday</span>.<span class="pl-k">new</span> <span class="pl-k">do </span>|<span class="pl-smi">builder</span>|
+  builder.use <span class="pl-c1">Faraday</span>::<span class="pl-c1">Request</span>::<span class="pl-c1">Retry</span>
+  builder.use <span class="pl-c1">Faraday</span>::<span class="pl-c1">Request</span>::<span class="pl-c1">BasicAuthentication</span>, <span class="pl-s"><span class="pl-pds">'</span>login<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>pass<span class="pl-pds">'</span></span>
+  builder.use <span class="pl-c1">Faraday</span>::<span class="pl-c1">Response</span>::<span class="pl-c1">Logger</span>
+  builder.use <span class="pl-c1">Faraday</span>::<span class="pl-c1">Adapter</span>::<span class="pl-c1">NetHttp</span>
+<span class="pl-k">end</span></pre></div>
+
+<h3>
+<a id="user-content-using-a-different-http-adapter" class="anchor" href="#using-a-different-http-adapter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using a Different HTTP Adapter</h3>
+
+<p>If you wanted to use a different HTTP adapter, you can plug one in. For example, to use a EventMachine friendly client, you can switch to the EMHttp adapter:</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span> <span class="pl-k">do </span>|<span class="pl-smi">builder</span>|
+  builder.use <span class="pl-c1">Faraday</span>::<span class="pl-c1">Adapter</span>::<span class="pl-c1">EMHttp</span>
+
+  <span class="pl-c"># alternative syntax that looks up registered adapters from lib/faraday/adapter.rb</span>
+  builder.adapter <span class="pl-c1">:em_http</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>Currently, the supported adapters are Net::HTTP, EM::HTTP, Excon, and Patron.</p>
+
+<h3>
+<a id="user-content-advanced-middleware-usage" class="anchor" href="#advanced-middleware-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advanced Middleware Usage</h3>
+
+<p>The order in which middleware is stacked is important. Like with Rack, the first middleware on the list wraps all others, while the last middleware is the innermost one, so that's usually the adapter.</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>(<span class="pl-c1">:url</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>http://sushi.com<span class="pl-pds">'</span></span>) <span class="pl-k">do </span>|<span class="pl-smi">builder</span>|
+  <span class="pl-c"># POST/PUT params encoders:</span>
+  builder.request  <span class="pl-c1">:multipart</span>
+  builder.request  <span class="pl-c1">:url_encoded</span>
+
+  builder.adapter  <span class="pl-c1">:net_http</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>This request middleware setup affects POST/PUT requests in the following way:</p>
+
+<ol>
+<li>
+<code>Request::Multipart</code> checks for files in the payload, otherwise leaves everything untouched;</li>
+<li>
+<code>Request::UrlEncoded</code> encodes as "application/x-www-form-urlencoded" if not already encoded or of another type</li>
+</ol>
+
+<p>Swapping middleware means giving the other priority. Specifying the "Content-Type" for the request is explicitly stating which middleware should process it.</p>
+
+<p>Examples:</p>
+
+<div class="highlight highlight-source-ruby"><pre>payload <span class="pl-k">=</span> { <span class="pl-c1">:name</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>Maguro<span class="pl-pds">'</span></span> }
+
+<span class="pl-c"># uploading a file:</span>
+payload <span class="pl-k">=</span> { <span class="pl-c1">:profile_pic</span> =&gt; <span class="pl-c1">Faraday</span>::<span class="pl-c1">UploadIO</span>.<span class="pl-k">new</span>(<span class="pl-s"><span class="pl-pds">'</span>avatar.jpg<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>image/jpeg<span class="pl-pds">'</span></span>) }
+
+<span class="pl-c"># "Multipart" middleware detects files and encodes with "multipart/form-data":</span>
+conn.put <span class="pl-s"><span class="pl-pds">'</span>/profile<span class="pl-pds">'</span></span>, payload</pre></div>
+
+<h3>
+<a id="user-content-modifying-the-middleware-stack" class="anchor" href="#modifying-the-middleware-stack" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modifying the Middleware Stack</h3>
+
+<p>Each <code>Faraday::Connection</code> instance has a <code>Faraday::Builder</code> instance that can be used to manipulate the middlewares stack.</p>
+
+<div class="highlight highlight-source-ruby"><pre>conn <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span>
+conn.builder.swap(<span class="pl-c1">1</span>, <span class="pl-c1">Faraday</span>::<span class="pl-c1">Adapter</span>::<span class="pl-c1">EMHttp</span>)  <span class="pl-c"># replace adapter</span>
+conn.builder.insert(<span class="pl-c1">0</span>, <span class="pl-c1">MyCustomMiddleware</span>)      <span class="pl-c"># add middleware to beginning</span>
+conn.builder.delete(<span class="pl-c1">MyCustomMiddleware</span>)</pre></div>
+
+<p>For a full list of actions, take a look at the <code>Faraday::Builder</code> documentation.</p>
+
+<h3>
+<a id="user-content-writing-middleware" class="anchor" href="#writing-middleware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing Middleware</h3>
+
+<p>Middleware are classes that respond to <code>call</code>. They wrap the request/response cycle. When it's time to execute a middleware, it's called with an <code>env</code> hash that has information about the request and response. The general interface for a middleware is:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">MyCustomMiddleware</span>
+  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
+    <span class="pl-c"># do something with the request</span>
+
+    <span class="pl-smi">@app</span>.call(env).on_complete <span class="pl-k">do </span>|<span class="pl-smi">env</span>|
+      <span class="pl-c"># do something with the response</span>
+      <span class="pl-c"># env[:response] is now filled in</span>
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>It's important to do all processing of the response only in the on_complete block. This enables middleware to work in parallel mode where requests are asynchronous.</p>
+
+<p><code>env</code> is a hash with symbol keys that contains info about the request and response.</p>
+
+<pre><code>:method - a symbolized request method (:get, :post, :put, :delete, :option, :patch)
+:body   - the request body that will eventually be converted to a string.
+:url    - URI instance for the current request.
+:status           - HTTP response status code
+:request_headers  - hash of HTTP Headers to be sent to the server
+:response_headers - Hash of HTTP headers from the server
+:parallel_manager - sent if the connection is in parallel mode
+:request - Hash of options for configuring the request.
+  :timeout      - open/read timeout Integer in seconds
+  :open_timeout - read timeout Integer in seconds
+  :proxy        - Hash of proxy options
+    :uri        - Proxy Server URI
+    :user       - Proxy server username
+    :password   - Proxy server password
+:response - Faraday::Response instance. Available only after `on_complete`
+:ssl - Hash of options for configuring SSL requests.
+  :ca_path - path to directory with certificates
+  :ca_file - path to certificate file
+</code></pre>
+
+<h3>
+<a id="user-content-testing-middleware" class="anchor" href="#testing-middleware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing Middleware</h3>
+
+<p>Faraday::Adapter::Test is an HTTP adapter middleware that lets you to fake responses.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># It's possible to define stubbed request outside a test adapter block.</span>
+stubs <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>::<span class="pl-c1">Adapter</span>::<span class="pl-c1">Test</span>::<span class="pl-c1">Stubs</span>.<span class="pl-k">new</span> <span class="pl-k">do </span>|<span class="pl-smi">stub</span>|
+  stub.get(<span class="pl-s"><span class="pl-pds">'</span>/tamago<span class="pl-pds">'</span></span>) { [<span class="pl-c1">200</span>, {}, <span class="pl-s"><span class="pl-pds">'</span>egg<span class="pl-pds">'</span></span>] }
+<span class="pl-k">end</span>
+
+<span class="pl-c"># You can pass stubbed request to the test adapter or define them in a block</span>
+<span class="pl-c"># or a combination of the two.</span>
+test <span class="pl-k">=</span> <span class="pl-c1">Faraday</span>.<span class="pl-k">new</span> <span class="pl-k">do </span>|<span class="pl-smi">builder</span>|
+  builder.adapter <span class="pl-c1">:test</span>, stubs <span class="pl-k">do </span>|<span class="pl-smi">stub</span>|
+    stub.get(<span class="pl-s"><span class="pl-pds">'</span>/ebi<span class="pl-pds">'</span></span>) {[ <span class="pl-c1">200</span>, {}, <span class="pl-s"><span class="pl-pds">'</span>shrimp<span class="pl-pds">'</span></span> ]}
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c"># It's also possible to stub additional requests after the connection has</span>
+<span class="pl-c"># been initialized. This is useful for testing.</span>
+stubs.get(<span class="pl-s"><span class="pl-pds">'</span>/uni<span class="pl-pds">'</span></span>) {[ <span class="pl-c1">200</span>, {}, <span class="pl-s"><span class="pl-pds">'</span>urchin<span class="pl-pds">'</span></span> ]}
+
+resp <span class="pl-k">=</span> test.get <span class="pl-s"><span class="pl-pds">'</span>/tamago<span class="pl-pds">'</span></span>
+resp.body <span class="pl-c"># =&gt; 'egg'</span>
+resp <span class="pl-k">=</span> test.get <span class="pl-s"><span class="pl-pds">'</span>/ebi<span class="pl-pds">'</span></span>
+resp.body <span class="pl-c"># =&gt; 'shrimp'</span>
+resp <span class="pl-k">=</span> test.get <span class="pl-s"><span class="pl-pds">'</span>/uni<span class="pl-pds">'</span></span>
+resp.body <span class="pl-c"># =&gt; 'urchin'</span>
+resp <span class="pl-k">=</span> test.get <span class="pl-s"><span class="pl-pds">'</span>/else<span class="pl-pds">'</span></span> <span class="pl-c">#=&gt; raises "no such stub" error</span>
+
+<span class="pl-c"># If you like, you can treat your stubs as mocks by verifying that all of</span>
+<span class="pl-c"># the stubbed calls were made. NOTE that this feature is still fairly</span>
+<span class="pl-c"># experimental: It will not verify the order or count of any stub, only that</span>
+<span class="pl-c"># it was called once during the course of the test.</span>
+stubs.verify_stubbed_calls</pre></div>
+
+<h3>
+<a id="user-content-useful-middleware" class="anchor" href="#useful-middleware" aria-hidden="true"><span class="octicon octicon-link"></span></a>Useful Middleware</h3>
+
+<ul>
+<li>
+<a href="https://github.com/pengwynn/faraday_middleware">faraday-middleware</a> - collection of Faraday middlewares.</li>
+<li>
+<a href="https://github.com/dmarkow/faraday_yaml">faraday_yaml</a> - yaml request/response processing</li>
+</ul>

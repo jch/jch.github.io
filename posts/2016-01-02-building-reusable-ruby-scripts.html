@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <style>
+      body {
+        font-family: 'Lora', serif;
+        font-size: 1.2em;
+        padding: 2em 1em;
+      }
+
+      pre, code {
+        font-family: 'Inconsolata', monospace;
+      }
+
+      header {
+        margin-bottom: 1.5em;
+      }
+
+      header .home {
+        font-weight: bold;
+      }
+
+      .posts li {
+        margin-bottom: 0.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
+<a id="user-content-building-reusable-ruby-scripts" class="anchor" href="#building-reusable-ruby-scripts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building reusable Ruby scripts</h1>
+
+<blockquote>
+<p>Write programs that do one thing and do it well. Write programs to work
+together. Write programs to handle text streams, because that is a universal
+interface. -Doug McIlroy, Inventor of Unix pipe</p>
+</blockquote>
+
+<p>This post illustrates some of the ideas behind the <a href="https://en.wikipedia.org/wiki/Unix_philosophy">Unix
+philosophy</a> by composing
+utilities together to convert Markdown to HTML. I chose Ruby because it's a
+language I'm familiar with, but also to show that shell scripting does not
+require bash. The main idea is to write small filter scripts that can be
+composed together with pipes to create flexible tools.</p>
+
+<h2>
+<a id="user-content-making-an-executable-ruby-script" class="anchor" href="#making-an-executable-ruby-script" aria-hidden="true"><span class="octicon octicon-link"></span></a>Making an executable Ruby script</h2>
+
+<p>Typically, Ruby files end with a <code>.rb</code> extension and are executed by invoking
+the Ruby interpreter explicitly. But instead typing out <code>ruby markdown.rb</code> each
+time, we can use a <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> at
+the top of our script to indicate which language and interpreter to use.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-c"># This first line allows us to name our script `markdown` without the .rb extension</span></pre></div>
+
+<p>To skip invoking <code>ruby</code> explicitly, use a terminal to change the permission of
+our script to make it executable:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ chmod +x markdown
+$ ./markdown  <span class="pl-c"># no output and no errors</span></pre></div>
+
+<h2>
+<a id="user-content-parsing-command-line-arguments" class="anchor" href="#parsing-command-line-arguments" aria-hidden="true"><span class="octicon octicon-link"></span></a>Parsing command line arguments</h2>
+
+<p>For the first iteration, our script will take a single argument -- a filename of
+a markdown document to convert to html. Command line arguments are available
+through an Array named <code>ARGV</code>.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+markdown_file <span class="pl-k">=</span> <span class="pl-c1">ARGV</span>.first <span class="pl-c"># ARGV is ['foo.md']</span>
+puts markdown_file</pre></div>
+
+<p>If we run our script, we see that ARGV is whatever arguments we pass in:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ ./markdown foo.md
+foo.md</pre></div>
+
+<p>Other languages sometimes provide a convenience method named <code>ARGC</code> to indicate
+the number of command line arguments ((ARG)ument (C)ount) , but since <code>ARGV</code> is
+an array, it's easy to grab the number of arguments by calling <code>ARGV.length</code>.</p>
+
+<p>For a simple script like ours, it's sufficient to work with ARGV directly. If
+there are complex options and flags to parse, the standard library's <code>optparse</code>
+module is a good starting point. This
+<a href="https://gist.github.com/rtomayko/1190547">gist</a> is a template and an example
+for parsing conventional POSIX style flags.</p>
+
+<h2>
+<a id="user-content-an-example-unix-pipe" class="anchor" href="#an-example-unix-pipe" aria-hidden="true"><span class="octicon octicon-link"></span></a>An example Unix pipe</h2>
+
+<p>We have a markdown filename. The next step is to convert it to HTML. There are
+many gems that will accomplish this, but for the sake of the exercise, we don't
+install any gems. Instead, we can use GitHub's <a href="https://developer.github.com/v3/markdown/">markdown
+API</a> with curl. For example:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">'</span>{"text": "# header"}<span class="pl-pds">'</span></span> <span class="pl-k">|</span> curl -s -H <span class="pl-s"><span class="pl-pds">'</span>Content-Type: text/plain<span class="pl-pds">'</span></span> https://api.github.com/markdown -d<span class="pl-s"><span class="pl-pds">'</span>@-<span class="pl-pds">'</span></span></pre></div>
+
+<p>The first half of the pipeline uses <code>echo</code> to print a JSON snippet to stdout. We
+pipe this output to <code>curl</code>. The last argument <code>-d'@-'</code> is how we send the stdin
+data to GitHub. From <code>curl</code>'s man page:</p>
+
+<blockquote>
+<p>-d, --data
+If you start the data with the letter @, the rest should be a file name to
+read the data from, or - if you want curl to read the data from stdin.</p>
+</blockquote>
+
+<p><code>-s</code> makes <code>curl</code>'s output less noisy, and <code>-H</code> lets us pass in custom HTTP
+headers required by the API.</p>
+
+<p>Our script's immediate goal is to produce JSON similar to the <code>echo</code> command in
+our example above. Again, we do not need an external library because <code>json</code> is
+available through the standard library:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+
+markdown_file <span class="pl-k">=</span> <span class="pl-c1">ARGV</span>.first
+payload <span class="pl-k">=</span> { <span class="pl-c1">:text</span> =&gt; <span class="pl-c1">File</span>.read(markdown_file) }.to_json
+
+puts payload</pre></div>
+
+<p>We can test this works as expected by executing:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span># header<span class="pl-pds">"</span></span> <span class="pl-k">&gt;</span> foo.md
+$ ./markdown foo.md <span class="pl-k">|</span> curl -s -H <span class="pl-s"><span class="pl-pds">'</span>Content-Type: text/plain<span class="pl-pds">'</span></span> https://api.github.com/markdown -d<span class="pl-s"><span class="pl-pds">'</span>@-<span class="pl-pds">'</span></span>
+<span class="pl-k">&lt;</span>h<span class="pl-k">1&gt;</span>header<span class="pl-k">&lt;</span>/h<span class="pl-k">1&gt;</span></pre></div>
+
+<h2>
+<a id="user-content-piping-to-other-processes-in-ruby" class="anchor" href="#piping-to-other-processes-in-ruby" aria-hidden="true"><span class="octicon octicon-link"></span></a>Piping to other processes in Ruby</h2>
+
+<p>With our prepared JSON payload, our next step is to handle the pipe within our
+script. Ruby's <code>IO.pipe</code> is a general way of creating a connected read and write
+pipes, but for our purposes, we're interested in the higher abstraction of the
+<code>open3</code> module:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>open3<span class="pl-pds">"</span></span>
+
+markdown_file <span class="pl-k">=</span> <span class="pl-c1">ARGV</span>.first
+payload <span class="pl-k">=</span> { <span class="pl-c1">:text</span> =&gt; <span class="pl-c1">File</span>.read(markdown_file) }.to_json
+
+curl_cmd <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">%Q(</span>curl -s -H 'Content-Type: text/plain' https://api.github.com/markdown -d'@-'<span class="pl-pds">)</span></span>
+
+<span class="pl-c"># `stdin`, `stdout`, `stderr` are the respective file handlers for the curl command</span>
+stdin, stdout, stderr <span class="pl-k">=</span> <span class="pl-c1">Open3</span>.popen3(curl_cmd)
+
+<span class="pl-c"># Take the json we built and give it to curl via it's stdin. We have to</span>
+<span class="pl-c"># explicitly close it's stdin before we can access it's stdout. Otherwise, curl</span>
+<span class="pl-c"># will keep waiting for more input.</span>
+stdin.puts payload
+stdin.close
+
+<span class="pl-c"># Print out curl's output to stdout and stderr</span>
+puts stdout.read
+<span class="pl-smi">$stderr</span>.puts stderr.read</pre></div>
+
+<p>Let's try it out:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span># header<span class="pl-pds">"</span></span> <span class="pl-k">&gt;</span> foo.md
+$ ./markdown foo.md
+<span class="pl-k">&lt;</span>h<span class="pl-k">1&gt;</span>header<span class="pl-k">&lt;</span>/h<span class="pl-k">1&gt;</span></pre></div>
+
+<h2>
+<a id="user-content-default-to-processing-stdin" class="anchor" href="#default-to-processing-stdin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default to processing stdin</h2>
+
+<p>In our last example, we had to create a markdown file because our script expects
+a filename as an argument. The great thing about most Unix utilities is they
+default to operating on stdin and stdout. This makes it easy to chain commands
+together so that the stdout of one command flows into the stdin of the next. For
+example, both of the following commands will print the number of lines in a
+file:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># count the number of lines for a given filename</span>
+$ wc -l README.md
+
+<span class="pl-c"># print out the file, then count the number of the lines on stdin</span>
+$ cat README.md <span class="pl-k">|</span> wc -l</pre></div>
+
+<p>We can improve our markdown script with this behavior; Convert a file if a file
+name is given, or convert whatever is passed in via stdin if there are no
+arguments.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+
+markdown_file <span class="pl-k">=</span> <span class="pl-c1">ARGV</span>.first
+markdown_content <span class="pl-k">=</span> markdown_file <span class="pl-k">?</span> <span class="pl-c1">File</span>.read(markdown_file) : <span class="pl-smi">$stdin</span>.read
+payload <span class="pl-k">=</span> { <span class="pl-c1">:text</span> =&gt; markdown_content }.to_json
+
+<span class="pl-c"># snip</span></pre></div>
+
+<p>We can simplify this code further by using Ruby's <code>ARGF</code> object. From the
+docs:</p>
+
+<blockquote>
+<p>ARGF is a stream designed for use in scripts that process files given as
+command-line arguments or passed in via STDIN.</p>
+</blockquote>
+
+<p>The same code rewritten with <code>ARGF</code> would look like:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+
+markdown_content <span class="pl-k">=</span> <span class="pl-c1">ARGF</span>.read
+payload <span class="pl-k">=</span> { <span class="pl-c1">:text</span> =&gt; markdown_content }.to_json
+
+<span class="pl-c"># snip</span></pre></div>
+
+<p>As an added bonus, <code>ARGF</code> works on multiple filenames, allowing our script to
+process multiple files at once:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># ARGF.read will read in all 3 files</span>
+$ ./markdown foo.md bar.md baz.md</pre></div>
+
+<h2>
+<a id="user-content-keep-stdout-on-topic" class="anchor" href="#keep-stdout-on-topic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Keep stdout on topic</h2>
+
+<p>The complement to processing stdin by default is to keep stdout on topic. Stdout
+should be reserved only for the intent of the original script. In our script,
+the only output should be HTML because the script is used to convert markdown to
+HTML. We avoid logging diagnostic messages or printing progress counters unless
+we decide to add flags to our script that support these features. This allows us
+to easily chain more commands after our own script. For example, if we want to
+indent the output from our command, we can use the <code>tidy</code> command and know that
+everything we output is HTML:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ ./markdown.sh foo.md <span class="pl-k">|</span> tidy -i</pre></div>
+
+<h2>
+<a id="user-content-exit-with-an-appropriate-code" class="anchor" href="#exit-with-an-appropriate-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exit with an appropriate code</h2>
+
+<p>Script exit codes allow us to control the flow of our pipelines. For example, we
+may want to publish the results of running <code>markdown</code>, but only if the command
+succeeded:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># Generate blog-post.html. If successful, run `./publish`, otherwise, print an error message</span>
+cat blog-post.md \
+  <span class="pl-k">|</span> ./markdown <span class="pl-k">&gt;</span> blog-post.html <span class="pl-k">&amp;&amp;</span> ./publish <span class="pl-k">||</span> <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>failed to publish blog-post.html<span class="pl-pds">"</span></span></pre></div>
+
+<p>A successful exit is <code>0</code>, with any other number indicating something went wrong.
+Unfortunately, if we ran the above, we would always publish and never see the
+error message even if curl failed. Our script doesn't call <code>exit</code> explicitly, so
+we always exit <code>0</code> -- even when GitHub's API isn't accessible.</p>
+
+<p>Since the last thing our script run is <code>curl</code>, our script should exit with
+<code>curl</code>'s exit code. Our current call to <code>Open3.popen3</code> saves three of the return
+values, but the method actually returns four. We will use this fourth value to
+query for <code>curl</code>'s exit code.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># snip</span>
+
+<span class="pl-c"># We add a -f flag so that non-200 responses fail with an exit code of 22</span>
+curl_cmd <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">%Q(</span>curl -f -s -H 'Content-Type: text/plain' https://api.github.com/markdown -d'@-'<span class="pl-pds">)</span></span>
+
+<span class="pl-c"># `stdin`, `stdout`, `stderr` are the respective file handlers for the curl command</span>
+<span class="pl-c"># `thread` is a `Thread` instance representing the command we're running</span>
+stdin, stdout, stderr, thread <span class="pl-k">=</span> <span class="pl-c1">Open3</span>.popen3(curl_cmd)
+
+<span class="pl-c"># snip</span>
+
+<span class="pl-c"># thread.value is a `Process::Status`. We exit our script with whatever curl's</span>
+<span class="pl-c"># exit code was.</span>
+exit thread.value.exitstatus</pre></div>
+
+<h2>
+<a id="user-content-conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
+
+<p>By following these simple conventions, our scripts work well with other existing
+Unix tools. This allows us to quickly prototype things that would otherwise
+require a lot of setup and dependencies. Since the scripts aim to handle a
+single task, we are more likely to reuse the script for tasks that we didn't
+original intend for the script to handle.</p>
+
+<p>Our final source listing is:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c">#/usr/bin/env ruby</span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>json<span class="pl-pds">"</span></span>
+<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">"</span>open3<span class="pl-pds">"</span></span>
+
+markdown_file <span class="pl-k">=</span> <span class="pl-c1">ARGV</span>.first
+payload <span class="pl-k">=</span> { <span class="pl-c1">:text</span> =&gt; <span class="pl-c1">File</span>.read(markdown_file) }.to_json
+
+<span class="pl-c"># Curl command to post STDIN to GitHub's markdown API</span>
+<span class="pl-c">#</span>
+<span class="pl-c"># -f: non-200 responses fail with an exit code of 22</span>
+<span class="pl-c"># -s: silent</span>
+<span class="pl-c"># -H: http headers</span>
+curl_cmd <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">%Q(</span>curl -f -s -H 'Content-Type: text/plain' https://api.github.com/markdown -d'@-'<span class="pl-pds">)</span></span>
+
+<span class="pl-c"># `stdin`, `stdout`, `stderr` are the respective file handlers for the curl command</span>
+<span class="pl-c"># `thread` is a `Thread` instance representing the command we're running</span>
+stdin, stdout, stderr, thread <span class="pl-k">=</span> <span class="pl-c1">Open3</span>.popen3(curl_cmd)
+
+<span class="pl-c"># Take the json we built and give it to curl via it's stdin. We have to</span>
+<span class="pl-c"># explicitly close it's stdin before we can access it's stdout. Otherwise, curl</span>
+<span class="pl-c"># will keep waiting for more input.</span>
+stdin.puts payload
+stdin.close
+
+<span class="pl-c"># Print out curl's output to stdout and stderr</span>
+puts stdout.read
+<span class="pl-smi">$stderr</span>.puts stderr.read
+
+<span class="pl-c"># thread.value is a `Process::Status`. We exit our script with whatever curl's</span>
+<span class="pl-c"># exit code was.</span>
+exit thread.value.exitstatus</pre></div>
+
+<p>I use this to generate the markup for this blog. The full source is available at
+<a href="https://github.com/jch/jsg">jch/jsg</a>.</p>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>

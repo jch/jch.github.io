@@ -1,0 +1,115 @@
+<h1>
+<a id="user-content-and-you-thought-render-farms-were-just-for-pixar" class="anchor" href="#and-you-thought-render-farms-were-just-for-pixar" aria-hidden="true"><span class="octicon octicon-link"></span></a>And You Thought Render Farms Were Just For Pixar!</h1>
+
+<p>Rails views are typically rendered after some controller action is executed. But the code that powers Rails controllers is flexible and extensible enough to create custom rendering objects that can reuse views and helpers, but live outside of web request processing. In this post, I'll cover what a Rails controller is and what it's composed of. I'll also go over how to extend it to create your own custom renderers, and show an example of how you can render views in your background jobs and push the results to your frontend.</p>
+
+<h2>
+<a id="user-content-whats-a-controller" class="anchor" href="#whats-a-controller" aria-hidden="true"><span class="octicon octicon-link"></span></a>What's a Controller?</h2>
+
+<p>A Rails controller is a subclass of <code>ActionController::Base</code>. The <a href="http://api.rubyonrails.org/classes/ActionController/Base.html">documentation</a> says:</p>
+
+<blockquote>
+<p>Action Controllers are the core of a web request in Rails. They are made up of one or more actions that are executed on request and then either render a template or redirect to another action. An action is defined as a public method on the controller, which will automatically be made accessible to the web-server through Rails Routes.</p>
+</blockquote>
+
+<p>While <code>Base</code> suggests that this is a root class, it actually inherits from <code>ActionController::Metal</code> and <code>AbstractController::Base</code>. Also, some of the core features such as rendering and redirection are actually mixins. Visually, this class hierarchy looks something like:</p>
+
+<p><a href="https://camo.githubusercontent.com/4f3d728e0dffbb82e6f034c43c2b3c2421bc7720/687474703a2f2f662e636c2e6c792f6974656d732f3162315a324e306b3072334831613374336630502f53637265656e25323053686f74253230323031322d30362d31322532306174253230392e33382e3535253230504d2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/4f3d728e0dffbb82e6f034c43c2b3c2421bc7720/687474703a2f2f662e636c2e6c792f6974656d732f3162315a324e306b3072334831613374336630502f53637265656e25323053686f74253230323031322d30362d31322532306174253230392e33382e3535253230504d2e706e67" data-canonical-src="http://f.cl.ly/items/1b1Z2N0k0r3H1a3t3f0P/Screen%20Shot%202012-06-12%20at%209.38.55%20PM.png" style="max-width:100%;"></a></p>
+
+<p><code>ActionController::Metal</code> is a stripped down version of what we know as controllers. It's a <a href="http://guides.rubyonrails.org/rails_on_rack.html">rackable</a> object that understands HTTP. By default though, it doesn't have know anything about rendering, redirection, or route paths.</p>
+
+<p><code>AbstractController::Base</code> is one layer above <code>Metal</code>. This class dispatches calls to known actions and knows about a generic response body. An <code>AbstractController::Base</code> doesn't assume it's being used in an HTTP request context. In fact, if we peek at the source code for <a href="http://api.rubyonrails.org/classes/ActionMailer/Base.html">actionmailer</a>, we'll see that it's a subclass of <code>AbstractController::Base</code>, but used in the context of generating emails rather than processing HTTP requests.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">module</span> <span class="pl-en">ActionMailer</span>
+  <span class="pl-k">class</span> <span class="pl-en">Base<span class="pl-e"> &lt; AbstractController::Base</span></span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Logger</span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Rendering</span>  <span class="pl-c"># &lt;- ActionController::Base also uses</span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Layouts</span>    <span class="pl-c"># &lt;- these mixins, but for generating</span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Helpers</span>    <span class="pl-c"># &lt;- HTTP response bodies, instead of email response bodies</span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Translation</span>
+    <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">AssetPaths</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="user-content-custom-controller-for-background-job-rendering" class="anchor" href="#custom-controller-for-background-job-rendering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Controller for Background Job Rendering</h2>
+
+<p>For a recent project, I needed to execute flight searches in background jobs against an external API. Initially, I planned to push the search results as a json object and render everything client-side, but I wanted to reuse existing Rails views, helpers, and route path helpers without redefining them in the frontend. Also, because of differing client performance, rendering server-side <a href="http://engineering.twitter.com/2012/05/improving-performance-on-twittercom.html">improves page load times for users</a> in this instance. Architecturally, what I wanted looks like:</p>
+
+<p><a href="https://camo.githubusercontent.com/973b50b80b065100ffaa3c41962c9ee4caff19c3/687474703a2f2f662e636c2e6c792f6974656d732f306d303832523135335a3244334c3141307431682f53637265656e25323053686f74253230323031322d30362d31322532306174253230392e34372e3336253230504d2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/973b50b80b065100ffaa3c41962c9ee4caff19c3/687474703a2f2f662e636c2e6c792f6974656d732f306d303832523135335a3244334c3141307431682f53637265656e25323053686f74253230323031322d30362d31322532306174253230392e34372e3336253230504d2e706e67" data-canonical-src="http://f.cl.ly/items/0m082R153Z2D3L1A0t1h/Screen%20Shot%202012-06-12%20at%209.47.36%20PM.png" style="max-width:100%;"></a></p>
+
+<p>The requirements for this custom controller were:</p>
+
+<ul>
+<li>access to route helpers</li>
+<li>renders templates and partials in app/views</li>
+</ul>
+
+<p>Unlike a full blown <code>ActionController</code>, this custom controller doesn't need to understand HTTP. All it needs is the result of the flight search from background workers to be able to render an html response.</p>
+
+<p>The full code for the custom controller is:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">SearchRenderer<span class="pl-e"> &lt; AbstractController::Base</span></span>
+  <span class="pl-k">include</span> <span class="pl-c1">Rails</span>.application.routes.url_helpers  <span class="pl-c"># rails route helpers</span>
+  <span class="pl-k">include</span> <span class="pl-c1">Rails</span>.application.helpers             <span class="pl-c"># rails helpers under app/helpers</span>
+
+  <span class="pl-c"># Add rendering mixins</span>
+  <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Rendering</span>
+  <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Logger</span>
+
+  <span class="pl-c"># Setup templates and partials search path</span>
+  append_view_path <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pse">#{</span><span class="pl-s1"><span class="pl-c1">Rails</span>.root</span><span class="pl-pse"><span class="pl-s1">}</span></span>/app/views<span class="pl-pds">"</span></span>
+
+  <span class="pl-c"># Instance variables are available in the views,</span>
+  <span class="pl-c"># so we save the variables we want to access in the views</span>
+  <span class="pl-k">def</span> <span class="pl-en">initialize</span>(<span class="pl-smi">search_results</span>)
+    <span class="pl-smi">@search_results</span> <span class="pl-k">=</span> search_results
+  <span class="pl-k">end</span>
+
+  <span class="pl-c"># running this action will render 'app/views/search_renderer/foo.html.erb'</span>
+  <span class="pl-c"># with @search_results, and route helpers available in the views.</span>
+  <span class="pl-k">def</span> <span class="pl-en">execute</span>
+    render <span class="pl-c1">:action</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>A runnable example of this source code is available at <a href="https://github.com/jch/custom-controller-renderer">this github repository</a>.</p>
+
+<p>Breaking down the above code, the first thing we do is inherit from <code>AbstractController::Base</code>:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">SearchRenderer<span class="pl-e"> &lt; AbstractController::Base</span></span>
+  <span class="pl-k">def</span> <span class="pl-en">initialize</span>(<span class="pl-smi">search_results</span>)
+    <span class="pl-smi">@search_results</span> <span class="pl-k">=</span> search_results
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<p>We also save the search results in an instance variable so that our templates can access them later.</p>
+
+<div class="highlight highlight-source-ruby"><pre>  <span class="pl-k">include</span> <span class="pl-c1">Rails</span>.application.routes.url_helpers  <span class="pl-c"># rails route helpers</span>
+  <span class="pl-k">include</span> <span class="pl-c1">Rails</span>.application.helpers             <span class="pl-c"># rails helpers under app/helpers</span></pre></div>
+
+<p>These methods return Rails route helpers like <code>resource_path</code> and <code>resource_url</code>, and also any helpers defined in <code>app/helpers</code>.</p>
+
+<p>Next we add the mixins we need to be able to call the <code>#render</code> controller method. Calling <code>#append_view_path</code> sets up the view lookup path to be the same as our Rails controller views lookup path.</p>
+
+<div class="highlight highlight-source-ruby"><pre>  <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Rendering</span>
+  <span class="pl-k">include</span> <span class="pl-c1">AbstractController</span>::<span class="pl-c1">Logger</span>
+
+  append_view_path <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pse">#{</span><span class="pl-s1"><span class="pl-c1">Rails</span>.root</span><span class="pl-pse"><span class="pl-s1">}</span></span>/app/views<span class="pl-pds">"</span></span></pre></div>
+
+<p>Then we define a controller action named <code>execute</code> that'll render out the response as a string. The <code>#render</code> method used here is very similar to the one used by <code>ActionController</code>.</p>
+
+<div class="highlight highlight-source-ruby"><pre>  <span class="pl-k">def</span> <span class="pl-en">execute</span>
+    render <span class="pl-c1">:action</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>
+  <span class="pl-k">end</span></pre></div>
+
+<p>To use this renderer object, you need to initialize it with a search results object, and call <code>#execute</code>:</p>
+
+<div class="highlight highlight-source-ruby"><pre>search_results <span class="pl-k">=</span> [{<span class="pl-c1">:foo</span> =&gt; <span class="pl-s"><span class="pl-pds">"</span>bar<span class="pl-pds">"</span></span>}, {<span class="pl-c1">:foo</span> =&gt; <span class="pl-s"><span class="pl-pds">"</span>baz<span class="pl-pds">"</span></span>}]
+renderer <span class="pl-k">=</span> <span class="pl-c1">SearchRenderer</span>.<span class="pl-k">new</span>(search_results)
+renderer.execute</pre></div>
+
+<h2>
+<a id="user-content-summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
+
+<p>Rails ActionControllers are specific to HTTP, but its abstract parent class can be used to construct objects for generic controller objects for coordinating actions outside of an HTTP context. Custom controller objects can be composed with the available mixins to add common functionality such as rendering. These custom controllers can also share code with existing Rails applications DRY up templates and helpers.</p>

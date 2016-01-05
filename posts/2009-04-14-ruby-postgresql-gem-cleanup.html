@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <style>
+      body {
+        font-family: 'Lora', serif;
+        font-size: 1.2em;
+        padding: 2em 1em;
+      }
+
+      pre, code {
+        font-family: 'Inconsolata', monospace;
+      }
+
+      header {
+        margin-bottom: 1.5em;
+      }
+
+      header .home {
+        font-weight: bold;
+      }
+
+      .posts li {
+        margin-bottom: 0.3em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
+<a id="user-content-ruby-postgresql-gem-cleanup" class="anchor" href="#ruby-postgresql-gem-cleanup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ruby Postgresql Gem Cleanup</h1>
+
+<p>I ran into some trouble with getting a good native postgresql driver
+installed.  Here are some links and resources I found to be useful.  I
+also wrote a <a href="http://www.whatcodecraves.com/posts/2008/02/05/setup_rails_with_postgresql/">checklist for bootstrapping a new Rails app with
+postgres</a>
+as the adapter.</p>
+
+<p>There are several choices for postgresql adapters.  The most active
+and up-to-date one appears to be
+<a href="http://rubyforge.org/projects/ruby-pg/">ruby-pg</a>, previously known as
+ruby-postgres.  ruby-pr was the one I was using originally, but this
+one is non-native and unmaintained.</p>
+
+<p>A good starting point was <a href="http://www.robbyonrails.com/articles/2007/06/19/installing-ruby-on-rails-and-postgresql-on-os-x-second-edition">Robby's 'Installing Ruby on Rails and
+Postgresql on OS X 2nd
+edition</a>.
+<a href="http://shifteleven.com/articles/2008/03/21/installing-postgresql-on-leopard-using-macports">ShiftEleven</a>
+also had detailed instructions for installing postgresql with
+macports.</p>
+
+<p>The exact steps I took that worked for me were:</p>
+
+<pre><code># start postgres on computer start.
+sudo launchctl load -w /Library/LaunchDaemons/org.macports.postgresql83-server.plist
+
+# the ARCHFLAGS is because of Leopard weirdness.
+sudo env ARCHFLAGS="-arch i386" gem install pg
+</code></pre>
+
+
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>

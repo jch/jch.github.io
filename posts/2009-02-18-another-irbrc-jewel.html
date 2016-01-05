@@ -1,0 +1,24 @@
+<h1>
+<a id="user-content-another-irbrc-jewel" class="anchor" href="#another-irbrc-jewel" aria-hidden="true"><span class="octicon octicon-link"></span></a>Another .irbrc Jewel</h1>
+
+<p>A while back, I discovered the magical
+<a href="http://giantrobots.thoughtbot.com/2008/12/23/script-console-tips">.irbrc</a>.
+If you scroll down to the comments, Arthur and I left a tip on how to
+view arbitrary script/console output in Textmate.  It's really amazing
+for XML or big chunks of output.  Other useful irb links after the
+fold.</p>
+
+<p><a href="http://stephencelis.com/">Stephen Cells</a> mentioned the <a href="http://utilitybelt.rubyforge.org/">utilitybelt
+ngem</a>. It might be overkill, but
+I'll probably pick through for a few good bits.</p>
+
+<p>I added another snippet to my .irbrc for copying stuff to the
+clipboard on OS X.</p>
+
+<pre><code>class Object
+  def pbcopy(string)
+    IO.popen('pbcopy', 'w') { |f| f.puts(string) }
+    nil
+  end
+end
+</code></pre>

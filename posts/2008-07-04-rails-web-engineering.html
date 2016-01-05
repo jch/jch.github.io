@@ -1,0 +1,52 @@
+<h1>
+<a id="user-content-rails-webapp-engineering" class="anchor" href="#rails-webapp-engineering" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails Webapp Engineering</h1>
+
+<p>The day after I came back from Australia, I started my new job at
+<a href="http://www.coupa.com">Coupa Software</a>.  I'm absolutely loving it at
+the moment because of the awesome people and the amount of software
+I'm learning.  Here's just a few that I've picked up in my first week
+that I'd like to jot down.</p>
+
+<h2>
+<a id="user-content-skinny-controllers-fat-models" class="anchor" href="#skinny-controllers-fat-models" aria-hidden="true"><span class="octicon octicon-link"></span></a>Skinny Controllers, Fat Models</h2>
+
+<p>Here's <a href="http://weblog.jamisbuck.org/2006/10/18/skinny-controller-fat-model">one
+article</a>
+about it.  It really <em>really</em> helps out with testing.</p>
+
+<h2>
+<a id="user-content-association" class="anchor" href="#association" aria-hidden="true"><span class="octicon octicon-link"></span></a>Association</h2>
+
+<p><a href="http://api.rubyonrails.org/classes/ActiveRecord/Aggregations/ClassMethods.html#M001262">composed_of</a></p>
+
+<ul>
+<li>cmd-k clears terminal window</li>
+<li>rake stats</li>
+<li><p>script/spec for an individual test</p></li>
+<li><p><a href="http://api.rubyonrails.org/classes/ActionController/Streaming.html">send_data, send_file</a></p></li>
+<li><p>render_to_string - returns string, use with send_data</p></li>
+<li>
+<p><a href="http://www.ruby-doc.org/core/classes/Enumerable.html#M001147">Enumerable:inject</a></p>
+
+<ul>
+<li>same as Scheme accumulator I used in 61A</li>
+</ul>
+</li>
+<li>
+<p><a href="http://ruby-pdf.rubyforge.org/pdf-writer/doc/classes/PDF/SimpleTable.html">PDF::SimpleTable</a></p>
+
+<ul>
+<li>really really easy to use reporter generator.</li>
+</ul>
+</li>
+<li><p>request.xhr? - if request is ajax-y</p></li>
+</ul>
+
+<h2>
+<a id="user-content-getting-all-tables" class="anchor" href="#getting-all-tables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting All Tables</h2>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c1">ActiveRecord</span>::<span class="pl-c1">Base</span>.establish_connection(<span class="pl-c1">RAILS_ENV</span>.to_sym)
+connection <span class="pl-k">=</span> <span class="pl-c1">ActiveRecord</span>::<span class="pl-c1">Base</span>.connection
+
+options[<span class="pl-c1">:tables</span>] <span class="pl-k">||=</span> connection.tables.reject { |<span class="pl-smi">t</span>| <span class="pl-s"><span class="pl-pds">%w(</span>schema_info</span>
+<span class="pl-s">sessions<span class="pl-pds">)</span></span>.include?(t) }</pre></div>

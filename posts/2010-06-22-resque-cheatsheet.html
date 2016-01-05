@@ -1,0 +1,74 @@
+<h1>
+<a id="user-content-resque-cheatsheet" class="anchor" href="#resque-cheatsheet" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resque Cheatsheet</h1>
+
+<p><a href="/images/octocat_happy.gif" target="_blank"><img src="/images/octocat_happy.gif" style="max-width:100%;"></a>
+Coded and used by the <a href="http://github.com/">Github</a> team,
+<a href="http://github.com/defunkt/resque">Resque</a> is a Ruby queue for
+processing background jobs built on top of
+<a href="http://code.google.com/p/redis/">Redis</a>.  So far, I'm really enjoying
+the simple setup and simple API.  The documentation gives a lot of
+good background information, and it's been working well overall.
+Follow the jump for a day-to-day usage reference.</p>
+
+<p><br></p>
+
+<h2>
+<a id="user-content-status" class="anchor" href="#status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Status</h2>
+
+<pre><code>Resque.info
+Resque.queues
+Resque.redis
+Resque.size(queue_name)
+
+# check out what's coming next in the queue
+#    Resque.peek(archive_queue)
+#    Resque.peek(archive_queue, 1, 5)
+#    Resque.peek(archive_queue, 59, 30)
+Resque.peek(queue_name, start=1, count=1)
+</code></pre>
+
+<h2>
+<a id="user-content-workers" class="anchor" href="#workers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Workers</h2>
+
+<pre><code>Resque.workers
+Resque.working
+Resque.remove_worker(worker_id) # find worker_id from one of the above methods
+</code></pre>
+
+<h2>
+<a id="user-content-queue-management" class="anchor" href="#queue-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queue Management</h2>
+
+<pre><code># For testing a worker, I usually call the 'perform' method directly.
+#    Resque.enqueue(ArchiveWorker)
+#    Resque.enqueue(ArchiveWorker, 'matching', 'arguments')
+Resque.enqueue(klass, *args)
+Resque.dequeue(klass, *args)
+Resque.remove_queue(queue_name)
+</code></pre>
+
+<h2>
+<a id="user-content-callbacks" class="anchor" href="#callbacks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Callbacks</h2>
+
+<pre><code># Each of these can either take a block, or be assigned to with a Proc
+Resque.before_first_fork(&amp;blk)
+Resque.before_fork(&amp;blk)
+Resque.after_fork(&amp;blk)
+</code></pre>
+
+<h2>
+<a id="user-content-problems" class="anchor" href="#problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Problems</h2>
+
+<p>Redis connects to wrong host - Redis connects to localhost:6379 by
+default. Customize this by doing the following:</p>
+
+<pre><code>Resque.redis = 'hostname:port:db'  # all 3 values are optional
+</code></pre>
+
+<p>Workers die stop after first batch completes - This is caused by the
+workers losing their connection to MySQL.  See <a href="http://gist.github.com/250080">this
+gist</a> for a fix and an explanation.
+Alternatively, you can add this line at the beginning of your
+'perform' method:</p>
+
+<pre><code>ActiveRecord::Base.reconnect!
+</code></pre>

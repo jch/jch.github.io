@@ -1,0 +1,57 @@
+<h1>
+<a id="user-content-interview-your-libraries" class="anchor" href="#interview-your-libraries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Interview your libraries</h1>
+
+<p>I love working with John Barnette, even if we don't work on the same stuff
+regularly. The other day, he wrote this in a discussion:</p>
+
+<blockquote>
+<p>Every time we bring in an external library, we inherit its opinions,
+shortcomings, idioms, and taste. This isn't a reason to rewrite everything
+ourselves, but it's good for us to interview libraries like we interview new
+GitHubbers.</p>
+</blockquote>
+
+<p>I loved this. In two short sentences, Barnette summed up why we should
+evaluate new dependencies before adding them to an existing project.</p>
+
+<h2>
+<a id="user-content-why-not-drop-in-a-library" class="anchor" href="#why-not-drop-in-a-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why not drop in a library?</h2>
+
+<p>It's tempting to add a library that promises to do 90% of your goal. But that
+instant gratification often comes with delayed hidden costs. Things I've been
+bitten by in the past include:</p>
+
+<ul>
+<li>Security. It's hard, and no one gets it right the first time.</li>
+<li>Performance. Sure it works in the simple case, but does it scale?</li>
+<li>Complexity. It's not worth importing a kitchen sink if you're only
+planning to use one small method.</li>
+<li>Lack of benefit. Some libraries just don't buy you very much.
+Syntactic sugar is nice if it wraps an ugly interface, but if it doesn't,
+it means keeping two interfaces in you head while you work.</li>
+<li>Organizational cost. Does your team know how to use it? If not,
+is it worth it for them to pick it up? It's better to choose something plainer,
+simpler, and more explicit if it means the rest of your team can easily
+understand and work with it.</li>
+</ul>
+
+<h2>
+<a id="user-content-what-about-frameworks-and-orms" class="anchor" href="#what-about-frameworks-and-orms" aria-hidden="true"><span class="octicon octicon-link"></span></a>What about frameworks and ORMs?</h2>
+
+<p>I've worked with Rails for a long time now, and I have a good sense of where
+to poke around if I have questions. But let's be honest, with 183 commits made
+by 63 authors in the last week alone, I'll never <em>know</em> Rails inside and out.</p>
+
+<p><a href="https://camo.githubusercontent.com/06d7220ace3612c9ebc0d25d13872ca8fbcb85b9/687474703a2f2f662e636c2e6c792f6974656d732f307130613171326a334f3243316d3145335031592f53637265656e25323053686f74253230323031332d30352d30372532306174253230382e34322e3239253230504d2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/06d7220ace3612c9ebc0d25d13872ca8fbcb85b9/687474703a2f2f662e636c2e6c792f6974656d732f307130613171326a334f3243316d3145335031592f53637265656e25323053686f74253230323031332d30352d30372532306174253230382e34322e3239253230504d2e706e67" alt="" data-canonical-src="http://f.cl.ly/items/0q0a1q2j3O2C1m1E3P1Y/Screen%20Shot%202013-05-07%20at%208.42.29%20PM.png" style="max-width:100%;"></a></p>
+
+<p>Rails is large and complex. Yet, I'm happy to use it daily in my project. Why?
+Because I trust the project and community to stick around. It'd be a pain to
+rewrite what Rails buys you. Plus, the documentation is great, there are
+timely security patches, and my team knows how to use it.</p>
+
+<h2>
+<a id="user-content-go-with-your-gut" class="anchor" href="#go-with-your-gut" aria-hidden="true"><span class="octicon octicon-link"></span></a>Go with your gut</h2>
+
+<p>None of the hidden costs I listed above are hard rules for rejecting a
+library. But the next time you think about adding a library to your codebase,
+grill it with some hard questions and see if it's worth adding.</p>

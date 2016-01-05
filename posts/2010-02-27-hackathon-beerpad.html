@@ -1,0 +1,77 @@
+<h1>
+<a id="user-content-hackathon-creation-beerpad" class="anchor" href="#hackathon-creation-beerpad" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hackathon creation: Beerpad</h1>
+
+<p><a href="/images/beerpad_logo.png" target="_blank"><img src="/images/beerpad_logo.png" alt="beerpad logo: cup of beer" style="max-width:100%;"></a> To spice things up from
+<a href="http://outspokes.com">Outspokes</a> and consulting, Arthur, Jeff and I
+held our first informal hackathon at <a href="http://www.yelp.com/biz/mo-joe-cafe-berkeley">Mo Joe
+Cafe</a> on a sunny
+Saturday morning. The three of us had no real goal other than to get
+our geek on in good company. I had a great time brainstorming and
+creating my deliciously refreshing beer review site named
+<a href="http://beerpad.heroku.com">Beerpad</a>. Follow the jump for details on the project.</p>
+
+<p><a href="/images/beerpad_screenshot.png" target="_blank"><img src="/images/beerpad_screenshot.png" alt="screenshot of beerpad
+page" style="max-width:100%;"></a> My idea for Beerpad was straightforward
+enough; I wanted an app for writing beer reviews for my own reference
+and for sharing and exploring new beers with friends. Up until two or
+three months ago, I hadn't kept track of which beers I've tried. When
+I started taking notes, they outgrew index cards and my google doc
+pretty quickly. Other rating sites like
+<a href="http://beeradvocate.com/">BeerAdvocate</a> and
+<a href="http://www.ratebeer.com/">RateBeer</a> have great information but have
+become noisy and cluttered over time. I thought I could do better than
+what the competition offered. The project also gives me a perfect
+excuse to try out new development techniques I've been reading about.</p>
+
+<p>This being a hackathon, I scoped my design to the most interesting features in
+order to avoid slogging through uninteresting boring tasks I already knew how
+to implement. User registration? Nah. Linux setup? Recently did a bunch of that
+for Outspokes. Email deliverability? Later. The list of things I did <strong>not</strong>
+feel like working kept growing and growing. I was starting to worry that I'd
+have no project to work on, but the list finally whittled down to the core
+features:</p>
+
+<ul>
+<li>write beer reviews</li>
+<li>add photos</li>
+<li>search for beers</li>
+</ul>
+
+<p>There are many fun ideas that friends have suggested like beer quests/feats,
+social networking, and mobile tools. I wanted to make this a realistic
+hackathon and complete something substantial and useful, so I'm keeping these
+fantastic ideas out of the first release for the sake of time. Many thanks to
+Dennis, Graham, both Wendys, Lilly, Andrew, and Sam for helping me seed
+initial beer names. I owe y'all a brewsky the next time I concoct a batch.</p>
+
+<h2>
+<a id="user-content-summary-of-topics" class="anchor" href="#summary-of-topics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary of topics</h2>
+
+<p>These links will fill out as I write about them</p>
+
+<ul>
+<li>Hosting with Heroku</li>
+<li>Authentication with Authlogic</li>
+<li>Don't acts as no stinking state machine</li>
+<li>Sexy uploaders with SWFUpload, Paperclip, and S3</li>
+<li>Why acceptance testing? A lazy programmer's story of frustration with Cucumber and Watir</li>
+<li>Design for optimization: When it's not premature optimization</li>
+</ul>
+
+<p>I had a lot of fun researching new techniques for writing this application.
+For hosting, I tried out Heroku and fell in love with their git workflow. For
+authentication, I took a step away from the well known
+<a href="">restful_authentication</a> plugin to look at <a href="">clearance</a> and <a href="">authlogic</a>.
+I found a great API with Authlogic and preferred it over its alternatives. I
+decided to allow drafts on beer reviews, so I reached for <a href="">AASM
+(acts_as_state_machine)</a>, but I also looked at some alternatives. Unlike the
+happy endings of Heroku and authlogic, my adventure with state machines was a
+complete pain. For photo uploads, I wanted a sexy multifile uploader like
+flickr or gmail. This led me down a confusing maze of flash uploaders, flash
+bugs, and hard to configure Rails plugins and libraries. Concurrent with all
+this research and development. I looked for better ways to do integration and
+acceptance testing and also to design with performance in mind.</p>
+
+<p>Whew. That was a lot to summarize and blurt out all at once. I think I'm going
+to find myself a cold refreshing beer to try. <a href="http://beerpad.heroku.com/">You should join
+me</a>. -Jerry</p>

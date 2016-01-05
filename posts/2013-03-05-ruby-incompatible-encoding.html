@@ -1,0 +1,88 @@
+<h1>
+<a id="user-content-ruby-incompatible-encoding-errors" class="anchor" href="#ruby-incompatible-encoding-errors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ruby Incompatible Encoding Errors</h1>
+
+<p>String encodings is like air. Completely necessary and never on your mind
+until something goes wrong. Encoding bugs are painful and often feel like the
+black arts. Follow the jump for an aggregation of past experiences for solving
+these tricky problems.</p>
+
+<h2>
+<a id="user-content-background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
+
+<p>The first time you think of encodings in Ruby is probably the first time you
+see an exception along the lines of:</p>
+
+<pre><code>incompatible character encodings: ASCII-8BIT and UTF-8
+</code></pre>
+
+<p>Before you pull out your hair, I recommend reading <a href="http://blog.grayproductions.net/articles/understanding_m17n">James Edward Grey
+II's</a> in depth
+coverage on why and what encodings are. Markus Prinz's <a href="http://nuclearsquid.com/writings/ruby-1-9-encodings/">Working with Encodings
+in Ruby 1.9</a> is also a
+good read. Go ahead, this article will wait.</p>
+
+<p>The core cause of the above error is when your code tries to mash two strings
+with different encodings together. For example, trying to glue a UTF-8 Chinese
+string to an ASCII-8BIT English string. They're hard to hunt down because the
+error is generated in C code and doesn't descend from the Exception class.
+This means you can't <code>rescue</code> the error to inspect it. Your best tool for
+finding the origin of the error is to learn about the <a href="http://ruby-doc.org/core-2.0/Encoding.html">Encoding</a>
+module. Once you're familiar with that API, it's easy to inspect the encoding
+to check it's what you expected.</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-s"><span class="pl-pds">"</span>some string<span class="pl-pds">"</span></span>.encoding
+<span class="pl-s"><span class="pl-pds">"</span>some string<span class="pl-pds">"</span></span>.force_encoding(<span class="pl-s"><span class="pl-pds">'</span>UTF-8<span class="pl-pds">'</span></span>)</pre></div>
+
+<h3>
+<a id="user-content-rails" class="anchor" href="#rails" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails</h3>
+
+<p>Rails defaults to UTF-8 for encoding. You can change it via application.rb
+with:</p>
+
+<div class="highlight highlight-source-ruby"><pre>config.encoding <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>UTF-8<span class="pl-pds">'</span></span></pre></div>
+
+<p>Yehuda Katz has a <a href="http://yehudakatz.com/2010/05/05/ruby-1-9-encodings-a-primer-and-the-solution-for-rails/">good write
+up</a>
+describing the problem. The long term solution is to have
+libraries that deal with external strings to respect
+<code>Encoding.default_internal</code></p>
+
+<h3>
+<a id="user-content-databases" class="anchor" href="#databases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Databases</h3>
+
+<p>To make sure your database uses the correct encoding, set your connection
+adapter to the correct encoding:</p>
+
+<pre><code># config/database.yml
+development:
+  encoding: unicode
+</code></pre>
+
+<h3>
+<a id="user-content-views" class="anchor" href="#views" aria-hidden="true"><span class="octicon octicon-link"></span></a>Views</h3>
+
+<p>When template views are read in from the filesystem, it respects the global
+ruby default for encoding. This can be overridden by a special shebang-like
+declaration at the top of the file:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># encoding: utf-8</span></pre></div>
+
+<p>Check out <a href="http://api.rubyonrails.org/classes/ActionView/Template.html#method-i-encode-21">ActionView::Template#encode!</a>
+for more details.</p>
+
+<p>If you're seeing an incompatible encoding error in a view, it's possible that
+it's caused by rendering a value from an external gem or string. Remember that
+the <code>render</code> method returns a string. A quick way to inspect that your
+partials are in the correct encoding is to save the result of a partial into a
+variable and print it's encoding:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">&lt;</span><span class="pl-k">%</span> output <span class="pl-k">=</span> render(<span class="pl-c1">:partial</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>some/partial<span class="pl-pds">'</span></span>) <span class="pl-s"><span class="pl-pds">%&gt;</span></span>
+<span class="pl-s">&lt;%= output.encoding %<span class="pl-pds">&gt;</span></span></pre></div>
+
+<h3>
+<a id="user-content-heroku" class="anchor" href="#heroku" aria-hidden="true"><span class="octicon octicon-link"></span></a>Heroku</h3>
+
+<p>Don't <a href="http://stackoverflow.com/questions/7612912/set-utf-8-as-default-%0Astring-encoding-in-heroku">forget to set your environment
+variable</a> to the correct default encoding.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ heroku config:add LANG=en_US.UTF-8</pre></div>

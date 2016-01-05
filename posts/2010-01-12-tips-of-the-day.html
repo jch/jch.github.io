@@ -1,0 +1,48 @@
+<h1>
+<a id="user-content-tips-of-the-day" class="anchor" href="#tips-of-the-day" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tips of the Day</h1>
+
+<ul>
+<li>dumping and restoring databases from RDS</li>
+<li>connecting to Twitter via oauth using python</li>
+<li>python debugger in Django</li>
+</ul>
+
+<h2>
+<a id="user-content-backup-and-restore-to-rds" class="anchor" href="#backup-and-restore-to-rds" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backup and Restore to RDS</h2>
+
+<p>Backup:</p>
+
+<pre><code>mysqldump -h dev-rds.customdomain.com -u root -psecret database_name table_name  | gzip &gt; backup.sql.gz
+</code></pre>
+
+<p>table_name is optional, and you can pass a -9 to gzip to maximize compression</p>
+
+<p>Restore:</p>
+
+<pre><code>gunzip &lt; backup.sql.gz | mysql -h dev-rds.customdomain.com -u root -psecret database_name
+</code></pre>
+
+<h2>
+<a id="user-content-python-twitter-oauth" class="anchor" href="#python-twitter-oauth" aria-hidden="true"><span class="octicon octicon-link"></span></a>Python Twitter OAuth</h2>
+
+<p><a href="/files/python_twitter_oauth_sample.zip">Download sample code</a></p>
+
+<p><a href="http://oauth.googlecode.com/svn/code/python/oauth/oauth.py">Grab oauth
+library</a>,
+and drop it on your python path.  Don't use the egg because there are
+problems with it.</p>
+
+<p>If you're using cookie based sessions and developing locally, make
+sure your callback url is consistent with your local dev url.  I had
+the callback url set to <a href="http://127.0.0.1/twitter_callback">http://127.0.0.1/twitter_callback</a>, but I was
+accessing the application via http://localhost:8000/, so the cookies
+weren't being set properly.  The fix was to access the app from
+<a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a> instead.</p>
+
+<h2>
+<a id="user-content-python-debugger-in-django" class="anchor" href="#python-debugger-in-django" aria-hidden="true"><span class="octicon octicon-link"></span></a>Python Debugger in Django</h2>
+
+<pre><code>import pdb; pdb.set_trace()
+</code></pre>
+
+<p>Equivalent of 'import ruby-debug; debugger' in ruby.</p>

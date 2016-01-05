@@ -1,0 +1,74 @@
+<h1>
+<a id="user-content-protecting-resqueserver" class="anchor" href="#protecting-resqueserver" aria-hidden="true"><span class="octicon octicon-link"></span></a>Protecting Resque::Server</h1>
+
+<p>Resque ships with a Sinatra app that can be mounted within your application for
+inspecting the status of your workers and jobs. By default, there's no
+authentication built in. But thanks to the fact that Sinatra is rack-able, you
+can put a middleware in front of it for handling authentication. For example, to
+add HTTP Basic auth, you can use Rack's built-in
+<a href="https://github.com/chneukirchen/rack/blob/master/lib/rack/auth/basic.rb">Rack::Auth::Basic</a>.</p>
+
+<h3>
+<a id="user-content-http-basic-authentication" class="anchor" href="#http-basic-authentication" aria-hidden="true"><span class="octicon octicon-link"></span></a>HTTP Basic authentication</h3>
+
+<div class="highlight highlight-source-ruby"><pre>protected_app <span class="pl-k">=</span> <span class="pl-c1">Rack</span>::<span class="pl-c1">Auth</span>::<span class="pl-c1">Basic</span>.<span class="pl-k">new</span>(<span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>) <span class="pl-k">do </span>|<span class="pl-smi">username</span>, <span class="pl-smi">password</span>|
+  password <span class="pl-k">==</span> <span class="pl-s"><span class="pl-pds">'</span>some-secret<span class="pl-pds">'</span></span>
+<span class="pl-k">end</span>
+
+<span class="pl-c"># mount protected_app in Rails, or other rack application…</span></pre></div>
+
+<p>This kind of works, but I always forget the password and have to look it up. It
+also sucks for on boarding new developers since it's not very discoverable. An
+improved solution is to piggyback onto your existing authentication system. For
+one of our apps, we use Devise, which exposes the user object in the Rack <code>env</code>
+object. Roughly, our rescue authentication looks like:</p>
+
+<h3>
+<a id="user-content-devise-or-other-authentication-library" class="anchor" href="#devise-or-other-authentication-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Devise or other authentication library</h3>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/initializers/resque.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">AuthenticatedMiddleware</span>
+  <span class="pl-k">def</span> <span class="pl-en">initialize</span>(<span class="pl-smi">app</span>)
+    <span class="pl-smi">@app</span> <span class="pl-k">=</span> app
+  <span class="pl-k">end</span>
+
+  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
+    <span class="pl-k">if</span> env[<span class="pl-s"><span class="pl-pds">'</span>warden<span class="pl-pds">'</span></span>].authenticated? <span class="pl-k">&amp;&amp;</span> env[<span class="pl-s"><span class="pl-pds">'</span>warden<span class="pl-pds">'</span></span>].user.staff?
+      <span class="pl-smi">@app</span>.call(env)
+    <span class="pl-k">else</span>
+      [<span class="pl-c1">403</span>, {<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>text/plain<span class="pl-pds">'</span></span>}, [<span class="pl-s"><span class="pl-pds">'</span>Authenticate first<span class="pl-pds">'</span></span>]]
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>.use(<span class="pl-c1">AuthenticatedMiddleware</span>)
+
+<span class="pl-c"># config/routes.rb</span>
+mount <span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>, <span class="pl-c1">:at</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>/resque<span class="pl-pds">'</span></span></pre></div>
+
+<p>If the main application is a Rails app, you can also use <a href="http://guides.rubyonrails.org/routing.html#advanced-constraints">routing
+constraints</a> to
+limit access. The benefit here is the Rail request and session object are
+available. For example, in another internal-only application, we only check that
+the session includes a user id:</p>
+
+<h3>
+<a id="user-content-rails-route-contraints" class="anchor" href="#rails-route-contraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails route contraints</h3>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/routes.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">SessionAuthenticatedConstraint</span>
+  <span class="pl-k">def</span> <span class="pl-en">self.matches?</span>(<span class="pl-smi">request</span>)
+    <span class="pl-k">!</span>request.session[<span class="pl-c1">:user_id</span>].blank?
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+constraints(<span class="pl-c1">SessionAuthenticatedConstraint</span>) <span class="pl-k">do</span>
+  mount <span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>, <span class="pl-c1">:at</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>/resque<span class="pl-pds">'</span></span>
+<span class="pl-k">end</span></pre></div>
+
+<p>Overall, I prefer the last approach because it's easy to understand, easy to
+test, idiomatic of Rails conventions, and short.</p>
+
+<p>Shout outs to
+<a href="https://twitter.com/kdaigle">@kdaigle</a> for code reviewing me and suggesting the
+last approach, and <a href="https://twitter.com/jonmagic">@jonmagic</a> for reviewing this post.</p>

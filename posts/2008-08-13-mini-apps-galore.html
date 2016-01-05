@@ -1,0 +1,86 @@
+<h1>
+<a id="user-content-mini-apps-galore" class="anchor" href="#mini-apps-galore" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mini-apps Galore!</h1>
+
+<p>I'm warming up to the idea of using small webapps that do <em>less</em>.
+Instead of full blown behemoth applications that take a lot of time to
+learn and configure, they're more in the spirit of Unix tools or perl
+one-liners.  Here's three that I came across that show quite a bit of
+promise.</p>
+
+<h2>
+<a id="user-content-hoptoad" class="anchor" href="#hoptoad" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hoptoad</h2>
+
+<p><a href="/images/hoptoadapp.png">
+   <img src="/images/hoptoadapp-thumb.png" alt="hoptoad main page with a listing of unresolved exceptions from my application" style="max-width:100%;">
+</a></p>
+
+<p>Think of Hoptoad as a beautiful and functional wrapper around
+<a href="http://agilewebdevelopment.com/plugins/exception_notifier">exception
+notifier</a>.
+Only rather than installing exception notifier per application,
+Hoptoad is a single stop for all your broken app needs.  Setup is as
+simple as installing the Hoptoad plugin, adding 4 lines to your app,
+and running a rake task.  After this, you can access your exceptions
+in Hoptoad's simple web interface, or subscribe to the provided RSS
+feeds.  Each exception gets a summary view, some environment context,
+and a full backtrace.  If you wanted to munge on that exception data
+some more, they include an
+<a href="http://whatcodecraves.hoptoadapp.com/pages/api">API</a> to access the
+site.</p>
+
+<h2>
+<a id="user-content-pingmymap" class="anchor" href="#pingmymap" aria-hidden="true"><span class="octicon octicon-link"></span></a>PingMyMap</h2>
+
+<p><a href="/images/pingmymap.png">
+  <img src="/images/pingmymap-thumb.png" alt="listing of what sites pingmymap sent my sitemap to" style="max-width:100%;">
+</a></p>
+
+<p>I came across PingMyMap when I was cleaning up my sitemap generator.
+At the time I only used Google's <a href="https://www.google.com/webmasters/tools/docs/en/sitemap-generator.html">python sitemap
+generator</a>.
+I'm not hell-bent on SEO, but I figured it wouldn't hurt for people to
+be able to find my site if it actually helps them.  PingMyMap doesn't
+offer any tips or tools for optimizing your site.  For an app that
+deals with <a href="http://www.sitemaps.org/">sitemaps</a>, it doesn't even offer
+you a tool to generate a sitemap!  Instead all this mini app does is
+take an existing sitemap and send it off to 5 search engines that it
+knows about.  It provides an
+<a href="http://pingmymap.com/documentation/#api">API</a> for you to post the
+actual sitemap, and then it'll tell you whether it was successful or
+not in submitting your sitemap to those search engines.</p>
+
+<h2>
+<a id="user-content-disqus" class="anchor" href="#disqus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Disqus</h2>
+
+<p><a href="/images/disqus.png">
+  <img src="/images/disqus-thumb.png" alt="disqus showing list of comments for this blog article" style="max-width:100%;">
+</a></p>
+
+<p>To play with Disqus, simply post a comment to this blog article :).
+Like the other two examples above, Disqus offloads the common tasks of
+'comments' into a shared webapp.  You can manage comments you get from
+multiples sites.  It also offers integration with existing popular
+blog engines.  Unlike the others, Disqus also holds some of your data.
+This eases management of that data, but at the cost of losing control
+of your own data.  One of the main reasons I enjoyed using Blogger was
+that it allowed me the option to store my own data on my own server.
+One of the main reasons why I disliked Blogger was that functionality
+wasn't always guaranteed.  Disqus shows promise because they also
+<em>plan</em> on having APIs for accessing their app, but only time can show
+if this one's a keeper.</p>
+
+<p>For the record, I had the exact same idea for a webapp like Disqus for
+a long time.  I even spent an evening a few days ago prototyping out a
+super raw version.  My raw version let you do all kinds of crazy
+stuff... including XSS attacks, off-site AJAX calls, and SQL injection
+attacks :)</p>
+
+<h2>
+<a id="user-content-wrap-up" class="anchor" href="#wrap-up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wrap up</h2>
+
+<p>Even though these 3 apps do very different things, they all share a
+very similar <em>feel</em>.  They don't try to do everything, they're simple
+to setup, and best of all, they're extendable and hackable through
+their APIs.  It might not be the kind of extensibility that a
+full-blown open source project provides, but with the shallow learning
+curve, it's the <em>right</em> amount of extensibility to get stuff done.</p>

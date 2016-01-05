@@ -1,0 +1,135 @@
+<h1>
+<a id="user-content-fixing-common-bundler-problems" class="anchor" href="#fixing-common-bundler-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fixing Common Bundler Problems</h1>
+
+<p><a href="/images/gembundler.png" target="_blank"><img src="/images/gembundler.png" style="max-width:100%;"></a>
+When <a href="http://gembundler.com/">bundler</a> first came out, I really wanted
+to like it. It promised a clean way to declare dependencies on for
+your application in a single place, and have that be definitive
+regardless of what box your app was running on.  Unfortunately,
+reality didn't match up with promises and I've had plenty of headaches
+from bundler problems.  Read on for a list of tips I've pulled
+together to save you some headache.</p>
+
+<h2>
+<a id="user-content-ensure-youre-local-bundler-is-the-same-version-as-your-server" class="anchor" href="#ensure-youre-local-bundler-is-the-same-version-as-your-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ensure you're local bundler is the same version as your server</h2>
+
+<p>Different versions of bundler may act differently:</p>
+
+<pre><code>bundle --version  # on your local machine and your server
+sudo gem install bundler --version="0.9.26"
+</code></pre>
+
+<h2>
+<a id="user-content-explicitly-specify-gem-versions" class="anchor" href="#explicitly-specify-gem-versions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Explicitly specify gem versions</h2>
+
+<p>Did you know in HTTParty 0.4.5, there's no 'parsed_response' method on
+a response object?  Well, neither did I when it worked fine on my
+local laptop (0.6.1), but not on the server (0.4.5)</p>
+
+<pre><code>gem "httparty"  # bad times if your system gem is out of date...
+gem "httparty", "~&gt; 0.6.1"  # better, but...
+gem "httparty", "0.6.1"     # ...why not just specify the version everyone should use?
+</code></pre>
+
+<h2>
+<a id="user-content-check-youre-actually-using-gems-installed-by-bundler" class="anchor" href="#check-youre-actually-using-gems-installed-by-bundler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check you're actually using gems installed by bundler</h2>
+
+<p>Once in a while, bundler will report success on install, but you'll
+get the wrong gems loaded in your load path.  Grep your load path to
+double check libraries you're having trouble with</p>
+
+<pre><code># in script/console
+&gt;&gt; $:.grep /http/
+=&gt; ["/Users/jch/.bundle/ruby/1.8/gems/httparty-0.6.1/lib"]
+</code></pre>
+
+<h2>
+<a id="user-content-gemfile-conditionals" class="anchor" href="#gemfile-conditionals" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gemfile conditionals</h2>
+
+<p>bundler allows you to specify groups so only gems you need in one
+environment are loaded:</p>
+
+<pre><code># we don't call the group :test because we don't want them auto-required
+group :test do
+  gem 'database_cleaner', '~&gt; 0.5.0'
+  gem 'rspec'
+  gem 'rspec-rails', '~&gt; 1.3.2', :require =&gt; 'spec/rails'
+end
+</code></pre>
+
+<p>All gems you specify in your Gemfile WILL be installed regardless of
+what RAILS_ENV you're currently on.  There's a very deceptively named
+option called --without that does not work as you would expect:</p>
+
+<pre><code># weird, but this will install gems in group test
+bundle install --without=test
+</code></pre>
+
+<p>This can turn out to be a disaster if your production environment
+tries to install a OSX specific gem with native extensions that you
+use for development.  An ugly fix in the meantime is to add
+conditionals that look for an environment variable:</p>
+
+<pre><code>if ['test', 'cucumber'].include?(ENV['RAILS_ENV'])
+  group :test do
+    # your gems
+  end
+end
+</code></pre>
+
+<h2>
+<a id="user-content-update-your-capistrano" class="anchor" href="#update-your-capistrano" aria-hidden="true"><span class="octicon octicon-link"></span></a>Update your capistrano</h2>
+
+<p>Don't forget to bundle when you deploy:</p>
+
+<pre><code>after  "deploy:update_code", "deploy:bundle"
+namespace :deploy do
+  desc "Freeze dependencies"
+  task :bundle, :roles =&gt; :app do
+    run "cd #{release_path} &amp;&amp; bundle install --relock --without=test"
+  end
+end
+</code></pre>
+
+<h2>
+<a id="user-content-nameerrors-and-autoloading-issues" class="anchor" href="#nameerrors-and-autoloading-issues" aria-hidden="true"><span class="octicon octicon-link"></span></a>NameErrors and autoloading issues</h2>
+
+<p>Read <a href="http://github.com/josevalim/inherited_resources/issues/issue/34">this
+issue</a>.
+The fix is to skip the require in your Gemfile and do the require in
+your environment.rb:</p>
+
+<pre><code># Gemfile
+gem 'misbehaving_gem', :require_as =&gt; []
+
+# environment.rb
+Rails::Initializer.run do |config|
+  # ...
+  config.gem 'misbehaving_gem'
+  # ...
+end
+</code></pre>
+
+<h2>
+<a id="user-content-nuke-bundler" class="anchor" href="#nuke-bundler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nuke .bundler</h2>
+
+<p>When all else doesn't make sense, and you've pulled out what precious
+little hair you have left:</p>
+
+<pre><code>rm -rf RAILS_ROOT/.bundle      # removes gems for this project
+rm -rf ~/.bundle               # removes cached gems for your current user
+rm -rf RAILS_ROOT/Gemfile.lock # lets you do a fresh 'bundle install'
+
+# do a fresh bundle install
+bundle install
+</code></pre>
+
+<h2>
+<a id="user-content-other" class="anchor" href="#other" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other</h2>
+
+<p>Bundler is still a moving target as far as bugs goes.  It's getting
+better with each release, so many of these issues might not exist by
+the time you start using it.  Meanwhile, hopefully this list above is
+will save you some time with bundler related headaches.  Let me know
+in the comments if you've encountered other tips for resolving these
+problems.</p>

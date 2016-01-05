@@ -1,0 +1,96 @@
+<h1>
+<a id="user-content-setup-rails-with-postgresql" class="anchor" href="#setup-rails-with-postgresql" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup Rails with Postgresql</h1>
+
+<p>Everytime I set up a Rails project, there are many braindead steps
+that need to be followed.  Instead of doing a web search each time I
+need to get an app setup, I follow these simple sequence of
+instructions.</p>
+
+<p>The first thing to do is to create the rails directory structure.
+Many Rails tutorials assume SQLite or MySQL.  Here in ivy covered UC
+Berkeley, our database of choice is Postgresql.</p>
+
+<pre><code>rails --database=postgresql myapp
+</code></pre>
+
+<h2>
+<a id="user-content-postgresql" class="anchor" href="#postgresql" aria-hidden="true"><span class="octicon octicon-link"></span></a>Postgresql</h2>
+
+<pre><code>(as postgres admin user)
+psql template1
+
+create role myapp with createdb login password 'myapp';  // 'login' is optional if you plan to use psql
+// with newer versions of Rails, 'rake db:create:all' will create all the databases listed in config/database.yml
+select * from pg_user;    // verify user created
+select * from pg_shadow;  // sysid listed here
+create database myapp_development owner myapp;
+create database myapp_test owner myapp;
+create database myapp_production owner myapp;
+
+(in RAILS_ROOT)
+rake db:migrate
+</code></pre>
+
+<p>If rake complains that it can't load the file 'postgres', then you are
+missing the postgresql database adapter.  You can get it via:</p>
+
+<pre><code>sudo gem install pg
+</code></pre>
+
+<p>If that fails, read the <a href="http://wiki.rubyonrails.org/rails/pages/PostgreSQL">wiki
+page</a> about it.
+For the lazy, you can simply install the slower pure ruby adapter
+'postgres-pr'</p>
+
+<p>The 'postgres' gem is
+<a href="http://archives.postgresql.org/pgsql-interfaces/2007-12/msg00001.php">unmaintained</a>,
+and a new <a href="http://rubyforge.org/projects/ruby-pg">fork of the project 'pg'</a>.</p>
+
+<h2>
+<a id="user-content-config" class="anchor" href="#config" aria-hidden="true"><span class="octicon octicon-link"></span></a>Config</h2>
+
+<p>Keep your database.yml
+<a href="http://blog.bleything.net/2006/06/27/dry-out-your-database-yml">DRY</a>.
+Edit database.yml as follows:</p>
+
+<pre><code>common: &amp;common
+  adapter: postgresql
+  username: myapp
+  password: password # from psql setup, see Postgresql
+
+development:
+  &lt;&lt;: *common
+  database: myapp_development
+
+test:
+  &lt;&lt;: *common
+  database: myapp_test
+
+production:
+  &lt;&lt;: *common
+  database: myapp_production
+</code></pre>
+
+<h2>
+<a id="user-content-subversion" class="anchor" href="#subversion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Subversion</h2>
+
+<p>The following keeps your repository squeaky clean:</p>
+
+<pre><code>mv myapp myapp-tmp
+mkdir -p myapp/{branches,tags}
+mv myapp-tmp myapp/trunk
+cd myapp/trunk
+rm -rf log/* tmp/*
+mv config/database{,-example}.yml
+svn ps svn:ignore '*' log
+svn ps svn:ignore '*' tmp
+svn ps svn:ignore 'database.yml' config
+</code></pre>
+
+<h2>
+<a id="user-content-updating-stuff" class="anchor" href="#updating-stuff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updating Stuff</h2>
+
+<p>To update rails, do</p>
+
+<pre><code>sudo gem install -y rails
+</code></pre>

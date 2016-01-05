@@ -1,0 +1,81 @@
+<h1>
+<a id="user-content-tips-of-the-day" class="anchor" href="#tips-of-the-day" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tips of the Day</h1>
+
+<ul>
+<li>backspace in GNU screen with Apple Terminal, SSH, and Ubuntu</li>
+<li>jquery tooltip plugins</li>
+<li>django stuff</li>
+</ul>
+
+<h2>
+<a id="user-content-its-just-a-backspace" class="anchor" href="#its-just-a-backspace" aria-hidden="true"><span class="octicon octicon-link"></span></a>It's just a backspace</h2>
+
+<p>Is it too much to ask for backspace to mean backwards-delete?
+Apparently it is, because there are entire bug threads and forum posts
+dedicated to the issue.  I finally got mine working with the following
+in my .screenrc:</p>
+
+<pre><code>bindkey -d ^? stuff ^H
+</code></pre>
+
+<p>Thanks to <a href="http://www.deadlock.it/linux/fix-gnu-screen-backspace-misinterpretation/">this blog
+post</a>.
+The original post also maps ^@, but that conflicts with ctrl-space
+set-mark in emacs. It also appears to be working for me without that
+second line.</p>
+
+<p>The other solution that made backspace work was</p>
+
+<pre><code>alias screen='TERM=screen screen'
+</code></pre>
+
+<p>But this solution screwed up the status bar colors on the bottom of my
+screen.</p>
+
+<p>Something that was somewhat useful in helping debug this problem was
+figuring out what backspace actually mapped to in Terminal, in a ssh
+shell, and in screen.  To display a non-printing character, start with
+^v (control-v), then type the non-printing letter (backspace).  What I
+got were:</p>
+
+<pre><code>Terminal: ^?
+SSH:      ^?
+screen:   ^[[3~
+</code></pre>
+
+<p>It's amazing how many mappings people suggested in the forums, and how
+all of them didn't work.  My guess is that YMMV and you just need to
+try all of them until you get one that works.  Here's some others I
+tried:</p>
+
+<pre><code>bindkey -k kb stuff "\010"
+bindkey -k kb stuff "\177"
+</code></pre>
+
+<p>And other variations with ^?, ^H, and ^[[3~.</p>
+
+<h2>
+<a id="user-content-jquery-tooltips" class="anchor" href="#jquery-tooltips" aria-hidden="true"><span class="octicon octicon-link"></span></a>jQuery Tooltips</h2>
+
+<p>I ended up choosing
+<a href="http://pupunzi.open-lab.com/mb-jquery-components/mb-tooltip/">mbTooltips</a>
+for this specific application because it's relatively lightweight (4k
+minified, with 8k of dependencies).  The original <a href="http://www.learningjquery.com/2006/10/updated-plugin-jtip">jTips
+plugin</a>
+that was in use was a whopping 187k AND used AJAX requests to get
+tooltip data.  jTips is also unmaintained.  Personally, I would just
+use the default 'title' attribute on HTML elements for tooltips, and
+style them appropriately.</p>
+
+<h2>
+<a id="user-content-django-stuff" class="anchor" href="#django-stuff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Django Stuff</h2>
+
+<p>To do redirects:</p>
+
+<pre><code># You'd think redirects wouldn't need to be explicitly imported...
+from django.http import HttpResponseRedirect
+return HttpResponseRedirect("/")
+</code></pre>
+
+<p><a href="http://docs.djangoproject.com/en/dev/topics/forms/">Form models, form helpers, form
+processing</a></p>

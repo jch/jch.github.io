@@ -1,0 +1,271 @@
+<h1>
+<a id="user-content-prototyping-with-compass-and-serve" class="anchor" href="#prototyping-with-compass-and-serve" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prototyping with Compass and Serve</h1>
+
+<p>For prototyping a new webapp, I like to get an HTML prototype on screen as
+fast as possible. There are a number of ways to achieve this, ranging from the
+heavyweight Rails, to the lightweight Sinatra. But even a barebones Sinatra
+app requires you to specify routes and layouts. When I'm focused on sketching
+out the markup structure and design, what I'm looking for is less distractions
+from setup. Theoretically, one could prototype everything with raw static
+HTML, but most designs usually share layouts and snippets that would be a pain
+to copy and paste between different files. Writing raw CSS is also possible,
+but once you've gotten a taste of Sass and Compass extensions, why would you
+want to? In this post I'll outline my bottoms up approach to getting a site
+design bootstrapped. I'll also cover how to get these prototypes up in a
+public area for feedback, and how these prototypes can be used as scaffolding
+alongside your development.</p>
+
+<h2>
+<a id="user-content-tldr" class="anchor" href="#tldr" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>TL;DR</strong>
+</h2>
+
+<p>This tutorial builds up an HTML prototype from the bottom up to show how
+prototyping problems can be solved with compass and serve. To build an HTML
+prototype, you can skip all of the details and just run:</p>
+
+<pre><code>serve create my-project
+</code></pre>
+
+<p>Check out the <a href="http://get-serve.com/documentation/create">serve documentation</a>
+for more detail. To arrive at the same conclusion step-by-step, read the long
+version below.</p>
+
+<h2>
+<a id="user-content-overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>We'll walk through the individual steps of building out a web prototype. We'll
+start with the bare minimum and add pieces as needed. The example design I'm
+using is the design for my car blog, and the final source can be <a href="https://github.com/jch/rock_road">found here
+on github</a>.</p>
+
+<h2>
+<a id="user-content-build-a-single-static-page" class="anchor" href="#build-a-single-static-page" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build a single static page</h2>
+
+<p>The beauty of static pages is how quick it is to set one up. We'll worry about
+the other pages after we've happy with how the index page looks. For starters,
+let's create a basic page skeleton.</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">html</span>&gt;
+  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
+  &lt;<span class="pl-ent">body</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
+        &lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">'</span>post<span class="pl-pds">'</span></span>&gt;
+          <span class="pl-c">&lt;!-- blog post goes here --&gt;</span>
+        &lt;/<span class="pl-ent">div</span>&gt;
+      &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+  &lt;/<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
+
+<p>To stub out image assets, I used <a href="http://lorempixel.com/">LoremPixel</a>. There's
+no styling at all, but the structure gives us a good idea of where everything
+will live.</p>
+
+<h2>
+<a id="user-content-add-stylesheets" class="anchor" href="#add-stylesheets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add stylesheets</h2>
+
+<p>Instead of writing raw CSS, it's much easier to write stylesheets with sass.
+Compass is another library that provides a bunch of useful sass mixins and
+functions. When paired with guard-compass, the stylesheets are compiled to css
+files whenever you save your sass files.</p>
+
+<p>Add the following to a Gemfile</p>
+
+<div class="highlight highlight-source-ruby"><pre>source <span class="pl-s"><span class="pl-pds">"</span>http://rubygems.org<span class="pl-pds">"</span></span>
+
+<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>compass<span class="pl-pds">"</span></span>
+<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>guard<span class="pl-pds">"</span></span>
+<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>guard-compass<span class="pl-pds">"</span></span></pre></div>
+
+<p>Then run:</p>
+
+<div class="highlight highlight-source-ruby"><pre>bundle
+bundle exec compass init <span class="pl-k">--</span>syntax<span class="pl-k">=</span>sass
+bundle exec guard init</pre></div>
+
+<p>By default, <code>compass</code> uses the scss syntax, but I prefer the indentation based
+sass syntax instead. Skip the <code>--syntax=sass</code> if you prefer the default. Edit
+your Guardfile to look like the following:</p>
+
+<div class="highlight highlight-source-ruby"><pre>guard <span class="pl-s"><span class="pl-pds">"</span>compass<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
+  watch(<span class="pl-sr"><span class="pl-pds">%r{</span>sass/*<span class="pl-cce">\.</span>sass<span class="pl-pds">}</span></span>)
+<span class="pl-k">end</span></pre></div>
+
+<p>Let's add our first sass file and check that our setup is working. Add a main.sass to your sass/ subdirectory with the following:</p>
+
+<pre><code>body
+  background-color: red
+</code></pre>
+
+<p>Add a line to index.html in the head section to reference the compiled
+stylesheet. Notice that we're referencing the compiled css file, not the
+original sass source file.</p>
+
+<pre><code>&lt;link rel='stylesheet' type='text/css' href='stylesheets/main.css'&gt;
+</code></pre>
+
+<p>Now start guard with:</p>
+
+<pre><code>bundle exec guard
+</code></pre>
+
+<p>You should see your sass source files compile. Now whenever you make changes
+to your sass files, guard will pick them up and recompile your sources.</p>
+
+<h2>
+<a id="user-content-reusable-snippets" class="anchor" href="#reusable-snippets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reusable snippets</h2>
+
+<p>When designing, it's common to have a chunk of markup that needs to be reused
+over and over. In our example, I'd like to see the design with multiple <code>post</code>
+elements at once. I could duplicate the markup several times, but that's a
+pain, and becomes even more painful when you have to change all of the
+duplicated markup if you want to make a change. What we ideally want is to
+have a separate file for the reusable snippets that we can include as many
+times as we'd like.</p>
+
+<p>Serve does exactly that (and more). First let's get it installed by adding it
+to our Gemfile.</p>
+
+<pre><code>gem "serve"  # run "bundle" after editing
+</code></pre>
+
+<p>In serve, reusable snippets are called 'partials'. Partials live in a folder
+called <code>views</code> by default. To make a new partial for each individual blog
+post, we create a file named <code>_post.erb</code> with the html of a post:</p>
+
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- in views/_post.erb --&gt;</span>
+&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">'</span>post<span class="pl-pds">'</span></span>&gt;
+  <span class="pl-c">&lt;!-- blog post goes here --&gt;</span>
+&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+
+<p>Whenever we want to reference that partial, we can include it in our other
+templates by calling render. For example, if we want to list 5 posts per index page, we can use a simple loop:</p>
+
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- in index.html --&gt;</span>
+&lt;<span class="pl-ent">html</span>&gt;
+  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
+  &lt;<span class="pl-ent">body</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
+        <span class="pl-c">&lt;!-- renders 5 post divs --&gt;</span>
+        &lt;%= 5.times.each do %&gt;
+          &lt;%= render 'post' %&gt;
+        &lt;% end %&gt;
+      &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+  &lt;/<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
+
+<p>To see this in action, run <code>serve</code> in your terminal, and visit
+<code>http://localhost:4000</code>. You should see the blog index page with 5 posts in
+it.</p>
+
+<h2>
+<a id="user-content-layouts" class="anchor" href="#layouts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Layouts</h2>
+
+<p>Our blog index page is starting to come together. But our blog will have other
+pages as well. There'll be an 'About' page and also a page to show a blog post
+and it's comments. These pages will share a lot of the same markup (the
+header, the footer, the page structure). Rather than pulling out partials for
+each of these, we can create a layout. Think of a layout as an inside-out
+partial. Instead of specifying which parts are the same, you specify which
+part will change. To create our layout, add the following to <code>_layout.erb</code> in
+the views directory.</p>
+
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- views/_layout.erb --&gt;</span>
+&lt;<span class="pl-ent">html</span>&gt;
+  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
+  &lt;<span class="pl-ent">body</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
+      &lt;%= yield %&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
+      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
+    &lt;/<span class="pl-ent">div</span>&gt;
+  &lt;/<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
+
+<p>Now we can change <code>index.html</code> to:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
+  &lt;%= 5.times.each do %&gt;
+    &lt;%=  render 'post' %&gt;
+  &lt;% end %&gt;
+&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
+
+<p>If you try and view this in your browser, you'll notice that the loop didn't
+render the partial and still looks like ruby code. This is because serve
+determines what template language to run on a file based on it's file
+extension. So to run ruby code in our index template, we need to rename it to
+<code>index.html.erb</code></p>
+
+<p>To create our About page, we just need to put the html that's different in
+<code>about.erb</code></p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">h1</span>&gt;About&lt;/<span class="pl-ent">h1</span>&gt;
+<span class="pl-c">&lt;!-- about us here --&gt;</span></pre></div>
+
+<p>Serve figures out the URL paths based on the filename, so you can view this
+new file at <a target="_blank" href="http://localhost:4000">http://localhost:4000</a></p>
+
+<h2>
+<a id="user-content-layouts-and-nested-paths" class="anchor" href="#layouts-and-nested-paths" aria-hidden="true"><span class="octicon octicon-link"></span></a>Layouts and Nested Paths</h2>
+
+<p>Up til now, we've put our html files at the top level folder. This works until
+you have multiple pages and multiple layouts. Just like how it figures out
+URL's from filename, serve will also pickup nested folders as part of the URL.
+For example, if I wanted to create <code>/about/jerry</code> page that uses a different
+layout, I could create the following directory structure:</p>
+
+<pre><code>rrb
+  _layout.erb
+  show.html.erb     # show will use rrb/_layout.erb
+  about
+    _layout.erb
+    jerry.html.erb  # jerry will use rrb/about/_layout.erb
+</code></pre>
+
+<h2>
+<a id="user-content-publishing-your-prototype" class="anchor" href="#publishing-your-prototype" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publishing your prototype</h2>
+
+<p>Once everything looks good, we still need to get feedback from people who may
+not have ruby setup. Serve has a nice export utility that will flatten your
+all your pages into static html files. To export your prototype, run:</p>
+
+<pre><code>serve export
+</code></pre>
+
+<p>This will dump everything into an <code>html</code> directory that you can zip up and
+share.</p>
+
+<h2>
+<a id="user-content-scaffolded-development" class="anchor" href="#scaffolded-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaffolded development</h2>
+
+<p>serve is a great tool to use alongside ruby webapp development. Since it's a
+rack app, you can mount it alongside your Rails or Sinatra application and
+fill out the functionality as you go.</p>
+
+<h2>
+<a id="user-content-design-driven-prototyping" class="anchor" href="#design-driven-prototyping" aria-hidden="true"><span class="octicon octicon-link"></span></a>Design driven prototyping</h2>
+
+<p>Prototyping out the flows and design of an application is a great way to
+explore how an application will work. Paper and photoshop prototypes are
+great, but actually being able to click through an HTML prototype can help the
+design and user experience process. The serve library makes it easy to build
+html prototypes by cutting down on the amount of setup work needed to be done.</p>
