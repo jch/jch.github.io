@@ -5,6 +5,7 @@ function setup {
   touch "$BATS_TMPDIR/src/old_file.md"
   mkdir -p "$BATS_TMPDIR/posts"
   mkdir -p "$BATS_TMPDIR/projects"
+  mkdir -p "$BATS_TMPDIR/about"
 }
 
 @test "publish" {
@@ -25,13 +26,18 @@ function setup {
   [[ -f "$BATS_TMPDIR/posts/old_file.html" ]]
 }
 
-@test "publish generates posts index" {
+@test "publish generates homepage of post listings" {
   bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
 
-  [[ -f "$BATS_TMPDIR/posts/index.html" ]]
+  [[ -f "$BATS_TMPDIR/index.html" ]]
 }
 
 @test "publish generates projects index" {
   bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
   [[ -f "$BATS_TMPDIR/projects/index.html" ]]
+}
+
+@test "publish generates about page" {
+  bin/publish -s "$BATS_TMPDIR/src" -o "$BATS_TMPDIR/posts" -r "$BATS_TMPDIR"
+  [[ -f "$BATS_TMPDIR/about/index.html" ]]
 }

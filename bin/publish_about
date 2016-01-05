@@ -1,0 +1,14 @@
+#!/bin/bash
+cat <<HOME | jsg_markdown | jsg_layout layout.html > $root_dir/about/index.html
+# About
+
+I'm a backend engineer at GitHub. I graduated from the University of California,
+Berkeley with a degree in computer science. Outside of technology, I enjoy cars,
+being outdoors, and hanging out with my family.
+
+This site is a dumping ground for projects and blog posts. It has gone full
+circle from a [collection of shell scripts](https://github.com/jch/flacoblog) to
+a [full Rails app](https://github.com/jch/whatcodecraves.com), and back to it's
+current form of a [collection of shell scripts](https://github.com/jch/jsg).
+
+HOME
