@@ -94,3 +94,11 @@ Learning about the other person's goals and background subtly shapes our
 interactions. Over time, we build up our trust in each other, and become more
 effective in our day to day work. We get a better sense of the other person's
 communication styles, and also what they're looking for.
+
+## Better one on ones
+
+It's easy to take one on ones for granted. But with some attention and care,
+effective one on ones are a great tool for your career. Agendas and notes keeps
+everyone focused, while review and follow up prevents things from being
+forgotten or neglected. Over time, these meetings become an open and safe place
+to talk about long term goals.
