@@ -48,5 +48,5 @@ log "publishing to '$output_dir' from '$src_dir'"
 [[ $# -gt 0 ]] && actions="$@" || actions='posts index projects about'
 for a in $actions; do
   log "running publish_$a"
-  publish_$a
+  bin/publish_$a
 done

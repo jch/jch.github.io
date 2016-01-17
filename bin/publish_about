@@ -1,5 +1,5 @@
 #!/bin/bash
-cat <<HOME | jsg_markdown | jsg_layout layout.html > $root_dir/about/index.html
+cat <<HOME | jsg -l layout.html > $root_dir/about/index.html
 # About
 
 I'm a backend engineer at GitHub. I graduated from the University of California,
