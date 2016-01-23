@@ -68,12 +68,38 @@ Our rough plan was:
 
 ![](/images/gmt400/power-on.png)
 
-* wiring diagram was wrong
-* ground was wrong to CD, but inadvertantly powered on because we stacked the radio on top of the cd, grounding it through the chassis
+We had a 12VDC power source handy, and the first test was to turn everything on.
+Initially we only connected power, ground, and the data wires, but nothing
+happened. So we went ahead and connected the rest as well. This turned both
+units on, but inserting a CD showed "ERR" on the display. Wires were removed one
+at a time to attempt to isolate the useful ones, but this eventually left both
+units off. It turned out that we had the wires between the radio and CD
+reversed. The radio was powering on fine, but the CD is powered by the radio.
+Pins 1 and 9 were both positive 12VDC, so we didn't notice the wires were
+reversed. Ground was wired incorrectly, but we inadvertently grounded the CD
+through it's metal chassis by stacking the radio on top of it. The actual wiring
+order was:
+
+TODO: wiring order
 
 ## Listening to the signal
 
+Once we could consistently turn things on, and play CDs, we wanted to listen in
+on the data wire. Our Arduinos could only handle 3.3V, but the multimeter showed
+10V+ coming out of the data wire. We attempted to use a voltage divider, but
+that resulted in the "ERR" display again. I'd like to understand why this didn't
+work, but we moved on to building an MBus circuit which splits the single wire
+into separate transmit and receive wires and steps down the voltage.
+
+TODO: image of circuit + breadboard
+
 ## Decoding the signal
+
+Once the circuit was connected to the data wire, we wrote some code to print out
+when the voltage was pulled high and low. When neither devices are talking, the
+wire defaults to high voltage. Bits are represented by the length of time the
+signal is pulled to ground.
+
 
 ## Simulating the signal
 
