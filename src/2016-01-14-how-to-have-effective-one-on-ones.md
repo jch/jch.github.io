@@ -1,60 +1,27 @@
 # How to have an effective one on one
 
 I have half hour weekly one on one meetings with my manager, Dave. We usually
-talk about work, life, and career goals. It gives us a time to pause and reflect
-on everything at a high level. Before we had started these, it felt
-uncomfortable to give feedback to one another without feeling like someone was
-in trouble. Having regular and short meetings makes it easy to highlight
-achievements before we forget them, and also to bring up concerns before they
-grow.
+talk about work, life, and career goals. It is our time to pause and reflect on
+these things at a high level. Before these meetings, it felt uncomfortable to
+give feedback to each another without implying something was wrong. Having
+regular and short meetings allows us to highlight achievements before we forget
+them, and also to bring up small concerns before they grow.
 
-Although we meeting regularly, this doesn't mean we take this time for granted.
-I've found that good one on one meetings follow some patterns. I'm still
-refining these, but here are a few:
+Although we meet regularly, we don't take this time for granted. Good one on one
+meetings follow some patterns. I'm still refining these, but here are a few:
 
 ## Write an agenda
 
-I spend roughly 15 minutes preparing a bulleted list agenda for what I want to
-talk about the night before the meeting. The list gives Dave a preview of what's
-on my mind, and a chance to gather relevant information before our meeting. It's
-also useful during the meeting because it gives us an outline to make sure we
-forget anything. I usually include:
+The night before each meeting, I spend roughly 15 minutes preparing an agenda
+with bullet points of topics I want to cover. This agenda gives Dave a preview,
+and a chance to gather relevant information before our meeting. It's also useful
+during the meeting as an outline. I usually include:
 
-* review from last week's meeting (I'll talk about this later)
-* one sentence about high level accomplishments
-* team members that are doing a great job and deserve recognition
-* questions, if any
-* reminders about upcoming dates, events, personal life items
-
-Here's an example agenda from a recent meeting:
-
-* cloud: continue query scoping work, reviews, parser improvements for long term
-* orgs: mostly code reviews, on-boarding new team members, passive maintenance role, wrapping up
-* props: rick and arthur for the great work on query parsing
-* props: dave, matt, katie, rob for project organization and process
-* personal: working over the break was a good time to catch up and recharge technical chops
-* personal: following some large scale projects learning: mysql KV store, notification storage reduction, rails upgrades
-
-High level accomplishments are great for sensing if a project feels on track. I
-avoid including too many details because it's easy to get sidetracked and spend
-the whole 30 minutes talking about details that belong in another conversation.
-I summarize and highlight the big points about projects I'm working on (cloud,
-orgs), the type of work being done, and sometimes their status.
-
-One of my favorite parts of these meetings is recognizing great work from other
-team members. It's an important part of giving others incremental feedback so
-they're not in a vacuum about how they're doing until some type of annual
-performance review. I like to thank my team mates directly, but it's also good
-to have a running summary from these notes.
-
-In this example, I didn't have any questions. I find that when projects are
-running smoothly, there aren't many questions. One on ones are a good place to
-get a feel about whether many people on a team are having similar questions. But
-in those cases, the meeting isn't the best place to give an answer, a public
-discussion with the entire team works better.
-
-I save the last part of the agenda for long term things. Things I'm working on
-improving, ideas that I'd like to explore, interesting things I've read.
+* review last week's meeting
+* high level accomplishments
+* recognition for team members that are doing a great job
+* questions
+* reminders about upcoming events
 
 ## Take notes
 
