@@ -2,7 +2,7 @@
 require "open3"
 
 titles_by_href = {}
-src_files = `find #{ENV["src_dir"]} -type f | sort -r`
+src_files = `find #{ENV["src_dir"]} -type f -name '*.md' | sort -r`
 post_list_items = []
 src_files.each_line do |path|
   title = `head -n1 < #{path}`.gsub(/^[\s#]+/, "").chomp
