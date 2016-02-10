@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
+<a id="user-content-how-to-sort-github-notifications-in-gmail" class="anchor" href="#how-to-sort-github-notifications-in-gmail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to sort GitHub notifications in Gmail</h1>
+
+<p>Too many GitHub notifications in Gmail? This post gives an example of how to use
+<a href="https://developers.google.com/apps-script/">Google app script</a> to automatically
+add labels like "Direct mention" and "Participating" to threads you care about.</p>
+
+<h2>
+<a id="user-content-the-script" class="anchor" href="#the-script" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The script</h2>
+
+<p>My script builds upon Lyzi Diamond's post <a href="http://lyzidiamond.com/posts/github-notifications-google-script/">"Manage GitHub notification messages
+in Gmail with Google Apps
+Scripts"</a>.</p>
+
+<p>The full API reference for Gmail is available at
+<a href="https://developers.google.com/apps-script/reference/gmail/">https://developers.google.com/apps-script/reference/gmail/</a>.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// Main function</span>
+<span class="pl-k">function</span> <span class="pl-en">processInbox</span>() {
+  <span class="pl-k">var</span> unreadThreadCount <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getInboxUnreadCount</span>();
+  <span class="pl-k">if</span> (unreadThreadCount <span class="pl-k">==</span> <span class="pl-c1">0</span>) { <span class="pl-k">return</span> <span class="pl-c1">null</span>; }
+
+  <span class="pl-k">var</span> threads <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getInboxThreads</span>(<span class="pl-c1">0</span>, unreadThreadCount);
+  <span class="pl-k">for</span> (<span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> <span class="pl-smi">threads</span>.<span class="pl-c1">length</span>; i<span class="pl-k">++</span>) {
+    <span class="pl-k">var</span> thread <span class="pl-k">=</span> threads[i];
+    <span class="pl-k">var</span> messages <span class="pl-k">=</span> <span class="pl-smi">thread</span>.<span class="pl-en">getMessages</span>();
+
+    <span class="pl-k">if</span> ((messages[<span class="pl-c1">0</span>].<span class="pl-en">getFrom</span>()).<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>notifications@github.com<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
+      <span class="pl-smi">thread</span>.<span class="pl-en">moveToArchive</span>();
+
+      <span class="pl-c">// Iterate through newest messages, returning a GmailThread if a label was added to the thread.</span>
+      <span class="pl-c">// Only one label will be added, and they are listed in priority below.</span>
+      <span class="pl-k">var</span> start <span class="pl-k">=</span> <span class="pl-smi">Math</span>.<span class="pl-c1">max</span>(<span class="pl-c1">0</span>, <span class="pl-smi">messages</span>.<span class="pl-c1">length</span> <span class="pl-k">-</span> <span class="pl-c1">1</span>);
+      <span class="pl-k">var</span> label;
+      <span class="pl-k">for</span> (<span class="pl-k">var</span> j <span class="pl-k">=</span> start; j <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>; j<span class="pl-k">--</span>) {
+        <span class="pl-k">var</span> message <span class="pl-k">=</span> messages[j];
+        <span class="pl-k">var</span> body <span class="pl-k">=</span> <span class="pl-smi">message</span>.<span class="pl-en">getRawContent</span>();
+        <span class="pl-k">if</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: mention<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
+          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Direct mention<span class="pl-pds">"</span></span>));
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> ((<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: author<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) <span class="pl-k">||</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: comment<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>)) {
+          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Participating<span class="pl-pds">"</span></span>));
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: team_mention<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
+          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Team mention<span class="pl-pds">"</span></span>));
+        } <span class="pl-k">else</span> {
+          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Notification<span class="pl-pds">"</span></span>));
+        }
+      }
+    }
+  }
+}</pre></div>
+
+<h2>
+<a id="user-content-changes" class="anchor" href="#changes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changes</h2>
+
+<p><strong>Exit early when there are no threads to process</strong></p>
+
+<p>This fixes timeout and resource exhaustion errors. Google has limits on how much
+resources a script can take per run.</p>
+
+<p><strong>Apply label by priority</strong></p>
+
+<p>Rather than matching every GitHub header, this script applies the most important
+label to a thread. I check my messages in this order:</p>
+
+<ul>
+<li>Direct Mention</li>
+<li>Partcipating</li>
+<li>Team mention</li>
+<li>Notification</li>
+</ul>
+
+<p>This script assumes "Direct Mention", "Participating", "Team mention", and
+"Notification" labels exist. <a href="https://developers.google.com/apps-script/reference/gmail/gmail-app#createLabel(String)">Labels can be created
+programmatically</a>,
+but I decided it was not worthwhile for such a simple script.</p>
+
+<p><strong>Process newest messages first</strong></p>
+
+<p>By processing newest messages first, threads will always have the highest
+priority label applied. This is also good for performance because the script
+stops processing a thread as soon as we label one of it's messages.</p>
+
+<p><strong>Archive notification emails only</strong></p>
+
+<p>Other GitHub emails should still pass through.</p>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>
