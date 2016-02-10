@@ -1,23 +1,18 @@
 # How to sort GitHub notifications in Gmail
 
-[Google app script](https://developers.google.com/apps-script/) can filter
-GitHub notifications in Gmail. My script is based on Lyzi Diamond's post
-["Manage GitHub notification messages in Gmail with Google Apps
-Scripts"](http://lyzidiamond.com/posts/github-notifications-google-script/), but
-with the following changes:
+Too many GitHub notifications in Gmail? This post gives an example of how to use
+[Google app script](https://developers.google.com/apps-script/) to automatically
+add labels like "Direct mention" and "Participating" to threads you care about.
 
-* Exits early when there are no threads to process. This prevents timeouts.
-* Processes newest messages first. Again, prevents timeouts and errors.
-* Applies label by priority (Direct Mention > Participating > Team mention > Notification).
-* Only archive notification emails, not all emails from github.com.
+## The script
 
-This script assumes "Direct Mention", "Participating", "Team mention", and
-"Notification" labels exist. [Labels can be created
-programmatically][createLabel], but I decided it was not worthwhile for such a
-simple script.
+My script builds upon Lyzi Diamond's post ["Manage GitHub notification messages
+in Gmail with Google Apps
+Scripts"](http://lyzidiamond.com/posts/github-notifications-google-script/).
 
 The full API reference for Gmail is available at
 https://developers.google.com/apps-script/reference/gmail/.
+
 
 ```javascript
 // Main function
@@ -55,4 +50,34 @@ function processInbox() {
 }
 ```
 
-[createLabel]: https://developers.google.com/apps-script/reference/gmail/gmail-app#createLabel(String)
+## Changes
+
+**Exit early when there are no threads to process**
+
+This fixes timeout and resource exhaustion errors. Google has limits on how much
+resources a script can take per run.
+
+**Apply label by priority**
+
+Rather than matching every GitHub header, this script applies the most important
+label to a thread. I check my messages in this order:
+
+* Direct Mention
+* Partcipating
+* Team mention
+* Notification
+
+This script assumes "Direct Mention", "Participating", "Team mention", and
+"Notification" labels exist. [Labels can be created
+programmatically](https://developers.google.com/apps-script/reference/gmail/gmail-app#createLabel(String)),
+but I decided it was not worthwhile for such a simple script.
+
+**Process newest messages first**
+
+By processing newest messages first, threads will always have the highest
+priority label applied. This is also good for performance because the script
+stops processing a thread as soon as we label one of it's messages.
+
+**Archive notification emails only**
+
+Other GitHub emails should still pass through.
