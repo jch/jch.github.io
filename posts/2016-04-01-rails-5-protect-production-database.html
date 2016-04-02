@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <h1>
+<a id="user-content-rails-5-production-database-protection" class="anchor" href="#rails-5-production-database-protection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Rails 5 Production Database Protection</h1>
+
+<p>Rails 5 <a href="https://github.com/rails/rails/pull/22967">prevents bad things™</a> from happening to production databases:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ RAILS_ENV=production rake db:drop
+rake aborted<span class="pl-k">!</span>
+ActiveRecord::ProtectedEnvironmentError: You are attempting to run a destructive action against your <span class="pl-s"><span class="pl-pds">'</span>production<span class="pl-pds">'</span></span> database
+If you are sure you want to <span class="pl-k">continue</span>, run the same <span class="pl-c1">command</span> with the environment variable
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1</pre></div>
+
+<p>For older versions of Rails, I add the following to <code>lib/tasks/db.rake</code>:</p>
+
+<div class="highlight highlight-source-ruby"><pre>namespace <span class="pl-c1">:db</span> <span class="pl-k">do</span>
+  desc <span class="pl-s"><span class="pl-pds">'</span>Protect against running task in production<span class="pl-pds">'</span></span>
+  task <span class="pl-c1">:protect</span> <span class="pl-k">do</span>
+    fail <span class="pl-s"><span class="pl-pds">'</span>Refusing to run in production environment<span class="pl-pds">'</span></span> <span class="pl-k">if</span> <span class="pl-c1">Rails</span>.env <span class="pl-k">==</span> <span class="pl-s"><span class="pl-pds">'</span>production<span class="pl-pds">'</span></span>
+  <span class="pl-k">end</span>
+
+  task <span class="pl-c1">:drop</span> =&gt; <span class="pl-c1">:protect</span>
+  task <span class="pl-s"><span class="pl-pds">'</span>schema:load<span class="pl-pds">'</span></span> =&gt; <span class="pl-c1">:protect</span>
+<span class="pl-k">end</span></pre></div>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>
