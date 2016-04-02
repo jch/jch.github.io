@@ -37,6 +37,11 @@ ActiveRecord::ProtectedEnvironmentError: You are attempting to run a destructive
 If you are sure you want to <span class="pl-k">continue</span>, run the same <span class="pl-c1">command</span> with the environment variable
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1</pre></div>
 
+<p>Protected environments are configurable:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/application.rb</span>
+<span class="pl-c1">ActiveRecord</span>::<span class="pl-c1">Base</span>.protected_environments <span class="pl-k">&lt;&lt;</span> <span class="pl-s"><span class="pl-pds">'</span>staging<span class="pl-pds">'</span></span></pre></div>
+
 <p>For older versions of Rails, I add the following to <code>lib/tasks/db.rake</code>:</p>
 
 <div class="highlight highlight-source-ruby"><pre>namespace <span class="pl-c1">:db</span> <span class="pl-k">do</span>

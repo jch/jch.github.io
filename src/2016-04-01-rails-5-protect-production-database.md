@@ -10,6 +10,13 @@ If you are sure you want to continue, run the same command with the environment 
 DISABLE_DATABASE_ENVIRONMENT_CHECK=1
 ```
 
+Protected environments are configurable:
+
+```ruby
+# config/application.rb
+ActiveRecord::Base.protected_environments << 'staging'
+```
+
 For older versions of Rails, I add the following to `lib/tasks/db.rake`:
 
 ```ruby
