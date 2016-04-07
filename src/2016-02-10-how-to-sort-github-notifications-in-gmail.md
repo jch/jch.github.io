@@ -81,3 +81,71 @@ stops processing a thread as soon as we label one of it's messages.
 **Archive notification emails only**
 
 Other GitHub emails should still pass through.
+
+## 2016-04-7 Update
+
+The latest version does even less processing to reduce time outs.
+
+```javascript
+// Modified from http://lyzidiamond.com/posts/github-notifications-google-script/
+
+// Assumes incoming threads from notifications@github.com are labeled with `unprocessed`.
+
+function perf(start) {
+  Logger.log("Execution time: " + (Date.now() - start) + " ms");
+}
+
+function processInbox() {
+  var startTime = Date.now();
+  var directMentionRegexp = /@jch\b/;
+  var teamRegexp = /@github\/(cloud|tests)\b/;
+
+  var unprocessedLabel = GmailApp.getUserLabelByName('unprocessed');
+  var directMentionLabel = GmailApp.getUserLabelByName('Direct Mention');
+  var teamMentionLabel = GmailApp.getUserLabelByName('Team mention');
+  var notificationLabel = GmailApp.getUserLabelByName("Notification");
+
+  var threads = GmailApp.search('label:unprocessed');
+
+  Logger.log("Processing " + threads.length + " threads");
+
+  for (var i = 0; i < threads.length; i++) {
+    // Remove the `unprocessed` label, it'll be re-labeled again if a new message comes in
+    var thread = threads[i];
+    thread.removeLabel(unprocessedLabel);
+
+    // Thread is already labeled, no need to process further
+    var labels = thread.getLabels();
+    if (labels.includes(directMentionLabel) || labels.includes(teamMentionLabel)) {
+      continue;
+    }
+
+    // Iterate through newest messages, exiting if a label was added to the thread.
+    // Only one label will be added, and they are listed in priority below.
+    var messages = thread.getMessages();
+    var start = Math.max(0, messages.length - 1);
+    var label;
+    for (var j = start; j > -1; j--) {
+      var message = messages[j];
+
+      if (!message.isUnread()) {
+        break; // remaining messages have been processed before
+      }
+
+      var body = message.getPlainBody();
+      if (directMentionRegexp.test(body)) {
+        thread.addLabel(directMentionLabel);
+        break;
+      } else if (teamRegexp.test(body)) {
+        thread.addLabel(teamMentionLabel);
+        break;
+      } else {
+        thread.addLabel(notificationLabel);
+      }
+    }
+    perf(startTime);
+  }
+
+  perf(startTime);
+}
+```
