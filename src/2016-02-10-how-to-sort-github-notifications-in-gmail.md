@@ -98,7 +98,7 @@ function perf(start) {
 function processInbox() {
   var startTime = Date.now();
   var directMentionRegexp = /@jch\b/;
-  var teamRegexp = /@github\/(cloud|tests)\b/;
+  var teamRegexp = /@github\/(github|tests|other-teams)\b/;
 
   var unprocessedLabel = GmailApp.getUserLabelByName('unprocessed');
   var directMentionLabel = GmailApp.getUserLabelByName('Direct Mention');

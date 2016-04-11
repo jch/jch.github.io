@@ -128,7 +128,7 @@ stops processing a thread as soon as we label one of it's messages.</p>
 <span class="pl-k">function</span> <span class="pl-en">processInbox</span>() {
   <span class="pl-k">var</span> startTime <span class="pl-k">=</span> <span class="pl-c1">Date</span>.<span class="pl-en">now</span>();
   <span class="pl-k">var</span> directMentionRegexp <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span>@jch<span class="pl-k">\b</span><span class="pl-pds">/</span></span>;
-  <span class="pl-k">var</span> teamRegexp <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span>@github<span class="pl-cce">\/</span>(cloud<span class="pl-k">|</span>tests)<span class="pl-k">\b</span><span class="pl-pds">/</span></span>;
+  <span class="pl-k">var</span> teamRegexp <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span>@github<span class="pl-cce">\/</span>(github<span class="pl-k">|</span>tests<span class="pl-k">|</span>other-teams)<span class="pl-k">\b</span><span class="pl-pds">/</span></span>;
 
   <span class="pl-k">var</span> unprocessedLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">'</span>unprocessed<span class="pl-pds">'</span></span>);
   <span class="pl-k">var</span> directMentionLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">'</span>Direct Mention<span class="pl-pds">'</span></span>);
