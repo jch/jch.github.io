@@ -20,6 +20,7 @@ verbose=
 src_dir='src'
 output_dir='posts'
 root_dir='.'
+PATH=$PATH:./jsg/bin
 
 function log() {
   local long=$1

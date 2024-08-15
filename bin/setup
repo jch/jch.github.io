@@ -16,3 +16,8 @@ if ! grep 'v4.' "$root_path/bootstrap/css/bootstrap.css" ; then
   curl -L -s "https://github.com/twbs/bootstrap/archive/$bootstrap_branch.zip" \
     | tar -xzvf- --strip-components 2 --exclude='docs' -C "$root_path/bootstrap" '*/dist'
 fi
+
+if ! command -v jsg >/dev/null 2>&1; then
+  echo "jsg not found, installing..."
+  git clone https://github.com/jch/jsg.git "$root_path/jsg"
+fi
