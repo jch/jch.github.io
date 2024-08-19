@@ -4,13 +4,15 @@ cat <<PROJECTS | jsg_layout layout.html > $root_dir/projects/index.html
 <h1>Projects</h1>
 
 <p>These are projects I've started or contributed to. My GitHub profile is
-https://github.com/jch.</p>
+<a href="https://github.com/jch">jch</a>.</p>
 
 <dl>
-  <dt><a href="https://github.com/jch/html-pipeline">html-pipeline</a></dt>
-  <dd>HTML processing filters and utilities</dd>
+  <dt><a href="https://jch.app">jch.app</a></dt>
+  <dd>Networth and investment tracker</dd>
   <dt><a href="https://github.com/jch/personal-finance">personal-finance</a></dt>
   <dd>Guide and notes for personal finance</dd>
+  <dt><a href="https://github.com/jch/html-pipeline">html-pipeline</a></dt>
+  <dd>HTML processing filters and utilities</dd>
   <dt><a href="https://github.com/jch/dotfiles">dotfiles</a></dt>
   <dd>Development environment configs</dd>
   <dt><a href="https://github.com/jch/styleguide">styleguide</a></dt>
