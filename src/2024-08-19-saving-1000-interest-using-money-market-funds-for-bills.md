@@ -31,6 +31,7 @@ but my understanding is they're federal and state taxable, which would hit us
 with a ~22% and ~8% tax bill respectively; Eating away $300 a year in interest.
 There are state specific municipal bond funds that are federal and state tax
 exempt, but current yields net tax savings are below our marginal tax brackets.
+[TurboTax has a checkbox to enter this information](https://www.mymoneyblog.com/turbotax-us-treasury-interest-mutual-fund-state-exempt.html).
 
 We're not holding additional cash to take advantage of higher yields because we
 are sticking with our investing strategy, but it's a nice bonus / inflation
