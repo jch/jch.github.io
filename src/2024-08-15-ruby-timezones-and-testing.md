@@ -60,6 +60,17 @@ Date.stubs(:current).returns(Date.parse("2024-01-01"))
 Other methods have dates parameterized for testing. Since I'm not using any of
 timecop's travel functionality, I decided to remove the dependency.
 
+**Edit: 2024-08-28** Rails has [ActiveSupport::Testing::TimeHelpers](https://api.rubyonrails.org/v7.2.1/classes/ActiveSupport/Testing/TimeHelpers.html#method-i-travel_to) to do this without a dependency:
+
+```ruby
+travel 1.day
+travel_do Date.parse('2024-08-28') { ... }
+freeze_time {... }
+freeze_time
+# ...
+unfreeze_time
+```
+
 ## Resources
 
 - [Thoughtbot: It's about timezones](https://thoughtbot.com/blog/its-about-time-zones)

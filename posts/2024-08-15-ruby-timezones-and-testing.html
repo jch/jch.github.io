@@ -74,6 +74,13 @@ with using ActiveSupport's TimeWithZone and Date extensions.</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">stubs</span><span class="pl-kos">(</span><span class="pl-pds">:current</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">returns</span><span class="pl-kos">(</span><span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">parse</span><span class="pl-kos">(</span><span class="pl-s">"2024-01-01"</span><span class="pl-kos">)</span><span class="pl-kos">)</span></pre></div>
 <p>Other methods have dates parameterized for testing. Since I'm not using any of
 timecop's travel functionality, I decided to remove the dependency.</p>
+<p><strong>Edit: 2024-08-28</strong> Rails has <a href="https://api.rubyonrails.org/v7.2.1/classes/ActiveSupport/Testing/TimeHelpers.html#method-i-travel_to" rel="nofollow">ActiveSupport::Testing::TimeHelpers</a> to do this without a dependency:</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">travel</span> <span class="pl-c1">1</span><span class="pl-kos">.</span><span class="pl-en">day</span>
+<span class="pl-en">travel_do</span> <span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">parse</span><span class="pl-kos">(</span><span class="pl-s">'2024-08-28'</span><span class="pl-kos">)</span> <span class="pl-kos">{</span> ... <span class="pl-kos">}</span>
+<span class="pl-en">freeze_time</span> <span class="pl-kos">{</span>... <span class="pl-kos">}</span>
+<span class="pl-en">freeze_time</span>
+<span class="pl-c"># ...</span>
+<span class="pl-en">unfreeze_time</span></pre></div>
 <div class="markdown-heading"><h2 class="heading-element">Resources</h2><a id="user-content-resources" class="anchor" aria-label="Permalink: Resources" href="#resources"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li><a href="https://thoughtbot.com/blog/its-about-time-zones" rel="nofollow">Thoughtbot: It's about timezones</a></li>
@@ -82,7 +89,7 @@ timecop's travel functionality, I decided to remove the dependency.</p>
     </div>
 
     <!-- jQuery first, then Bootstrap JS. -->
-    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>
