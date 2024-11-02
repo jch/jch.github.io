@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
+    where possible so content is style agnostic -->
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <div class="container" role="banner">
+      <header>
+        <a href="/" class="home">Jerry Cheung</a>
+        <nav class="nav nav-inline pull-xs-right">
+          <a class="nav-link" href="/projects">Projects</a>
+          <a class="nav-link" href="/about">About</a>
+        </nav>
+      </header>
+
+      <div class="markdown-heading"><h1 class="heading-element">HTML Currency Input</h1><a id="user-content-html-currency-input" class="anchor" aria-label="Permalink: HTML Currency Input" href="#html-currency-input"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>It would be nice to have a browser-native locale aware currency input element:</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>=<span class="pl-s">“currency”</span> /&gt;
+<span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">text</span>" <span class="pl-c1">inputmode</span>="<span class="pl-s">currency” /&gt;</span>
+<span class="pl-s"></span></pre></div>
+<p>This element would render the amount using the user’s locale  ($1,234 or 1.234 €) while keeping a machine friendly number value when the form is submitted.</p>
+<p>Are all the necessary pieces in place for a first class element? Maybe?</p>
+<ul>
+<li>navigator.language is widely available for locale information</li>
+<li>ISO 4217 defines currency codes by locale</li>
+<li>
+<code>Intl.NumberFormat</code> and <code>Number.prototype.toLocaleString</code> can format numbers as locale-aware currencies</li>
+<li>Web components can extend existing <code>HTMLInputElement</code>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Cursor position is tricky</h2><a id="user-content-cursor-position-is-tricky" class="anchor" aria-label="Permalink: Cursor position is tricky" href="#cursor-position-is-tricky"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>When a user edits currency, I expect locale specific separators (e.g. , or .) to be added. But this also causes the cursor to jump when the separator is added. This already happens for some customized elements for phone numbers or credit cards. Replacing the input’s value on change puts the cursor at the end of the input, while using setRangeText gives more control over where the cursor lands. Attempts to solve this programmatically with arithmetic on <code>input.selectionStart</code> and <code>input.selectionEnd</code> are brittle.</p>
+<div class="markdown-heading"><h2 class="heading-element">Workaround</h2><a id="user-content-workaround" class="anchor" aria-label="Permalink: Workaround" href="#workaround"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Similar to the approach detailed in the notes, I format as a currency when an input loses focus, and switch back to the raw value when the input is being edited. The increased complexity of maintaining cursor position was not worth the improvement in user experience.</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/currency-input.gif"><img src="/images/currency-input.gif" width="220" height="480" style="max-width: 100%;"></a></p>
+<p>I think the separation of the numeric value for form submission from visual presentation is here. Trying to maintain the state of both through input.value isn’t sufficient. When inspecting the dom on an input element, you can see that it already uses user agent shadow content for showing the value.</p>
+<div class="markdown-heading"><h2 class="heading-element">Code</h2><a id="user-content-code" class="anchor" aria-label="Permalink: Code" href="#code"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I implemented this as a stimulus controller in <a href="https://jch.app" rel="nofollow">https://jch.app</a>, but here is an example without dependencies.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Try entering some long and short numbers...<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">class</span>="<span class="pl-s">currency</span>" <span class="pl-c1">inputmode</span>="<span class="pl-s">decimal</span>" <span class="pl-c1">type</span>="<span class="pl-s">text</span>" <span class="pl-c1">value</span>="<span class="pl-s">1234.56</span>" <span class="pl-c1">style</span>="<span class="pl-s">padding: 0.5em; font-size: 1.2em</span>"<span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span></pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">&lt;</span><span class="pl-ent">script</span> <span class="pl-c1">id</span><span class="pl-c1">=</span><span class="pl-s">"currencyJs"</span> <span class="pl-c1">type</span><span class="pl-c1">=</span><span class="pl-s">"module"</span><span class="pl-c1">&gt;</span>
+  const iso_4217 = <span class="pl-kos">{</span>
+    <span class="pl-s">'en-US'</span>: <span class="pl-s">'USD'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'en-GB'</span>: <span class="pl-s">'GBP'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'de-DE'</span>: <span class="pl-s">'EUR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'fr-FR'</span>: <span class="pl-s">'EUR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'es-ES'</span>: <span class="pl-s">'EUR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'it-IT'</span>: <span class="pl-s">'EUR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'ja-JP'</span>: <span class="pl-s">'JPY'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'zh-CN'</span>: <span class="pl-s">'CNY'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'ko-KR'</span>: <span class="pl-s">'KRW'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'ru-RU'</span>: <span class="pl-s">'RUB'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'ar-SA'</span>: <span class="pl-s">'SAR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'hi-IN'</span>: <span class="pl-s">'INR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'pt-BR'</span>: <span class="pl-s">'BRL'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'tr-TR'</span>: <span class="pl-s">'TRY'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'nl-NL'</span>: <span class="pl-s">'EUR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'pl-PL'</span>: <span class="pl-s">'PLN'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'th-TH'</span>: <span class="pl-s">'THB'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'vi-VN'</span>: <span class="pl-s">'VND'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'id-ID'</span>: <span class="pl-s">'IDR'</span><span class="pl-kos">,</span>
+    <span class="pl-s">'ms-MY'</span>: <span class="pl-s">'MYR'</span><span class="pl-kos">,</span>
+  <span class="pl-kos">}</span>;
+
+  const CurrencyInput = class <span class="pl-kos">{</span>
+    <span class="pl-en">constructor</span><span class="pl-kos">(</span><span class="pl-s1">element</span><span class="pl-kos">)</span><span class="pl-kos"></span> <span class="pl-kos">{</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span> <span class="pl-c1">=</span> <span class="pl-s1">element</span><span class="pl-kos">;</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">locale</span> <span class="pl-c1">=</span> <span class="pl-s1">navigator</span><span class="pl-kos">.</span><span class="pl-c1">language</span> <span class="pl-c1">||</span> <span class="pl-s1">navigator</span><span class="pl-kos">.</span><span class="pl-c1">userLanguage</span> <span class="pl-c1">||</span> <span class="pl-s">'en-US'</span><span class="pl-kos">;</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-en">addEventListener</span><span class="pl-kos">(</span><span class="pl-s">'blur'</span><span class="pl-kos">,</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">format</span><span class="pl-kos">.</span><span class="pl-en">bind</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-en">addEventListener</span><span class="pl-kos">(</span><span class="pl-s">'focus'</span><span class="pl-kos">,</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">unformat</span><span class="pl-kos">.</span><span class="pl-en">bind</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-en">format</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-kos">}</span>
+
+    get formatter() <span class="pl-kos">{</span>
+      <span class="pl-s1">return</span> <span class="pl-k">new</span> <span class="pl-v">Intl</span><span class="pl-kos">.</span><span class="pl-c1">NumberFormat</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">locale</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+        <span class="pl-c1">style</span>: <span class="pl-s">"currency"</span><span class="pl-kos">,</span>
+        <span class="pl-c1">currency</span>: <span class="pl-s1">iso_4217</span><span class="pl-kos">[</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">locale</span><span class="pl-kos">]</span> <span class="pl-c1">||</span> <span class="pl-s">'USD'</span><span class="pl-kos">,</span>
+      <span class="pl-kos">}</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-kos">}</span>
+
+    format() <span class="pl-kos">{</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">raw</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-en">value</span><span class="pl-kos">;</span>
+
+      <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-c1">!</span><span class="pl-en">isNaN</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos"></span> <span class="pl-kos">{</span>
+        <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">formatter</span><span class="pl-kos">.</span><span class="pl-en">format</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-kos">}</span>
+    <span class="pl-kos">}</span>
+
+    <span class="pl-s1">unformat</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">raw</span><span class="pl-kos">;</span>
+    <span class="pl-kos">}</span>
+  <span class="pl-kos">}</span><span class="pl-kos">;</span>
+
+  <span class="pl-k">new</span> <span class="pl-v">CurrencyInput</span><span class="pl-kos">(</span><span class="pl-smi">document</span><span class="pl-kos">.</span><span class="pl-s1">querySelector</span><span class="pl-kos">(</span>'<span class="pl-kos">.</span><span class="pl-s1">currency</span>'<span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-c1">&lt;</span><span class="pl-c1">/</span><span class="pl-ent">script</span><span class="pl-c1">&gt;</span></pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Notes</h2><a id="user-content-notes" class="anchor" aria-label="Permalink: Notes" href="#notes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<a href="https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-textarea/input-selection" rel="nofollow">https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-textarea/input-selection</a> cursor position on input update</li>
+<li>Why not use a number input type? <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#using_number_inputs" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#using_number_inputs</a>
+</li>
+<li>Format onblur, use real value when editing: <a href="https://levelup.gitconnected.com/creating-a-localized-currency-input-in-react-without-libraries-or-bugs-2f186124aedc?gi=b8408a661baa" rel="nofollow">https://levelup.gitconnected.com/creating-a-localized-currency-input-in-react-without-libraries-or-bugs-2f186124aedc?gi=b8408a661baa</a>
+</li>
+<li>Cursor position arithmetic, too complex to maintain: <a href="https://stackoverflow.com/a/39279790" rel="nofollow">https://stackoverflow.com/a/39279790</a>
+</li>
+<li>
+<a href="https://github.com/toarm/number-format?tab=readme-ov-file">https://github.com/toarm/number-format?tab=readme-ov-file</a> web component for display, but not an extension on input</li>
+<li>
+<a href="https://github.com/IngressoRapidoWebComponents/money-input?tab=readme-ov-file">https://github.com/IngressoRapidoWebComponents/money-input?tab=readme-ov-file</a> web component on input, has cursor position issue</li>
+<li><a href="https://devtoolstips.org/tips/en/inspect-user-agent-dom/" rel="nofollow">https://devtoolstips.org/tips/en/inspect-user-agent-dom/</a></li>
+</ul>
+    </div>
+
+    <!-- jQuery first, then Bootstrap JS. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  </body>
+</html>
