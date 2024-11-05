@@ -1,29 +1,20 @@
 #!/bin/bash
 
-cat <<PROJECTS | jsg_layout layout.html > $root_dir/projects/index.html
-<h1>Projects</h1>
+cat <<PROJECTS | jsg -l layout.html > $root_dir/projects/index.html
+# Projects
 
-<p>These are projects I've started or contributed to. My GitHub profile is
-<a href="https://github.com/jch">jch</a>.</p>
+These are projects I've started or contributed to. My GitHub profile is
+[jch](https://github.com/jch).
 
-<dl>
-  <dt><a href="https://jch.app">jch.app</a></dt>
-  <dd>Networth and investment tracker</dd>
-  <dt><a href="https://github.com/jch/personal-finance">personal-finance</a></dt>
-  <dd>Guide and notes for personal finance</dd>
-  <dt><a href="https://github.com/jch/html-pipeline">html-pipeline</a></dt>
-  <dd>HTML processing filters and utilities</dd>
-  <dt><a href="https://github.com/jch/dotfiles">dotfiles</a></dt>
-  <dd>Development environment configs</dd>
-  <dt><a href="https://github.com/jch/styleguide">styleguide</a></dt>
-  <dd>Only for Ruby and Rails now</dd>
-  <dt><a href="https://github.com/jch/saml">saml</a></dt>
-  <dd>SAML tutorial for web developers</dd>
-  <dt><a href="https://github.com/ruby-ldap/ruby-net-ldap">Net::LDAP</a></dt>
-  <dd>Pure Ruby LDAP library</dd>
-  <dt><a href="https://github.com/jch/em-irc">em-irc</a></dt>
-  <dd>IRC client that uses EventMachine to handle connections to servers</dd>
-  <dt><a href="https://github.com/ruby-grape/grape">grape</a></dt>
-  <dd>An opinionated micro-framework for creating REST-like APIs in Ruby</dd>
-</dl>
+* [jch.app](https://jch.app) - Networth and investment tracker
+* [personal-finance](https://github.com/jch/personal-finance) - Guide and notes for personal finance
+* [html-pipeline](https://github.com/jch/html-pipeline) - HTML processing filters and utilities
+* [dotfiles](https://github.com/jch/dotfiles) - Development environment configs
+* [styleguide](https://github.com/jch/styleguide) - Only for Ruby and Rails now
+* [saml](https://github.com/jch/saml) - SAML tutorial for web developers
+* [Net::LDAP](https://github.com/ruby-ldap/ruby-net-ldap) - Pure Ruby LDAP library
+* [em-irc](https://github.com/jch/em-irc) - IRC client that uses EventMachine to handle connections to servers
+* [grape](https://github.com/ruby-grape/grape) - An opinionated micro-framework for creating REST-like APIs in Ruby
+
+
 PROJECTS
