@@ -2,12 +2,21 @@
 cat <<HOME | jsg -l layout.html > $root_dir/about/index.html
 # About
 
-I'm a backend engineer at GitHub. I graduated from the University of California,
-Berkeley with a degree in computer science. Outside of technology, I enjoy cars,
-being outdoors, and hanging out with my family.
+Hi! I'm Jerry Cheung.
 
-This site is a dumping ground for projects and blog posts. It has gone full
-circle from a [collection of shell scripts](https://github.com/jch/flacoblog) to
+* I'm a dad.
+* I write software for fun.
+* I like helping people with their personal finances.
+* I joined GitHub and Coupa early on.
+* I graduated from UC Berkeley in computer science. 61A was taught in Scheme. [Midterm 1](/files/cs61A-sp2005-mt1-Harvey-exam.pdf)
+* I like cars, and [used to write about them](http://rockyroadblog.com). Currently:
+  * 1989 Honda CRX
+  * 1990 Buick Reatta
+  * 2014 Mazda 6
+  * 2022 Jeep Wrangler
+
+This site has gone full circle from a
+[collection of shell scripts](https://github.com/jch/flacoblog) to
 a [full Rails app](https://github.com/jch/whatcodecraves.com), and back to it's
 current form of a [collection of shell scripts](https://github.com/jch/jsg).
 
