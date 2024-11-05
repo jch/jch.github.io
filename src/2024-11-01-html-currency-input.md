@@ -18,7 +18,7 @@ From the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/in
 
 > The number input type should only be used for incremental numbers, especially when spinbutton incrementing and decrementing are helpful to user experience. The number input type is not appropriate for values that happen to only consist of numbers but aren't strictly speaking a number, such as postal codes in many countries or credit card numbers.
 
-`<input type="text" inputmode="decimal />` still gives a numberic keyboard on mobile, but skips the step controls. I started with this, but ran into readability issues for bigger numbers.
+`<input type="text" inputmode="decimal />` still gives a numeric keyboard on mobile, but skips the step controls. I started with this, but ran into readability issues for bigger numbers.
 
 ## 2. Choose a common value
 
