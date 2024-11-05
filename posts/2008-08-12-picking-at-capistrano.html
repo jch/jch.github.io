@@ -1,106 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-picking-at-capistrano" class="anchor" href="#picking-at-capistrano" aria-hidden="true"><span class="octicon octicon-link"></span></a>Picking at Capistrano</h1>
-
-<p>Here is the setup I wanted with <a href="http://www.capify.org/">Capistrano</a>
-with my <a href="http://housing.whatcodecraves.com/">housing app</a>.  I wanted
+    <div class="markdown-heading"><h1 class="heading-element">Picking at Capistrano</h1><a id="user-content-picking-at-capistrano" class="anchor" aria-label="Permalink: Picking at Capistrano" href="#picking-at-capistrano"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Here is the setup I wanted with <a href="http://www.capify.org/" rel="nofollow">Capistrano</a>
+with my <a href="http://housing.whatcodecraves.com/" rel="nofollow">housing app</a>.  I wanted
 to develop locally and continue using Subversion over SSH for source
 control.  Meanwhile, Cap would run svn commands remotely with
 basic svnserve.  My first configuration looked like this:</p>
-
 <pre><code>set :repository, "file:///var/svn/#{application}/trunk"
 set :user, "myuser"
 </code></pre>
-
 <p>My reasoning was that cap would first ssh to my server, and then run</p>
-
 <pre><code>svn checkout file:///var/svn/housing/trunk /path/to/deploy
 </code></pre>
-
 <p>Since I use a private key to authenticate to my server, I wouldn't
 need to type my password to start the initial ssh connection, and cap
 wouldn't need a password to access the repository because it would
 execute commands on the remote server with "file:///"</p>
-
 <p>It turns out that SCM commands are run locally rather than remotely.
 The implication is that my ":repository" variable has to be accessible
 both locally and remotely.  With ":repository" set to "file:///" cap
 tried to determine the revision number by running 'svn info' locally.
 Of course, this failed miserably because the repository existed on the
 remote server.</p>
-
 <p>Once I figured this out, I thought it'd be a simple matter of changing
 the config to say:</p>
-
 <pre><code>set :repository, "svn+ssh://whatcodecraves.com/var/svn/#{application}/trunk"
 </code></pre>
-
 <p>Now cap will happily run svn locally because it'll work over
 "svn+ssh://".  Unfortunately, this also had a huge flaw.  When cap
 tries to run the checkout command remotely, it'll use "svn+ssh://".
 But because my private key isn't stored on the server, cap will give
 three feeble attempts before croaking:</p>
-
 <pre><code>** [208.53.44.43 :: err] Permission denied, please try again.
 ** [208.53.44.43 :: err] Permission denied, please try again.
 ** [208.53.44.43 :: err] Permission denied (publickey,password).
 ** [208.53.44.43 :: err] svn: Connection closed unexpectedly
 </code></pre>
-
 <p>What's weird about this is that I didn't ask cap to use public key
 authentication, but it didn't give me any choice in the matter!
 Crawling the internet yielded a lot of noise about poorly configured
 repositories or basic explanations about public key authentication.
-Finally, I came across <a href="http://groups.google.com/group/capistrano/browse_thread/thread/13b029f75b61c09d/3746185353022cc7?lnk=gst&amp;q=Permission+denied+(publickey%2Cpassword)#3746185353022cc7">a
+Finally, I came across <a href="http://groups.google.com/group/capistrano/browse_thread/thread/13b029f75b61c09d/3746185353022cc7?lnk=gst&amp;q=Permission+denied+(publickey%2Cpassword)#3746185353022cc7" rel="nofollow">a
 response</a>
 in Capistrano's google group.  The fix is damn short:</p>
-
 <pre><code> default_run_options[:pty] = true
 </code></pre>
-
-<p>I looked up what a <a href="http://en.wikipedia.org/wiki/Pseudo_terminal">pseudo
+<p>I looked up what a <a href="http://en.wikipedia.org/wiki/Pseudo_terminal" rel="nofollow">pseudo
 terminal</a>.  I don't
 really see why this provides a fix, but my guess is that setting pty
 to true creates a new process separate from the original ssh process.
 Running svn within this new process would default to password
 authentication after failing to use public key authentication.</p>
-
 <p>This turned out to be an amazing pain to setup.  But it did let me
 step through some of the Capistrano code and appreciate what goes on
-under the hood.  It also teaches me to search their <a href="http://groups.google.com/group/capistrano">google
+under the hood.  It also teaches me to search their <a href="http://groups.google.com/group/capistrano" rel="nofollow">google
 group</a> rather than doing a
 general web search.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

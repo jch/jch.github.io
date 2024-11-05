@@ -1,187 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-how-to-sort-github-notifications-in-gmail" class="anchor" href="#how-to-sort-github-notifications-in-gmail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to sort GitHub notifications in Gmail</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">How to sort GitHub notifications in Gmail</h1><a id="user-content-how-to-sort-github-notifications-in-gmail" class="anchor" aria-label="Permalink: How to sort GitHub notifications in Gmail" href="#how-to-sort-github-notifications-in-gmail"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Too many GitHub notifications in Gmail? This post gives an example of how to use
-<a href="https://developers.google.com/apps-script/">Google app script</a> to automatically
+<a href="https://developers.google.com/apps-script/" rel="nofollow">Google app script</a> to automatically
 add labels like "Direct mention" and "Participating" to threads you care about.</p>
-
-<h2>
-<a id="user-content-the-script" class="anchor" href="#the-script" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The script</h2>
-
-<p>My script builds upon Lyzi Diamond's post <a href="http://lyzidiamond.com/posts/github-notifications-google-script/">"Manage GitHub notification messages
+<div class="markdown-heading"><h2 class="heading-element">The script</h2><a id="user-content-the-script" class="anchor" aria-label="Permalink: The script" href="#the-script"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>My script builds upon Lyzi Diamond's post <a href="http://lyzidiamond.com/posts/github-notifications-google-script/" rel="nofollow">"Manage GitHub notification messages
 in Gmail with Google Apps
 Scripts"</a>.</p>
-
 <p>The full API reference for Gmail is available at
-<a href="https://developers.google.com/apps-script/reference/gmail/">https://developers.google.com/apps-script/reference/gmail/</a>.</p>
-
+<a href="https://developers.google.com/apps-script/reference/gmail/" rel="nofollow">https://developers.google.com/apps-script/reference/gmail/</a>.</p>
 <div class="highlight highlight-source-js"><pre><span class="pl-c">// Main function</span>
-<span class="pl-k">function</span> <span class="pl-en">processInbox</span>() {
-  <span class="pl-k">var</span> unreadThreadCount <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getInboxUnreadCount</span>();
-  <span class="pl-k">if</span> (unreadThreadCount <span class="pl-k">==</span> <span class="pl-c1">0</span>) { <span class="pl-k">return</span> <span class="pl-c1">null</span>; }
+<span class="pl-k">function</span> <span class="pl-en">processInbox</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">unreadThreadCount</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getInboxUnreadCount</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">unreadThreadCount</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span><span class="pl-kos">)</span> <span class="pl-kos">{</span> <span class="pl-k">return</span> <span class="pl-c1">null</span><span class="pl-kos">;</span> <span class="pl-kos">}</span>
 
-  <span class="pl-k">var</span> threads <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getInboxThreads</span>(<span class="pl-c1">0</span>, unreadThreadCount);
-  <span class="pl-k">for</span> (<span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> <span class="pl-smi">threads</span>.<span class="pl-c1">length</span>; i<span class="pl-k">++</span>) {
-    <span class="pl-k">var</span> thread <span class="pl-k">=</span> threads[i];
-    <span class="pl-k">var</span> messages <span class="pl-k">=</span> <span class="pl-smi">thread</span>.<span class="pl-en">getMessages</span>();
+  <span class="pl-k">var</span> <span class="pl-s1">threads</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getInboxThreads</span><span class="pl-kos">(</span><span class="pl-c1">0</span><span class="pl-kos">,</span> <span class="pl-s1">unreadThreadCount</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span><span class="pl-kos">;</span> <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-s1">threads</span><span class="pl-kos">.</span><span class="pl-c1">length</span><span class="pl-kos">;</span> <span class="pl-s1">i</span><span class="pl-c1">++</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+    <span class="pl-k">var</span> <span class="pl-s1">thread</span> <span class="pl-c1">=</span> <span class="pl-s1">threads</span><span class="pl-kos">[</span><span class="pl-s1">i</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+    <span class="pl-k">var</span> <span class="pl-s1">messages</span> <span class="pl-c1">=</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">getMessages</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
-    <span class="pl-k">if</span> ((messages[<span class="pl-c1">0</span>].<span class="pl-en">getFrom</span>()).<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>notifications@github.com<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
-      <span class="pl-smi">thread</span>.<span class="pl-en">moveToArchive</span>();
+    <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-kos">(</span><span class="pl-s1">messages</span><span class="pl-kos">[</span><span class="pl-c1">0</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">getFrom</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">indexOf</span><span class="pl-kos">(</span><span class="pl-s">"notifications@github.com"</span><span class="pl-kos">)</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">moveToArchive</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
       <span class="pl-c">// Iterate through newest messages, returning a GmailThread if a label was added to the thread.</span>
       <span class="pl-c">// Only one label will be added, and they are listed in priority below.</span>
-      <span class="pl-k">var</span> start <span class="pl-k">=</span> <span class="pl-c1">Math</span>.<span class="pl-c1">max</span>(<span class="pl-c1">0</span>, <span class="pl-smi">messages</span>.<span class="pl-c1">length</span> <span class="pl-k">-</span> <span class="pl-c1">1</span>);
-      <span class="pl-k">var</span> label;
-      <span class="pl-k">for</span> (<span class="pl-k">var</span> j <span class="pl-k">=</span> start; j <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>; j<span class="pl-k">--</span>) {
-        <span class="pl-k">var</span> message <span class="pl-k">=</span> messages[j];
-        <span class="pl-k">var</span> body <span class="pl-k">=</span> <span class="pl-smi">message</span>.<span class="pl-en">getRawContent</span>();
-        <span class="pl-k">if</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: mention<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
-          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Direct mention<span class="pl-pds">"</span></span>));
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> ((<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: author<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) <span class="pl-k">||</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: comment<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>)) {
-          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Participating<span class="pl-pds">"</span></span>));
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">body</span>.<span class="pl-c1">indexOf</span>(<span class="pl-s"><span class="pl-pds">"</span>X-GitHub-Reason: team_mention<span class="pl-pds">"</span></span>) <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>) {
-          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Team mention<span class="pl-pds">"</span></span>));
-        } <span class="pl-k">else</span> {
-          <span class="pl-k">return</span> <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(<span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Notification<span class="pl-pds">"</span></span>));
-        }
-      }
-    }
-  }
-}</pre></div>
-
-<h2>
-<a id="user-content-changes" class="anchor" href="#changes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changes</h2>
-
+      <span class="pl-k">var</span> <span class="pl-s1">start</span> <span class="pl-c1">=</span> <span class="pl-v">Math</span><span class="pl-kos">.</span><span class="pl-en">max</span><span class="pl-kos">(</span><span class="pl-c1">0</span><span class="pl-kos">,</span> <span class="pl-s1">messages</span><span class="pl-kos">.</span><span class="pl-c1">length</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-k">var</span> <span class="pl-s1">label</span><span class="pl-kos">;</span>
+      <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">j</span> <span class="pl-c1">=</span> <span class="pl-s1">start</span><span class="pl-kos">;</span> <span class="pl-s1">j</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">;</span> <span class="pl-s1">j</span><span class="pl-c1">--</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+        <span class="pl-k">var</span> <span class="pl-s1">message</span> <span class="pl-c1">=</span> <span class="pl-s1">messages</span><span class="pl-kos">[</span><span class="pl-s1">j</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+        <span class="pl-k">var</span> <span class="pl-s1">body</span> <span class="pl-c1">=</span> <span class="pl-s1">message</span><span class="pl-kos">.</span><span class="pl-en">getRawContent</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">.</span><span class="pl-en">indexOf</span><span class="pl-kos">(</span><span class="pl-s">"X-GitHub-Reason: mention"</span><span class="pl-kos">)</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+          <span class="pl-k">return</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">"Direct mention"</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-kos">}</span> <span class="pl-k">else</span> <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">.</span><span class="pl-en">indexOf</span><span class="pl-kos">(</span><span class="pl-s">"X-GitHub-Reason: author"</span><span class="pl-kos">)</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">)</span> <span class="pl-c1">||</span> <span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">.</span><span class="pl-en">indexOf</span><span class="pl-kos">(</span><span class="pl-s">"X-GitHub-Reason: comment"</span><span class="pl-kos">)</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+          <span class="pl-k">return</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">"Participating"</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-kos">}</span> <span class="pl-k">else</span> <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">.</span><span class="pl-en">indexOf</span><span class="pl-kos">(</span><span class="pl-s">"X-GitHub-Reason: team_mention"</span><span class="pl-kos">)</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+          <span class="pl-k">return</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">"Team mention"</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-kos">}</span> <span class="pl-k">else</span> <span class="pl-kos">{</span>
+          <span class="pl-k">return</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">"Notification"</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-kos">}</span>
+      <span class="pl-kos">}</span>
+    <span class="pl-kos">}</span>
+  <span class="pl-kos">}</span>
+<span class="pl-kos">}</span></pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Changes</h2><a id="user-content-changes" class="anchor" aria-label="Permalink: Changes" href="#changes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><strong>Exit early when there are no threads to process</strong></p>
-
 <p>This fixes timeout and resource exhaustion errors. Google has limits on how much
 resources a script can take per run.</p>
-
 <p><strong>Apply label by priority</strong></p>
-
 <p>Rather than matching every GitHub header, this script applies the most important
 label to a thread. I check my messages in this order:</p>
-
 <ul>
 <li>Direct Mention</li>
 <li>Partcipating</li>
 <li>Team mention</li>
 <li>Notification</li>
 </ul>
-
 <p>This script assumes "Direct Mention", "Participating", "Team mention", and
-"Notification" labels exist. <a href="https://developers.google.com/apps-script/reference/gmail/gmail-app#createLabel(String)">Labels can be created
+"Notification" labels exist. <a href="https://developers.google.com/apps-script/reference/gmail/gmail-app#createLabel(String)" rel="nofollow">Labels can be created
 programmatically</a>,
 but I decided it was not worthwhile for such a simple script.</p>
-
 <p><strong>Process newest messages first</strong></p>
-
 <p>By processing newest messages first, threads will always have the highest
 priority label applied. This is also good for performance because the script
 stops processing a thread as soon as we label one of it's messages.</p>
-
 <p><strong>Archive notification emails only</strong></p>
-
 <p>Other GitHub emails should still pass through.</p>
-
-<h2>
-<a id="user-content-2016-04-7-update" class="anchor" href="#2016-04-7-update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2016-04-7 Update</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">2016-04-7 Update</h2><a id="user-content-2016-04-7-update" class="anchor" aria-label="Permalink: 2016-04-7 Update" href="#2016-04-7-update"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The latest version does even less processing to reduce time outs.</p>
-
 <div class="highlight highlight-source-js"><pre><span class="pl-c">// Modified from http://lyzidiamond.com/posts/github-notifications-google-script/</span>
 
 <span class="pl-c">// Assumes incoming threads from notifications@github.com are labeled with `unprocessed`.</span>
 
-<span class="pl-k">function</span> <span class="pl-en">perf</span>(<span class="pl-smi">start</span>) {
-  <span class="pl-smi">Logger</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">"</span>Execution time: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> (<span class="pl-c1">Date</span>.<span class="pl-en">now</span>() <span class="pl-k">-</span> start) <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> ms<span class="pl-pds">"</span></span>);
-}
+<span class="pl-k">function</span> <span class="pl-en">perf</span><span class="pl-kos">(</span><span class="pl-s1">start</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-v">Logger</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s">"Execution time: "</span> <span class="pl-c1">+</span> <span class="pl-kos">(</span><span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">now</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-c1">-</span> <span class="pl-s1">start</span><span class="pl-kos">)</span> <span class="pl-c1">+</span> <span class="pl-s">" ms"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span>
 
-<span class="pl-k">function</span> <span class="pl-en">processInbox</span>() {
-  <span class="pl-k">var</span> startTime <span class="pl-k">=</span> <span class="pl-c1">Date</span>.<span class="pl-en">now</span>();
-  <span class="pl-k">var</span> directMentionRegexp <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span>@jch<span class="pl-k">\b</span><span class="pl-pds">/</span></span>;
-  <span class="pl-k">var</span> teamRegexp <span class="pl-k">=</span><span class="pl-sr"> <span class="pl-pds">/</span>@github<span class="pl-cce">\/</span>(github<span class="pl-k">|</span>tests<span class="pl-k">|</span>other-teams)<span class="pl-k">\b</span><span class="pl-pds">/</span></span>;
+<span class="pl-k">function</span> <span class="pl-en">processInbox</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+  <span class="pl-k">var</span> <span class="pl-s1">startTime</span> <span class="pl-c1">=</span> <span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">now</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">directMentionRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span>@jch\b<span class="pl-c1">/</span></span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">teamRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span>@github\/(github|tests|other-teams)\b<span class="pl-c1">/</span></span><span class="pl-kos">;</span>
 
-  <span class="pl-k">var</span> unprocessedLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">'</span>unprocessed<span class="pl-pds">'</span></span>);
-  <span class="pl-k">var</span> directMentionLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">'</span>Direct Mention<span class="pl-pds">'</span></span>);
-  <span class="pl-k">var</span> teamMentionLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">'</span>Team mention<span class="pl-pds">'</span></span>);
-  <span class="pl-k">var</span> notificationLabel <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-en">getUserLabelByName</span>(<span class="pl-s"><span class="pl-pds">"</span>Notification<span class="pl-pds">"</span></span>);
+  <span class="pl-k">var</span> <span class="pl-s1">unprocessedLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">'unprocessed'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">directMentionLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">'Direct Mention'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">teamMentionLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">'Team mention'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">notificationLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">"Notification"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
-  <span class="pl-k">var</span> threads <span class="pl-k">=</span> <span class="pl-smi">GmailApp</span>.<span class="pl-c1">search</span>(<span class="pl-s"><span class="pl-pds">'</span>label:unprocessed<span class="pl-pds">'</span></span>);
+  <span class="pl-k">var</span> <span class="pl-s1">threads</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">search</span><span class="pl-kos">(</span><span class="pl-s">'label:unprocessed'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
-  <span class="pl-smi">Logger</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">"</span>Processing <span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-smi">threads</span>.<span class="pl-c1">length</span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span> threads<span class="pl-pds">"</span></span>);
+  <span class="pl-v">Logger</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s">"Processing "</span> <span class="pl-c1">+</span> <span class="pl-s1">threads</span><span class="pl-kos">.</span><span class="pl-c1">length</span> <span class="pl-c1">+</span> <span class="pl-s">" threads"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
-  <span class="pl-k">for</span> (<span class="pl-k">var</span> i <span class="pl-k">=</span> <span class="pl-c1">0</span>; i <span class="pl-k">&lt;</span> <span class="pl-smi">threads</span>.<span class="pl-c1">length</span>; i<span class="pl-k">++</span>) {
+  <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span><span class="pl-kos">;</span> <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-s1">threads</span><span class="pl-kos">.</span><span class="pl-c1">length</span><span class="pl-kos">;</span> <span class="pl-s1">i</span><span class="pl-c1">++</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
     <span class="pl-c">// Remove the `unprocessed` label, it'll be re-labeled again if a new message comes in</span>
-    <span class="pl-k">var</span> thread <span class="pl-k">=</span> threads[i];
-    <span class="pl-smi">thread</span>.<span class="pl-en">removeLabel</span>(unprocessedLabel);
+    <span class="pl-k">var</span> <span class="pl-s1">thread</span> <span class="pl-c1">=</span> <span class="pl-s1">threads</span><span class="pl-kos">[</span><span class="pl-s1">i</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
+    <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">removeLabel</span><span class="pl-kos">(</span><span class="pl-s1">unprocessedLabel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
 
     <span class="pl-c">// Thread is already labeled, no need to process further</span>
-    <span class="pl-k">var</span> labels <span class="pl-k">=</span> <span class="pl-smi">thread</span>.<span class="pl-en">getLabels</span>();
-    <span class="pl-k">if</span> (<span class="pl-smi">labels</span>.<span class="pl-en">includes</span>(directMentionLabel) <span class="pl-k">||</span> <span class="pl-smi">labels</span>.<span class="pl-en">includes</span>(teamMentionLabel)) {
-      <span class="pl-k">continue</span>;
-    }
+    <span class="pl-k">var</span> <span class="pl-s1">labels</span> <span class="pl-c1">=</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">getLabels</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">labels</span><span class="pl-kos">.</span><span class="pl-en">includes</span><span class="pl-kos">(</span><span class="pl-s1">directMentionLabel</span><span class="pl-kos">)</span> <span class="pl-c1">||</span> <span class="pl-s1">labels</span><span class="pl-kos">.</span><span class="pl-en">includes</span><span class="pl-kos">(</span><span class="pl-s1">teamMentionLabel</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-k">continue</span><span class="pl-kos">;</span>
+    <span class="pl-kos">}</span>
 
     <span class="pl-c">// Iterate through newest messages, exiting if a label was added to the thread.</span>
     <span class="pl-c">// Only one label will be added, and they are listed in priority below.</span>
-    <span class="pl-k">var</span> messages <span class="pl-k">=</span> <span class="pl-smi">thread</span>.<span class="pl-en">getMessages</span>();
-    <span class="pl-k">var</span> start <span class="pl-k">=</span> <span class="pl-c1">Math</span>.<span class="pl-c1">max</span>(<span class="pl-c1">0</span>, <span class="pl-smi">messages</span>.<span class="pl-c1">length</span> <span class="pl-k">-</span> <span class="pl-c1">1</span>);
-    <span class="pl-k">var</span> label;
-    <span class="pl-k">for</span> (<span class="pl-k">var</span> j <span class="pl-k">=</span> start; j <span class="pl-k">&gt;</span> <span class="pl-k">-</span><span class="pl-c1">1</span>; j<span class="pl-k">--</span>) {
-      <span class="pl-k">var</span> message <span class="pl-k">=</span> messages[j];
+    <span class="pl-k">var</span> <span class="pl-s1">messages</span> <span class="pl-c1">=</span> <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">getMessages</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-k">var</span> <span class="pl-s1">start</span> <span class="pl-c1">=</span> <span class="pl-v">Math</span><span class="pl-kos">.</span><span class="pl-en">max</span><span class="pl-kos">(</span><span class="pl-c1">0</span><span class="pl-kos">,</span> <span class="pl-s1">messages</span><span class="pl-kos">.</span><span class="pl-c1">length</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-k">var</span> <span class="pl-s1">label</span><span class="pl-kos">;</span>
+    <span class="pl-k">for</span> <span class="pl-kos">(</span><span class="pl-k">var</span> <span class="pl-s1">j</span> <span class="pl-c1">=</span> <span class="pl-s1">start</span><span class="pl-kos">;</span> <span class="pl-s1">j</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">-</span><span class="pl-c1">1</span><span class="pl-kos">;</span> <span class="pl-s1">j</span><span class="pl-c1">--</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-k">var</span> <span class="pl-s1">message</span> <span class="pl-c1">=</span> <span class="pl-s1">messages</span><span class="pl-kos">[</span><span class="pl-s1">j</span><span class="pl-kos">]</span><span class="pl-kos">;</span>
 
-      <span class="pl-k">if</span> (<span class="pl-k">!</span><span class="pl-smi">message</span>.<span class="pl-en">isUnread</span>()) {
-        <span class="pl-k">break</span>; <span class="pl-c">// remaining messages have been processed before</span>
-      }
+      <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-c1">!</span><span class="pl-s1">message</span><span class="pl-kos">.</span><span class="pl-en">isUnread</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+        <span class="pl-k">break</span><span class="pl-kos">;</span> <span class="pl-c">// remaining messages have been processed before</span>
+      <span class="pl-kos">}</span>
 
-      <span class="pl-k">var</span> body <span class="pl-k">=</span> <span class="pl-smi">message</span>.<span class="pl-en">getPlainBody</span>();
-      <span class="pl-k">if</span> (<span class="pl-smi">directMentionRegexp</span>.<span class="pl-c1">test</span>(body)) {
-        <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(directMentionLabel);
-        <span class="pl-k">break</span>;
-      } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">teamRegexp</span>.<span class="pl-c1">test</span>(body)) {
-        <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(teamMentionLabel);
-        <span class="pl-k">break</span>;
-      } <span class="pl-k">else</span> {
-        <span class="pl-smi">thread</span>.<span class="pl-en">addLabel</span>(notificationLabel);
-      }
-    }
-    <span class="pl-en">perf</span>(startTime);
-  }
+      <span class="pl-k">var</span> <span class="pl-s1">body</span> <span class="pl-c1">=</span> <span class="pl-s1">message</span><span class="pl-kos">.</span><span class="pl-en">getPlainBody</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">directMentionRegexp</span><span class="pl-kos">.</span><span class="pl-en">test</span><span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+        <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-s1">directMentionLabel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-k">break</span><span class="pl-kos">;</span>
+      <span class="pl-kos">}</span> <span class="pl-k">else</span> <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-s1">teamRegexp</span><span class="pl-kos">.</span><span class="pl-en">test</span><span class="pl-kos">(</span><span class="pl-s1">body</span><span class="pl-kos">)</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+        <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-s1">teamMentionLabel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+        <span class="pl-k">break</span><span class="pl-kos">;</span>
+      <span class="pl-kos">}</span> <span class="pl-k">else</span> <span class="pl-kos">{</span>
+        <span class="pl-s1">thread</span><span class="pl-kos">.</span><span class="pl-en">addLabel</span><span class="pl-kos">(</span><span class="pl-s1">notificationLabel</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+      <span class="pl-kos">}</span>
+    <span class="pl-kos">}</span>
+    <span class="pl-en">perf</span><span class="pl-kos">(</span><span class="pl-s1">startTime</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+  <span class="pl-kos">}</span>
 
-  <span class="pl-en">perf</span>(startTime);
-}</pre></div>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+  <span class="pl-en">perf</span><span class="pl-kos">(</span><span class="pl-s1">startTime</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+<span class="pl-kos">}</span></pre></div>
   </body>
 </html>

@@ -1,60 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-useful-libraries-rakepipeline-and-spade" class="anchor" href="#useful-libraries-rakepipeline-and-spade" aria-hidden="true"><span class="octicon octicon-link"></span></a>Useful Libraries: Rake::Pipeline and Spade</h1>
-
-<p><em>Republished from <a href="http://blog.opperator.com">Opperator blog</a></em></p>
-
+    <div class="markdown-heading"><h1 class="heading-element">Useful Libraries: Rake::Pipeline and Spade</h1><a id="user-content-useful-libraries-rakepipeline-and-spade" class="anchor" aria-label="Permalink: Useful Libraries: Rake::Pipeline and Spade" href="#useful-libraries-rakepipeline-and-spade"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>In doing research for whether Ember.js would be a good fit for Opperator, I
 took some notes about the process.  I came across two useful libraries used in Ember.js that I hadn't heard of
 before.
-<a href="http://rubydoc.info/github/livingsocial/rake-pipeline/master/file/README.yard">Rake::Pipeline</a>
+<a href="http://rubydoc.info/github/livingsocial/rake-pipeline/master/file/README.yard" rel="nofollow">Rake::Pipeline</a>
 helps package code assets together, and
 <a href="https://github.com/charlesjolley/spade">spade</a> is a Javascript dependency
 manager. Here's a quick overview of what they do, and how you can use them in your project.</p>
-
-<h2>
-<a id="user-content-rakepipeline" class="anchor" href="#rakepipeline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rake::Pipeline</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Rake::Pipeline</h2><a id="user-content-rakepipeline" class="anchor" aria-label="Permalink: Rake::Pipeline" href="#rakepipeline"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>From the Rake::Pipeline docs:</p>
-
 <blockquote>
 <p>Rake::Pipeline is a system for packaging assets for deployment to
 the web. It uses Rake under the hood for dependency management and
 updating output files based on input changes.</p>
 </blockquote>
-
 <p>Think of Rake::Pipeline as a lighter and simpler Sprockets. It allows you to
 declaratively match filenames with regexps, and then run those matched files
 through custom filter classes. Here's an easy example of how to concatenate
 all files that end in .js, and then slap a license on the top</p>
-
 <pre><code># Assetfile
 input  "app/assets/javascripts"
 output "public/javascripts"
@@ -74,7 +55,6 @@ match "*.js" do
   filter LicenseFilter
 end
 </code></pre>
-
 <p>First you declare where you want your base input and output directory paths
 should be. The <code>input</code> directory will be where files will be matched up
 against. Next we define our own custom LicenseFilter, which is used to prefix
@@ -82,33 +62,22 @@ input files with the contents of our LICENSE file. As you can guess from the
 arguments of the <code>generate_output</code> method, each element in the <code>inputs</code> array
 is an <code>IO</code> object that you can read from, and <code>output</code> is the destination of
 what you're writing.</p>
-
 <p>Finally, we use the <code>match</code> block to specify that we want all files that end
 in .js to be run through the <code>Rake::Pipeline::ConcatFilter</code> and output to
 <code>public/application.js</code>. Then we run our <code>LicenseFilter</code> against the final
 file to prefix our license.</p>
-
-<h2>
-<a id="user-content-spade" class="anchor" href="#spade" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spade</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Spade</h2><a id="user-content-spade" class="anchor" aria-label="Permalink: Spade" href="#spade"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Spade is a package manager and file loader that reminds me of
-<a href="http://npmjs.org/">NPM</a>. The goal of the library is to be able to package and
+<a href="http://npmjs.org/" rel="nofollow">NPM</a>. The goal of the library is to be able to package and
 require modules that can be run in a terminal and also in the browser. The
 browser part is obvious, but being able to run from the terminal is quite
 useful. For example, you can have an npm-like module named 'awesome-module', and from a terminal do:</p>
-
 <pre><code>spade preview  # opens in a browser with your module loaded
 spade console  # start interactive repl
 &gt; require('awesome-module/main)
 </code></pre>
-
 <p>Alongside with <a href="https://github.com/tomdale/spade-qunit">spade-qunit</a>, you can
 easily separate a library into a bunch of packages, test them separately, and
 view the results in a browser.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

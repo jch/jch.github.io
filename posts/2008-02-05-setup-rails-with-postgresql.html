@@ -1,49 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-setup-rails-with-postgresql" class="anchor" href="#setup-rails-with-postgresql" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup Rails with Postgresql</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Setup Rails with Postgresql</h1><a id="user-content-setup-rails-with-postgresql" class="anchor" aria-label="Permalink: Setup Rails with Postgresql" href="#setup-rails-with-postgresql"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Everytime I set up a Rails project, there are many braindead steps
 that need to be followed.  Instead of doing a web search each time I
 need to get an app setup, I follow these simple sequence of
 instructions.</p>
-
 <p>The first thing to do is to create the rails directory structure.
 Many Rails tutorials assume SQLite or MySQL.  Here in ivy covered UC
 Berkeley, our database of choice is Postgresql.</p>
-
 <pre><code>rails --database=postgresql myapp
 </code></pre>
-
-<h2>
-<a id="user-content-postgresql" class="anchor" href="#postgresql" aria-hidden="true"><span class="octicon octicon-link"></span></a>Postgresql</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Postgresql</h2><a id="user-content-postgresql" class="anchor" aria-label="Permalink: Postgresql" href="#postgresql"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <pre><code>(as postgres admin user)
 psql template1
 
@@ -58,29 +41,21 @@ create database myapp_production owner myapp;
 (in RAILS_ROOT)
 rake db:migrate
 </code></pre>
-
 <p>If rake complains that it can't load the file 'postgres', then you are
 missing the postgresql database adapter.  You can get it via:</p>
-
 <pre><code>sudo gem install pg
 </code></pre>
-
-<p>If that fails, read the <a href="http://wiki.rubyonrails.org/rails/pages/PostgreSQL">wiki
+<p>If that fails, read the <a href="http://wiki.rubyonrails.org/rails/pages/PostgreSQL" rel="nofollow">wiki
 page</a> about it.
 For the lazy, you can simply install the slower pure ruby adapter
 'postgres-pr'</p>
-
 <p>The 'postgres' gem is
-<a href="http://archives.postgresql.org/pgsql-interfaces/2007-12/msg00001.php">unmaintained</a>,
-and a new <a href="http://rubyforge.org/projects/ruby-pg">fork of the project 'pg'</a>.</p>
-
-<h2>
-<a id="user-content-config" class="anchor" href="#config" aria-hidden="true"><span class="octicon octicon-link"></span></a>Config</h2>
-
+<a href="http://archives.postgresql.org/pgsql-interfaces/2007-12/msg00001.php" rel="nofollow">unmaintained</a>,
+and a new <a href="http://rubyforge.org/projects/ruby-pg" rel="nofollow">fork of the project 'pg'</a>.</p>
+<div class="markdown-heading"><h2 class="heading-element">Config</h2><a id="user-content-config" class="anchor" aria-label="Permalink: Config" href="#config"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Keep your database.yml
-<a href="http://blog.bleything.net/2006/06/27/dry-out-your-database-yml">DRY</a>.
+<a href="http://blog.bleything.net/2006/06/27/dry-out-your-database-yml" rel="nofollow">DRY</a>.
 Edit database.yml as follows:</p>
-
 <pre><code>common: &amp;common
   adapter: postgresql
   username: myapp
@@ -98,12 +73,8 @@ production:
   &lt;&lt;: *common
   database: myapp_production
 </code></pre>
-
-<h2>
-<a id="user-content-subversion" class="anchor" href="#subversion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Subversion</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Subversion</h2><a id="user-content-subversion" class="anchor" aria-label="Permalink: Subversion" href="#subversion"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The following keeps your repository squeaky clean:</p>
-
 <pre><code>mv myapp myapp-tmp
 mkdir -p myapp/{branches,tags}
 mv myapp-tmp myapp/trunk
@@ -114,18 +85,9 @@ svn ps svn:ignore '*' log
 svn ps svn:ignore '*' tmp
 svn ps svn:ignore 'database.yml' config
 </code></pre>
-
-<h2>
-<a id="user-content-updating-stuff" class="anchor" href="#updating-stuff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updating Stuff</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Updating Stuff</h2><a id="user-content-updating-stuff" class="anchor" aria-label="Permalink: Updating Stuff" href="#updating-stuff"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>To update rails, do</p>
-
 <pre><code>sudo gem install -y rails
 </code></pre>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

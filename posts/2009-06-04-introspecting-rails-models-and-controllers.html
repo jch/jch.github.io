@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-introspecting-rails-models-and-controllers-callbacks" class="anchor" href="#introspecting-rails-models-and-controllers-callbacks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introspecting Rails Models and Controllers Callbacks</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Introspecting Rails Models and Controllers Callbacks</h1><a id="user-content-introspecting-rails-models-and-controllers-callbacks" class="anchor" aria-label="Permalink: Introspecting Rails Models and Controllers Callbacks" href="#introspecting-rails-models-and-controllers-callbacks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Once models and controllers grow to a certain size and complexity, it
 gets tricky to figure out what callbacks act upon them.  This is
 especially true for objects that are several inheritance layers deep,
@@ -36,20 +24,15 @@ have multiple mixins, were written a long long time ago, or any
 combination of the above.  I've picked up a few tools for crushing
 nasty little callback buggers that crop up every now and then.  I hope
 you find them useful!</p>
-
-<h2>
-<a id="user-content-activerecord-callbacks" class="anchor" href="#activerecord-callbacks" aria-hidden="true"><span class="octicon octicon-link"></span></a>ActiveRecord Callbacks</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">ActiveRecord Callbacks</h2><a id="user-content-activerecord-callbacks" class="anchor" aria-label="Permalink: ActiveRecord Callbacks" href="#activerecord-callbacks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Model validation and save callbacks are provided by the module
-<a href="http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html">ActiveRecord::Callbacks</a>.
+<a href="http://api.rubyonrails.org/classes/ActiveRecord/Callbacks.html" rel="nofollow">ActiveRecord::Callbacks</a>.
 If you read through this code, you'll find that it's built on top of a
 great little module called
-<a href="http://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html">ActiveSupport::Callbacks</a>.
+<a href="http://api.rubyonrails.org/classes/ActiveSupport/Callbacks.html" rel="nofollow">ActiveSupport::Callbacks</a>.
 I'm a big fan of this module because it gives you a nice abstraction
 to defining callbacks on arbitrary Ruby objects.</p>
-
 <p>The callbacks defined on ActiveRecord::Base sub-classes are</p>
-
 <pre><code>after_find
 after_initialize
 before_save
@@ -67,55 +50,38 @@ after_validation_on_update
 before_destroy
 after_destroy
 </code></pre>
-
 <p>To see the list of a particular callbacks, suffix the callback type
 with '_callback_chain'.  For example, to see the 'before_save'
 callbacks defined on the model Supplier:</p>
-
 <pre><code>Supplier.before_save_callback_chain
 </code></pre>
-
 <p>This will give you a list of
-<a href="http://api.rubyonrails.org/classes/ActiveSupport/Callbacks/Callback.html">ActiveSupport::Callbacks::Callback</a>
+<a href="http://api.rubyonrails.org/classes/ActiveSupport/Callbacks/Callback.html" rel="nofollow">ActiveSupport::Callbacks::Callback</a>
 objects that have interesting attributes such as identifier, kind,
 method, and options.</p>
-
 <p>To get a named list of callbacks, do</p>
-
 <pre><code>Supplier.before_save_callback_chain.map(&amp;:method)
 </code></pre>
-
 <p>To see whether a callback is conditional, check out it's 'options'</p>
-
 <pre><code>Supplier.before_save_callback_chain.first.options
 </code></pre>
-
-<h2>
-<a id="user-content-actioncontroller-callback" class="anchor" href="#actioncontroller-callback" aria-hidden="true"><span class="octicon octicon-link"></span></a>ActionController Callback</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">ActionController Callback</h2><a id="user-content-actioncontroller-callback" class="anchor" aria-label="Permalink: ActionController Callback" href="#actioncontroller-callback"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Controller callbacks documentation can be found at
-<a href="http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html">ActionController::Filters::ClassMethods</a>.</p>
-
+<a href="http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html" rel="nofollow">ActionController::Filters::ClassMethods</a>.</p>
 <p>SuppliersController.filter_chain</p>
-
 <p>Again, the array of filter objects returned by 'filter_chain' are
 ActiveSupport::Callbacks::Callback instances.  This lets you check the
 method names being called, as well as what options are set on it.</p>
-
-<h2>
-<a id="user-content-in-general" class="anchor" href="#in-general" aria-hidden="true"><span class="octicon octicon-link"></span></a>In General</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">In General</h2><a id="user-content-in-general" class="anchor" aria-label="Permalink: In General" href="#in-general"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Unrelated to callbacks, but a useful debugging tool to figure out what
 caused your code to be in it's current context, use
-<a href="http://www.ruby-doc.org/core/classes/Kernel.html#M005955">Kernel.caller</a>
+<a href="http://www.ruby-doc.org/core/classes/Kernel.html#M005955" rel="nofollow">Kernel.caller</a>
 to get a list of filenames and methods of the call stack.  It's
 usually pretty noisy, so I use
-<a href="http://www.ruby-doc.org/core/classes/Enumerable.html#M003152">Enumerable#grep</a>
+<a href="http://www.ruby-doc.org/core/classes/Enumerable.html#M003152" rel="nofollow">Enumerable#grep</a>
 to filter for what I'm interested in.</p>
-
 <pre><code>Kernel.caller.grep /supplier/
 </code></pre>
-
 <p>The combination of these 3 tips have helped me debug strange callback
 order bugs, as well as help me learn about a complex model that I've
 never dealt with before.  Unfortunately, I put off writing about this
@@ -124,10 +90,5 @@ found reading into the ActiveRecord and ActiveSupport code to be
 particularly enlightening.  If you have some other interesting
 introspection tips that help you develop, please share them in the
 comments ;)</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

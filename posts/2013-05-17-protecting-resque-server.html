@@ -1,109 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-protecting-resqueserver" class="anchor" href="#protecting-resqueserver" aria-hidden="true"><span class="octicon octicon-link"></span></a>Protecting Resque::Server</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Protecting Resque::Server</h1><a id="user-content-protecting-resqueserver" class="anchor" aria-label="Permalink: Protecting Resque::Server" href="#protecting-resqueserver"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Resque ships with a Sinatra app that can be mounted within your application for
 inspecting the status of your workers and jobs. By default, there's no
 authentication built in. But thanks to the fact that Sinatra is rack-able, you
 can put a middleware in front of it for handling authentication. For example, to
 add HTTP Basic auth, you can use Rack's built-in
 <a href="https://github.com/chneukirchen/rack/blob/master/lib/rack/auth/basic.rb">Rack::Auth::Basic</a>.</p>
-
-<h3>
-<a id="user-content-http-basic-authentication" class="anchor" href="#http-basic-authentication" aria-hidden="true"><span class="octicon octicon-link"></span></a>HTTP Basic authentication</h3>
-
-<div class="highlight highlight-source-ruby"><pre>protected_app <span class="pl-k">=</span> <span class="pl-c1">Rack</span>::<span class="pl-c1">Auth</span>::<span class="pl-c1">Basic</span>.<span class="pl-k">new</span>(<span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>) <span class="pl-k">do </span>|<span class="pl-smi">username</span>, <span class="pl-smi">password</span>|
-  password <span class="pl-k">==</span> <span class="pl-s"><span class="pl-pds">'</span>some-secret<span class="pl-pds">'</span></span>
+<div class="markdown-heading"><h3 class="heading-element">HTTP Basic authentication</h3><a id="user-content-http-basic-authentication" class="anchor" aria-label="Permalink: HTTP Basic authentication" href="#http-basic-authentication"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-s1">protected_app</span> <span class="pl-c1">=</span> <span class="pl-v">Rack</span>::<span class="pl-v">Auth</span>::<span class="pl-v">Basic</span><span class="pl-kos">.</span><span class="pl-en">new</span><span class="pl-kos">(</span><span class="pl-v">Resque</span>::<span class="pl-v">Server</span><span class="pl-kos">)</span> <span class="pl-k">do</span> |<span class="pl-s1">username</span><span class="pl-kos">,</span> <span class="pl-s1">password</span>|
+  <span class="pl-s1">password</span> == <span class="pl-s">'some-secret'</span>
 <span class="pl-k">end</span>
 
 <span class="pl-c"># mount protected_app in Rails, or other rack application…</span></pre></div>
-
 <p>This kind of works, but I always forget the password and have to look it up. It
 also sucks for on boarding new developers since it's not very discoverable. An
 improved solution is to piggyback onto your existing authentication system. For
 one of our apps, we use Devise, which exposes the user object in the Rack <code>env</code>
 object. Roughly, our rescue authentication looks like:</p>
-
-<h3>
-<a id="user-content-devise-or-other-authentication-library" class="anchor" href="#devise-or-other-authentication-library" aria-hidden="true"><span class="octicon octicon-link"></span></a>Devise or other authentication library</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Devise or other authentication library</h3><a id="user-content-devise-or-other-authentication-library" class="anchor" aria-label="Permalink: Devise or other authentication library" href="#devise-or-other-authentication-library"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/initializers/resque.rb</span>
-<span class="pl-k">class</span> <span class="pl-en">AuthenticatedMiddleware</span>
-  <span class="pl-k">def</span> <span class="pl-en">initialize</span>(<span class="pl-smi">app</span>)
-    <span class="pl-smi">@app</span> <span class="pl-k">=</span> app
+<span class="pl-k">class</span> <span class="pl-v">AuthenticatedMiddleware</span>
+  <span class="pl-k">def</span> <span class="pl-en">initialize</span><span class="pl-kos">(</span><span class="pl-s1">app</span><span class="pl-kos">)</span>
+    <span class="pl-c1">@app</span> <span class="pl-c1">=</span> <span class="pl-s1">app</span>
   <span class="pl-k">end</span>
 
-  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
-    <span class="pl-k">if</span> env[<span class="pl-s"><span class="pl-pds">'</span>warden<span class="pl-pds">'</span></span>].authenticated? <span class="pl-k">&amp;&amp;</span> env[<span class="pl-s"><span class="pl-pds">'</span>warden<span class="pl-pds">'</span></span>].user.staff?
-      <span class="pl-smi">@app</span>.call(env)
+  <span class="pl-k">def</span> <span class="pl-en">call</span><span class="pl-kos">(</span><span class="pl-s1">env</span><span class="pl-kos">)</span>
+    <span class="pl-k">if</span> <span class="pl-s1">env</span><span class="pl-kos">[</span><span class="pl-s">'warden'</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">authenticated?</span> &amp;&amp; <span class="pl-s1">env</span><span class="pl-kos">[</span><span class="pl-s">'warden'</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">user</span><span class="pl-kos">.</span><span class="pl-en">staff?</span>
+      <span class="pl-c1">@app</span><span class="pl-kos">.</span><span class="pl-en">call</span><span class="pl-kos">(</span><span class="pl-s1">env</span><span class="pl-kos">)</span>
     <span class="pl-k">else</span>
-      [<span class="pl-c1">403</span>, {<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>text/plain<span class="pl-pds">'</span></span>}, [<span class="pl-s"><span class="pl-pds">'</span>Authenticate first<span class="pl-pds">'</span></span>]]
+      <span class="pl-kos">[</span><span class="pl-c1">403</span><span class="pl-kos">,</span> <span class="pl-kos">{</span><span class="pl-s">'Content-Type'</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'text/plain'</span><span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">[</span><span class="pl-s">'Authenticate first'</span><span class="pl-kos">]</span><span class="pl-kos">]</span>
     <span class="pl-k">end</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span>
 
-<span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>.use(<span class="pl-c1">AuthenticatedMiddleware</span>)
+<span class="pl-v">Resque</span>::<span class="pl-v">Server</span><span class="pl-kos">.</span><span class="pl-en">use</span><span class="pl-kos">(</span><span class="pl-v">AuthenticatedMiddleware</span><span class="pl-kos">)</span>
 
 <span class="pl-c"># config/routes.rb</span>
-mount <span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>, <span class="pl-c1">:at</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>/resque<span class="pl-pds">'</span></span></pre></div>
-
-<p>If the main application is a Rails app, you can also use <a href="http://guides.rubyonrails.org/routing.html#advanced-constraints">routing
+<span class="pl-en">mount</span> <span class="pl-v">Resque</span>::<span class="pl-v">Server</span><span class="pl-kos">,</span> <span class="pl-pds">:at</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'/resque'</span></pre></div>
+<p>If the main application is a Rails app, you can also use <a href="http://guides.rubyonrails.org/routing.html#advanced-constraints" rel="nofollow">routing
 constraints</a> to
 limit access. The benefit here is the Rail request and session object are
 available. For example, in another internal-only application, we only check that
 the session includes a user id:</p>
-
-<h3>
-<a id="user-content-rails-route-contraints" class="anchor" href="#rails-route-contraints" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails route contraints</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Rails route contraints</h3><a id="user-content-rails-route-contraints" class="anchor" aria-label="Permalink: Rails route contraints" href="#rails-route-contraints"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/routes.rb</span>
-<span class="pl-k">class</span> <span class="pl-en">SessionAuthenticatedConstraint</span>
-  <span class="pl-k">def</span> <span class="pl-en">self.matches?</span>(<span class="pl-smi">request</span>)
-    <span class="pl-k">!</span>request.session[<span class="pl-c1">:user_id</span>].blank?
+<span class="pl-k">class</span> <span class="pl-v">SessionAuthenticatedConstraint</span>
+  <span class="pl-k">def</span> <span class="pl-smi">self</span><span class="pl-kos">.</span><span class="pl-en">matches?</span><span class="pl-kos">(</span><span class="pl-s1">request</span><span class="pl-kos">)</span>
+    !<span class="pl-s1">request</span><span class="pl-kos">.</span><span class="pl-en">session</span><span class="pl-kos">[</span><span class="pl-pds">:user_id</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">blank?</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span>
 
-constraints(<span class="pl-c1">SessionAuthenticatedConstraint</span>) <span class="pl-k">do</span>
-  mount <span class="pl-c1">Resque</span>::<span class="pl-c1">Server</span>, <span class="pl-c1">:at</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>/resque<span class="pl-pds">'</span></span>
+<span class="pl-en">constraints</span><span class="pl-kos">(</span><span class="pl-v">SessionAuthenticatedConstraint</span><span class="pl-kos">)</span> <span class="pl-k">do</span>
+  <span class="pl-en">mount</span> <span class="pl-v">Resque</span>::<span class="pl-v">Server</span><span class="pl-kos">,</span> <span class="pl-pds">:at</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'/resque'</span>
 <span class="pl-k">end</span></pre></div>
-
 <p>Overall, I prefer the last approach because it's easy to understand, easy to
 test, idiomatic of Rails conventions, and short.</p>
-
 <p>Shout outs to
-<a href="https://twitter.com/kdaigle">@kdaigle</a> for code reviewing me and suggesting the
-last approach, and <a href="https://twitter.com/jonmagic">@jonmagic</a> for reviewing this post.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+<a href="https://twitter.com/kdaigle" rel="nofollow">@kdaigle</a> for code reviewing me and suggesting the
+last approach, and <a href="https://twitter.com/jonmagic" rel="nofollow">@jonmagic</a> for reviewing this post.</p>
   </body>
 </html>

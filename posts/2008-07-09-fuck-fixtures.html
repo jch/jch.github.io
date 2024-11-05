@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-fuck-fixtures" class="anchor" href="#fuck-fixtures" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fuck Fixtures</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Fuck Fixtures</h1><a id="user-content-fuck-fixtures" class="anchor" aria-label="Permalink: Fuck Fixtures" href="#fuck-fixtures"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When you first start testing a newly created application, fixtures
 might seem very appealing.  They're easy to write, they make sense,
 and they quickly create valid or invalid instances for you to test
@@ -36,33 +24,25 @@ with.  Unfortunately, fixtures don't scale with a growing project.
 They quickly get out of hand, and you'll end up spending more time
 fixing your fixtures than your tests and code.  So fuck you fixtures,
 and good riddance.</p>
-
 <p>Fixtures are the devil because:</p>
-
 <ul>
 <li>they're brittle.</li>
 <li>they don't work well with complex association with foreign keys.</li>
 <li>they don't change when your schema and models change.</li>
 </ul>
-
 <p>Rails 2 fixtures are nicer, but it's much of the same.  If you don't
 believe me, just keep using them and you'll know what I'm talking
 about at some point.</p>
-
-<h2>
-<a id="user-content-a-valid-case" class="anchor" href="#a-valid-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>A Valid Case</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">A Valid Case</h2><a id="user-content-a-valid-case" class="anchor" aria-label="Permalink: A Valid Case" href="#a-valid-case"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>One interesting case my friend came across the other day was using
 fixtures for rspec tests.  As described above, I think model fixtures
 for testing is both brittle and hard to maintain.  However, he was
 running across the case:</p>
-
 <pre><code>it "should save to the freakin database" do
   @some_model.save.should == true
   debugger
 end
 </code></pre>
-
 <p>This test passes with flying colors...  But seeing is believing, and
 if you login to the test database, you won't be seeing a saved
 record.  This is generally a good thing because once the test is
@@ -71,20 +51,12 @@ independence between tests.  The downside is when you're testing
 something like Sphinx that assumes there's stuff in the database to
 work with, it won't work.  The above example will pass, and if you
 break at the debugger line, @some_model.new_record? will be false.</p>
-
-<h2>
-<a id="user-content-so-what-now" class="anchor" href="#so-what-now" aria-hidden="true"><span class="octicon octicon-link"></span></a>So What Now?</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">So What Now?</h2><a id="user-content-so-what-now" class="anchor" aria-label="Permalink: So What Now?" href="#so-what-now"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Other than that valid case, most problems should be solvable by
 stubbing and mocking.  If not, then refactor your code so that it is!
 One particularly delicious piece of syntactic sugar called <a href="http://github.com/thoughtbot/factory_girl/tree/master">Factory
 Girl</a>.  For a
-short description of what it does, check out <a href="http://giantrobots.thoughtbot.com/2008/6/6/waiting-for-a-factory-girl">this blog
+short description of what it does, check out <a href="http://giantrobots.thoughtbot.com/2008/6/6/waiting-for-a-factory-girl" rel="nofollow">this blog
 post</a>.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

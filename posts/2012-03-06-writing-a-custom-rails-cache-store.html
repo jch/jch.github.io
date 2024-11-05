@@ -1,124 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-writing-a-custom-rails-cache-store" class="anchor" href="#writing-a-custom-rails-cache-store" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing a Custom Rails Cache Store</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Writing a Custom Rails Cache Store</h1><a id="user-content-writing-a-custom-rails-cache-store" class="anchor" aria-label="Permalink: Writing a Custom Rails Cache Store" href="#writing-a-custom-rails-cache-store"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When you use Rails built-in helpers for page, action, and fragment caching, the cached data is stored into an instance of ActiveSupport::Cache::Store. But while the interface for using the cache stores are the same, each cache store implementation has different performance characteristics and are suited for different jobs. In this post, I'll cover what cache stores are available with Rails by default, how to tune them, and how to write your own custom cache store.</p>
-
-<h2>
-<a id="user-content-grabbing-the-code" class="anchor" href="#grabbing-the-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grabbing the Code</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Grabbing the Code</h2><a id="user-content-grabbing-the-code" class="anchor" aria-label="Permalink: Grabbing the Code" href="#grabbing-the-code"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>If you want to follow along in the code, I recommend cloning the <a href="https://github.com/rails/rails/">Rails repository</a>. The cache related code I'm covering all live within <a href="https://github.com/rails/rails/blob/master/activesupport/lib/active_support/cache.rb">activesupport/lib/cache.rb</a> and <a href="https://github.com/rails/rails/tree/master/activesupport/lib/active_support/cache">activesupport/lib/cache</a> folder. The corresponding tests live in <a href="https://github.com/rails/rails/blob/master/activesupport/test/caching_test.rb">activesupport/test/caching_test.rb</a>.</p>
-
-<h2>
-<a id="user-content-introducing-the-abstract-store" class="anchor" href="#introducing-the-abstract-store" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introducing the Abstract Store</h2>
-
-<p>All cache store implementations inherit from an abstract store named <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html">ActiveSupport::Cache::Store</a>. This class defines the public interface that's used by Rails to do caching. The three basic operations are read, write, and delete. Here's a simple example you can run in irb:</p>
-
-<div class="highlight highlight-source-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>activesupport<span class="pl-pds">'</span></span>
-cache <span class="pl-k">=</span> <span class="pl-c1">ActiveSupport</span>::<span class="pl-c1">Cache</span>.lookup_store(<span class="pl-c1">:memory_store</span>)
-cache.read(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>)
-=&gt; <span class="pl-c1">nil</span>
-cache.write(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>)
-cache.read(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>)
-=&gt; <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>
-cache.delete(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>)
-cache.read(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>)
-=&gt; <span class="pl-c1">nil</span></pre></div>
-
-<p>After requiring activesupport, we ask for an instance of a MemoryStore (we'll cover the different store types later in this post). The interface for read, write, and delete are self explanatory. You can also <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html">customize the behavior</a> of these actions.</p>
-
-<h2>
-<a id="user-content-store-implementations" class="anchor" href="#store-implementations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Store Implementations</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Introducing the Abstract Store</h2><a id="user-content-introducing-the-abstract-store" class="anchor" aria-label="Permalink: Introducing the Abstract Store" href="#introducing-the-abstract-store"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>All cache store implementations inherit from an abstract store named <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html" rel="nofollow">ActiveSupport::Cache::Store</a>. This class defines the public interface that's used by Rails to do caching. The three basic operations are read, write, and delete. Here's a simple example you can run in irb:</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">require</span> <span class="pl-s">'activesupport'</span>
+<span class="pl-s1">cache</span> <span class="pl-c1">=</span> <span class="pl-v">ActiveSupport</span>::<span class="pl-v">Cache</span><span class="pl-kos">.</span><span class="pl-en">lookup_store</span><span class="pl-kos">(</span><span class="pl-pds">:memory_store</span><span class="pl-kos">)</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-c1">=&gt;</span> <span class="pl-c1">nil</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">write</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">,</span> <span class="pl-s">'bar'</span><span class="pl-kos">)</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-c1">=&gt;</span> <span class="pl-s">'bar'</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">delete</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-c1">=&gt;</span> <span class="pl-c1">nil</span></pre></div>
+<p>After requiring activesupport, we ask for an instance of a MemoryStore (we'll cover the different store types later in this post). The interface for read, write, and delete are self explanatory. You can also <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html" rel="nofollow">customize the behavior</a> of these actions.</p>
+<div class="markdown-heading"><h2 class="heading-element">Store Implementations</h2><a id="user-content-store-implementations" class="anchor" aria-label="Permalink: Store Implementations" href="#store-implementations"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The concrete store implementations are well documented, so I'll introduce them briefly here and leave the details to the documentation.</p>
-
 <ul>
-<li><p><strong>MemoryStore</strong> - a cache store that stores data in a plain-old Ruby hash. As an added feature, it keeps track of cache access and cache size, and will prune the cache when it hits a customizable max size.</p></li>
-<li><p><strong>FileStore</strong> - a cache store that stores data on the filesystem. It also caches multiple read calls within the same block in memory to decrease I/O.</p></li>
-<li><p><strong>MemCacheStore</strong> - the big daddy of cache stores. Backed by memcached, this store allows you to specify multiple memcached servers and load balances between them.</p></li>
-<li><p><strong>NullStore</strong> - Interesting cache store that does nothing. That's right, if you look at <a href="https://github.com/rails/rails/blob/master/activesupport/lib/active_support/cache/null_store.rb">its implementation</a>, it's just a bunch of empty methods. It's perfect for use as a mock cache store for testing, or as a template for writing your own cache store.</p></li>
+<li>
+<p><strong>MemoryStore</strong> - a cache store that stores data in a plain-old Ruby hash. As an added feature, it keeps track of cache access and cache size, and will prune the cache when it hits a customizable max size.</p>
+</li>
+<li>
+<p><strong>FileStore</strong> - a cache store that stores data on the filesystem. It also caches multiple read calls within the same block in memory to decrease I/O.</p>
+</li>
+<li>
+<p><strong>MemCacheStore</strong> - the big daddy of cache stores. Backed by memcached, this store allows you to specify multiple memcached servers and load balances between them.</p>
+</li>
+<li>
+<p><strong>NullStore</strong> - Interesting cache store that does nothing. That's right, if you look at <a href="https://github.com/rails/rails/blob/master/activesupport/lib/active_support/cache/null_store.rb">its implementation</a>, it's just a bunch of empty methods. It's perfect for use as a mock cache store for testing, or as a template for writing your own cache store.</p>
+</li>
 </ul>
-
-<h2>
-<a id="user-content-rails-initialization" class="anchor" href="#rails-initialization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails Initialization</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Rails Initialization</h2><a id="user-content-rails-initialization" class="anchor" aria-label="Permalink: Rails Initialization" href="#rails-initialization"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>By default, Rails 3 will initialize a FileStore that you can reference through <code>Rails.cache</code>. This cache is used internally by Rails to cache classes, pages, actions, and fragments. If you want to change which cache store is used, you can configure it in your application.rb</p>
-
 <pre><code># use a MemoryStore cache with a max size of 512 megabytes
 config.cache_store = [:memory_store, {:size =&gt; 536870912}]
 </code></pre>
-
-<p>In production mode, Rails will also insert <a href="http://rtomayko.github.com/rack-cache/">Rack::Cache</a> to the top of the middleware stack and use Rails.cache as its storage. Note that even though Rack::Cache's heap storage does not bound the size of its cache, if you use ActiveSupport's MemoryStore, the least recently used entries will be pruned from the cache when it hits your specified limit. So if you <a href="http://tomayko.com/writings/things-caches-do">set correct cache headers</a>, Rack::Cache will pick them and cache your responses.</p>
-
-<h2>
-<a id="user-content-writing-a-custom-cache-store" class="anchor" href="#writing-a-custom-cache-store" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing A Custom Cache Store</h2>
-
+<p>In production mode, Rails will also insert <a href="http://rtomayko.github.com/rack-cache/">Rack::Cache</a> to the top of the middleware stack and use Rails.cache as its storage. Note that even though Rack::Cache's heap storage does not bound the size of its cache, if you use ActiveSupport's MemoryStore, the least recently used entries will be pruned from the cache when it hits your specified limit. So if you <a href="http://tomayko.com/writings/things-caches-do" rel="nofollow">set correct cache headers</a>, Rack::Cache will pick them and cache your responses.</p>
+<div class="markdown-heading"><h2 class="heading-element">Writing A Custom Cache Store</h2><a id="user-content-writing-a-custom-cache-store" class="anchor" aria-label="Permalink: Writing A Custom Cache Store" href="#writing-a-custom-cache-store"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The default cache stores are a perfect fit for most situations, but if you do need to write a custom cache store, rest assured that it's easy to do.</p>
-
 <p>The three main methods to override are:</p>
-
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># Read an entry from the cache implementation. Subclasses must implement this method.</span>
-<span class="pl-k">def</span> <span class="pl-en">read_entry</span>(<span class="pl-smi">key</span>, <span class="pl-smi">options</span>) <span class="pl-c"># :nodoc:</span>
-  <span class="pl-k">raise</span> <span class="pl-c1">NotImplementedError</span>.<span class="pl-k">new</span>
+<span class="pl-k">def</span> <span class="pl-en">read_entry</span><span class="pl-kos">(</span><span class="pl-s1">key</span><span class="pl-kos">,</span> <span class="pl-s1">options</span><span class="pl-kos">)</span> <span class="pl-c"># :nodoc:</span>
+  <span class="pl-en">raise</span> <span class="pl-v">NotImplementedError</span><span class="pl-kos">.</span><span class="pl-en">new</span>
 <span class="pl-k">end</span>
 
 <span class="pl-c"># Write an entry to the cache implementation. Subclasses must implement this method.</span>
-<span class="pl-k">def</span> <span class="pl-en">write_entry</span>(<span class="pl-smi">key</span>, <span class="pl-smi">entry</span>, <span class="pl-smi">options</span>) <span class="pl-c"># :nodoc:</span>
-  <span class="pl-k">raise</span> <span class="pl-c1">NotImplementedError</span>.<span class="pl-k">new</span>
+<span class="pl-k">def</span> <span class="pl-en">write_entry</span><span class="pl-kos">(</span><span class="pl-s1">key</span><span class="pl-kos">,</span> <span class="pl-s1">entry</span><span class="pl-kos">,</span> <span class="pl-s1">options</span><span class="pl-kos">)</span> <span class="pl-c"># :nodoc:</span>
+  <span class="pl-en">raise</span> <span class="pl-v">NotImplementedError</span><span class="pl-kos">.</span><span class="pl-en">new</span>
 <span class="pl-k">end</span>
 
 <span class="pl-c"># Delete an entry from the cache implementation. Subclasses must implement this method.</span>
-<span class="pl-k">def</span> <span class="pl-en">delete_entry</span>(<span class="pl-smi">key</span>, <span class="pl-smi">options</span>) <span class="pl-c"># :nodoc:</span>
-  <span class="pl-k">raise</span> <span class="pl-c1">NotImplementedError</span>.<span class="pl-k">new</span>
+<span class="pl-k">def</span> <span class="pl-en">delete_entry</span><span class="pl-kos">(</span><span class="pl-s1">key</span><span class="pl-kos">,</span> <span class="pl-s1">options</span><span class="pl-kos">)</span> <span class="pl-c"># :nodoc:</span>
+  <span class="pl-en">raise</span> <span class="pl-v">NotImplementedError</span><span class="pl-kos">.</span><span class="pl-en">new</span>
 <span class="pl-k">end</span></pre></div>
-
 <p>These methods are then used by the public interface methods. There are a few methods you can optionally implement, but your cache will work with just the three listed above.</p>
-
 <p>For a client project, I wrote a write-through cache store called <a href="https://github.com/jch/activesupport-cascadestore">CascadeCache</a> that chains multiple cache stores together. For example, here's one possible configuration:</p>
-
-<div class="highlight highlight-source-ruby"><pre>config.cache_store <span class="pl-k">=</span> [<span class="pl-c1">:cascade_store</span>, {
-  <span class="pl-c1">:stores</span> =&gt; [
-    [<span class="pl-c1">:memory_store</span>, <span class="pl-c1">:size</span> =&gt; <span class="pl-c1">5</span>.megabytes],
-    [<span class="pl-c1">:memcache_store</span>, <span class="pl-s"><span class="pl-pds">'</span>somehost:11211<span class="pl-pds">'</span></span>]
-  ]
-}]</pre></div>
-
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">cache_store</span> <span class="pl-c1">=</span> <span class="pl-kos">[</span><span class="pl-pds">:cascade_store</span><span class="pl-kos">,</span> <span class="pl-kos">{</span>
+  <span class="pl-pds">:stores</span> <span class="pl-c1">=&gt;</span> <span class="pl-kos">[</span>
+    <span class="pl-kos">[</span><span class="pl-pds">:memory_store</span><span class="pl-kos">,</span> <span class="pl-pds">:size</span> <span class="pl-c1">=&gt;</span> <span class="pl-c1">5</span><span class="pl-kos">.</span><span class="pl-en">megabytes</span><span class="pl-kos">]</span><span class="pl-kos">,</span>
+    <span class="pl-kos">[</span><span class="pl-pds">:memcache_store</span><span class="pl-kos">,</span> <span class="pl-s">'somehost:11211'</span><span class="pl-kos">]</span>
+  <span class="pl-kos">]</span>
+<span class="pl-kos">}</span><span class="pl-kos">]</span></pre></div>
 <p>The behavior of this cache store is to return the first hit from the list of caches. This allows the app to have a small low-latency MemoryStore in front of a MemCacheStore. If something can't be found in the MemoryCache, then we fall back to MemCache. When writing to the cache, entries are written through to both underlying cache stores. The primary reason for doing this wasn't because MemCache store was slow, but as an extra backup cache in case MemCache became temporarily unavailable (actually happened in production).</p>
-
 <p>I'm hoping CascadeCache makes it upstream into ActiveSupport, but in the meantime, I've packaged it up as a <a href="https://github.com/jch/activesupport-cascadestore">separate gem</a>. For another example of a custom cache implementation, check out <a href="https://github.com/jodosha/redis-store">redis-store</a>. It includes an ActiveSupport compatible cache.</p>
-
 <p>Caching is a tricky beast. On top of deciding what to cache and when to expire, the underlying cache store can affect your app's performance. Choose the cache store that best fits your needs, use a hybrid CascadeCache, or write your own. Good luck and happy tuning!</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

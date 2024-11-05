@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-hacking-live-systems" class="anchor" href="#hacking-live-systems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hacking Live Systems</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Hacking Live Systems</h1><a id="user-content-hacking-live-systems" class="anchor" aria-label="Permalink: Hacking Live Systems" href="#hacking-live-systems"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>After my evening jog, I hopped onto the QA environment around 11pm
 because I wanted to look something up for another blog post I was
 writing.  Instead of being greeted with the welcome screen of the app,
@@ -37,37 +25,26 @@ going off in my head, but I couldn't collect my thoughts because of
 the runner high.  Did I break something before I left work?  Did I
 forget to deploy the latest code base to QA?  Were we going to lose a
 night of quality QA from the team in India?</p>
-
 <p>My fears were confirmed when I signed on to chat.  Kyle was online.
 Kyle is <em>never</em> online this late.  I shoot him a quick message, "can
 you reach devtrunk?".  Just as I hit return, I get a message from
 Minh, "did you change the deploy stuff?".  QA in India had nothing to
 test on.  Things were looking grim.</p>
-
 <p>Deep breath, and go!</p>
-
 <p>Do a fresh deploy.  Interesting, the deployment went through without a
 hiccup.</p>
-
 <p>SSH into the QA box, look at the Apache logs.  Interesting, Apache's
 down.  Let's bring her back up.</p>
-
 <p>Hit the page.  Interesting, still getting redirected.  Must be a bad
 config.</p>
-
 <p>Scan through httpd.conf, scan through the included vhosts.
 Interesting, they all look ok...</p>
-
 <p>WAIT!  There's no vhost defined for devtrunk, the QA environment.  But
 I saw it earlier today...  Let's find an old working config and put
 that guy in for now.</p>
-
 <p>Reloading Apache...</p>
-
-<p><a href="/images/devtrunk-lives.png" target="_blank"><img src="/images/devtrunk-lives.png" alt="devtrunk lives!" style="max-width:100%;"></a></p>
-
+<p><a target="_blank" rel="noopener noreferrer" href="/images/devtrunk-lives.png"><img src="/images/devtrunk-lives.png" alt="devtrunk lives!" style="max-width: 100%;"></a></p>
 <p>I have never been happier to see Domo-kun.</p>
-
 <p>It's funny when these situations come up.  Programmers go into this
 'turbo' mode.  They start typing really fast, fixing and breaking
 things left and right.  This surge of energy can't be sustained for a
@@ -75,13 +52,7 @@ long period of time, so it's really important that they both diagnose
 and fix the problem before they burn out.  I left out all the details
 in my description for the solution, but they involved a lot of window
 switching, poorly typed out IM messages, and a lot of keystrokes.</p>
-
 <p>Man, what a rush.  I'm not sure what gave me more of a workout, a 45
 minute hour run, or typing frantically while figeting my leg.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

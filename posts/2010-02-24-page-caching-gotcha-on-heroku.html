@@ -1,36 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-page-caching-gotcha-on-heroku" class="anchor" href="#page-caching-gotcha-on-heroku" aria-hidden="true"><span class="octicon octicon-link"></span></a>Page Caching Gotcha on Heroku</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Page Caching Gotcha on Heroku</h1><a id="user-content-page-caching-gotcha-on-heroku" class="anchor" aria-label="Permalink: Page Caching Gotcha on Heroku" href="#page-caching-gotcha-on-heroku"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Andrew noticed that his beer reviews weren't showing up on
-<a href="http://beerpad.heroku.com/">beerpad</a> after he published them. His reviews
+<a href="http://beerpad.heroku.com/" rel="nofollow">beerpad</a> after he published them. His reviews
 were saved in the database and showed up on redeploy. I smelled a caching bug.
 Digging a little deeper, I found out that caches_page and expire_page are
 <a href="http://github.com/ricardochimal/rails/commit/ecd52a0f6b841d8a84f95fddff1ae4c774e4440e">overridden</a>
@@ -38,33 +26,28 @@ on Heroku to set http caching headers rather than write a file to the local
 filesystem. While I was fixing this bug, I picked up on a lot of useful
 details about Rails action caching and configuration. Details and my fix after
 the jump.</p>
-
-<p>With Heroku's <a href="http://docs.heroku.com/constraints#read-only-filesystem">read-only
-filesystem</a> and <a href="http://heroku.com/how/architecture">dyno
+<p>With Heroku's <a href="http://docs.heroku.com/constraints#read-only-filesystem" rel="nofollow">read-only
+filesystem</a> and <a href="http://heroku.com/how/architecture" rel="nofollow">dyno
 architecture</a>, it doesn't make sense to
 write rendered pages to file. However, in order to be compatible with existing
 apps, Heroku uses the <a href="http://github.com/pedro/caches_page_via_http">caches_page_via_http
 plugin</a> to cache entire
-responses in the <a href="http://docs.heroku.com/http-caching">Varnish layer</a> for a
+responses in the <a href="http://docs.heroku.com/http-caching" rel="nofollow">Varnish layer</a> for a
 few minutes. The problem with this is that expire_page is overridden to be
 noop, so stale pages can be served to users even if your code calls
 expire_page in the correct places.</p>
-
 <p>For example, my original code did the following:</p>
-
 <ol>
 <li>update a beer review</li>
 <li>expire the cached page for /reviews</li>
 <li>redirect to /reviews</li>
 </ol>
-
 <p>After a user submits their review, they should see their review at the top of
 the reviews listing at /reviews. With Heroku's patch, step 2 becomes a noop,
 and caches_page sets /reviews Cache-Control header to have a max age of 5
 minutes. If a user finishes writing a review in less than 5 minutes from the
 previous page cache, a stale page is served to them <em>without</em> their published
 review.  As a user, you'd think "crap, my review got nuked".  For example:</p>
-
 <ol>
 <li>GET /reviews - cached in Varnish and client browser for 5 minutes.</li>
 <li>GET /reviews/new - start a beer review.</li>
@@ -72,17 +55,14 @@ review.  As a user, you'd think "crap, my review got nuked".  For example:</p>
 <li>POST /reviews - <strong>should</strong> expire page, but is noop instead.</li>
 <li>redirect GET /reviews - stale page served from browser cache b/c &lt; 5 minutes has elapsed.</li>
 </ol>
-
 <p>After I figured this out, I switched my controller and sweepers to use
-<a href="http://api.rubyonrails.org/classes/ActionController/Caching/Actions.html">caches_action and
+<a href="http://api.rubyonrails.org/classes/ActionController/Caching/Actions.html" rel="nofollow">caches_action and
 expire_action</a>
 to make expiration work again.</p>
-
 <p>A minor gotcha with expire_action is you cannot use restful route helpers by
 default. The default cache_path used to key a cached value includes the
 hostname. If you try to expire using the route helpers, your key won't match
 and the cached value won't be expired.</p>
-
 <pre><code># original page caching expiration
 expire_page reviews_path
 
@@ -90,23 +70,18 @@ expire_page reviews_path
 # instead of using restful route helpers.
 expire_action :controller =&gt; 'reviews', :action =&gt; 'index'
 </code></pre>
-
-<h2>
-<a id="user-content-multiple-dynos" class="anchor" href="#multiple-dynos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiple Dynos</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Multiple Dynos</h2><a id="user-content-multiple-dynos" class="anchor" aria-label="Permalink: Multiple Dynos" href="#multiple-dynos"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Replacing page caching with action caching solves the problem caused by noop
 expiration. But using the default memory cache store with multiple dynos will
 still cause stale pages to be served. The new problem is that each dyno keeps
 it's own local memory cache, which means when you expire the cache, you're
 only expiring one dyno's cache rather than expiring all the caches. To get
 around this, we need to use a centralized cache store like Memcached or DRb.
-The Rails guide on caching has a <a href="http://guides.rubyonrails.org/caching_with_rails.html#cache-stores">good
+The Rails guide on caching has a <a href="http://guides.rubyonrails.org/caching_with_rails.html#cache-stores" rel="nofollow">good
 explanation</a>
 of the cache stores available and their differences.</p>
-
-<p>On Heroku, turning on Memcached is <a href="http://docs.heroku.com/memcached">really simple and well
+<p>On Heroku, turning on Memcached is <a href="http://docs.heroku.com/memcached" rel="nofollow">really simple and well
 documented</a>:</p>
-
 <pre><code># in terminal at rails root
 heroku addons:add memcached
 
@@ -125,10 +100,8 @@ if ENV['MEMCACHE_SERVERS']
   config.cache_store = :mem_cache_store, memcache_config
 end
 </code></pre>
-
 <p>I wrote a testing controller with 2 actions, and increased my dynos to 2 to
 compare the default memory cache store and memcached cache store.</p>
-
 <pre><code>class TestingController &lt; ApplicationController
   caches_action :caching
   def caching
@@ -141,33 +114,25 @@ compare the default memory cache store and memcached cache store.</p>
   end
 end
 </code></pre>
-
 <p>Once pushed and deployed, I repeatedly hit /testing/caching, and
 /testing/blocking from separate tabs. With the default memory cache store, I
 saw 2 different times on /testing/caching. Once I configured Rails to use
 memcached as the cache store, I saw only be a single time on /testing/caching.
 This makes sense because both dynos are pulling from the same centralized
 cache.</p>
-
 <p>The moral of the story is to not use page caching on Heroku for pages that
 need to be manually expired. Personally, I'm just going to set http expiration
 headers myself to make the code's behavior more transparent and consistent
 between local development and Heroku production.</p>
-
-<h2>
-<a id="user-content-useful-debugging-tips" class="anchor" href="#useful-debugging-tips" aria-hidden="true"><span class="octicon octicon-link"></span></a>Useful debugging tips</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Useful debugging tips</h2><a id="user-content-useful-debugging-tips" class="anchor" aria-label="Permalink: Useful debugging tips" href="#useful-debugging-tips"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>To see the cache store currently being used and the contents of your cache:</p>
-
 <pre><code>script/console production
 app.get '/'
 # tells you what cache_store is being used, and what's in your cache
 app.controller.send(:cache_configured?)
 </code></pre>
-
 <p>Sweepers have a reference to the controller, so it's useful to set a
 breakpoint before and after the call to expire_action:</p>
-
 <pre><code># in review_sweeper.rb
 def after_save(obj)
   debugger
@@ -175,24 +140,16 @@ def after_save(obj)
   expire_action :controller =&gt; 'reviews', :action =&gt; 'index'
 end
 </code></pre>
-
-<h2>
-<a id="user-content-reference-links" class="anchor" href="#reference-links" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference Links</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Reference Links</h2><a id="user-content-reference-links" class="anchor" aria-label="Permalink: Reference Links" href="#reference-links"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>
-<a href="http://guides.rubyonrails.org/caching_with_rails.html">RailsGuides - Caching with Rails</a> - great overview of caching, and explains cache memory stores.</li>
-<li><a href="http://api.rubyonrails.org/classes/ActionController/Caching/Actions.html">Rails action caching documentation</a></li>
-<li><a href="http://api.rubyonrails.org/classes/ActionController/Caching/Pages.html">Rails page caching documentation</a></li>
-<li><a href="http://docs.heroku.com/http-caching">Heroku HTTP caching documentation</a></li>
-<li><a href="http://docs.heroku.com/memcached">Heroku Memcached documentation</a></li>
+<a href="http://guides.rubyonrails.org/caching_with_rails.html" rel="nofollow">RailsGuides - Caching with Rails</a> - great overview of caching, and explains cache memory stores.</li>
+<li><a href="http://api.rubyonrails.org/classes/ActionController/Caching/Actions.html" rel="nofollow">Rails action caching documentation</a></li>
+<li><a href="http://api.rubyonrails.org/classes/ActionController/Caching/Pages.html" rel="nofollow">Rails page caching documentation</a></li>
+<li><a href="http://docs.heroku.com/http-caching" rel="nofollow">Heroku HTTP caching documentation</a></li>
+<li><a href="http://docs.heroku.com/memcached" rel="nofollow">Heroku Memcached documentation</a></li>
 <li>
-<a href="http://redbot.org/">Resource Expert Droid</a> - useful service for inspecting http response headers</li>
+<a href="http://redbot.org/" rel="nofollow">Resource Expert Droid</a> - useful service for inspecting http response headers</li>
 </ul>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

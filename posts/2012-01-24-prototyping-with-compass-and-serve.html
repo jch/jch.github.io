@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-prototyping-with-compass-and-serve" class="anchor" href="#prototyping-with-compass-and-serve" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prototyping with Compass and Serve</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Prototyping with Compass and Serve</h1><a id="user-content-prototyping-with-compass-and-serve" class="anchor" aria-label="Permalink: Prototyping with Compass and Serve" href="#prototyping-with-compass-and-serve"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>For prototyping a new webapp, I like to get an HTML prototype on screen as
 fast as possible. There are a number of ways to achieve this, ranging from the
 heavyweight Rails, to the lightweight Sinatra. But even a barebones Sinatra
@@ -42,114 +30,81 @@ want to? In this post I'll outline my bottoms up approach to getting a site
 design bootstrapped. I'll also cover how to get these prototypes up in a
 public area for feedback, and how these prototypes can be used as scaffolding
 alongside your development.</p>
-
-<h2>
-<a id="user-content-tldr" class="anchor" href="#tldr" aria-hidden="true"><span class="octicon octicon-link"></span></a><strong>TL;DR</strong>
-</h2>
-
+<div class="markdown-heading"><h2 class="heading-element"><strong>TL;DR</strong></h2><a id="user-content-tldr" class="anchor" aria-label="Permalink: TL;DR" href="#tldr"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>This tutorial builds up an HTML prototype from the bottom up to show how
 prototyping problems can be solved with compass and serve. To build an HTML
 prototype, you can skip all of the details and just run:</p>
-
 <pre><code>serve create my-project
 </code></pre>
-
-<p>Check out the <a href="http://get-serve.com/documentation/create">serve documentation</a>
+<p>Check out the <a href="http://get-serve.com/documentation/create" rel="nofollow">serve documentation</a>
 for more detail. To arrive at the same conclusion step-by-step, read the long
 version below.</p>
-
-<h2>
-<a id="user-content-overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Overview</h2><a id="user-content-overview" class="anchor" aria-label="Permalink: Overview" href="#overview"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>We'll walk through the individual steps of building out a web prototype. We'll
 start with the bare minimum and add pieces as needed. The example design I'm
 using is the design for my car blog, and the final source can be <a href="https://github.com/jch/rock_road">found here
 on github</a>.</p>
-
-<h2>
-<a id="user-content-build-a-single-static-page" class="anchor" href="#build-a-single-static-page" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build a single static page</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Build a single static page</h2><a id="user-content-build-a-single-static-page" class="anchor" aria-label="Permalink: Build a single static page" href="#build-a-single-static-page"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The beauty of static pages is how quick it is to set one up. We'll worry about
 the other pages after we've happy with how the index page looks. For starters,
 let's create a basic page skeleton.</p>
-
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">html</span>&gt;
-  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
-  &lt;<span class="pl-ent">body</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
-        &lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">'</span>post<span class="pl-pds">'</span></span>&gt;
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">header</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">a</span> <span class="pl-c1">href</span>='<span class="pl-s">#</span>'<span class="pl-kos">&gt;</span>Rocky Road Blog<span class="pl-kos">&lt;/</span><span class="pl-ent">a</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">main</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">post-list</span>'<span class="pl-kos">&gt;</span>
+        <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>='<span class="pl-s">post</span>'<span class="pl-kos">&gt;</span>
           <span class="pl-c">&lt;!-- blog post goes here --&gt;</span>
-        &lt;/<span class="pl-ent">div</span>&gt;
-      &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-  &lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
-<p>To stub out image assets, I used <a href="http://lorempixel.com/">LoremPixel</a>. There's
+        <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">footer</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Copyright 2011 RockyRoadBlog. All rights reserved<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span></pre></div>
+<p>To stub out image assets, I used <a href="http://lorempixel.com/" rel="nofollow">LoremPixel</a>. There's
 no styling at all, but the structure gives us a good idea of where everything
 will live.</p>
-
-<h2>
-<a id="user-content-add-stylesheets" class="anchor" href="#add-stylesheets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add stylesheets</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Add stylesheets</h2><a id="user-content-add-stylesheets" class="anchor" aria-label="Permalink: Add stylesheets" href="#add-stylesheets"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Instead of writing raw CSS, it's much easier to write stylesheets with sass.
 Compass is another library that provides a bunch of useful sass mixins and
 functions. When paired with guard-compass, the stylesheets are compiled to css
 files whenever you save your sass files.</p>
-
 <p>Add the following to a Gemfile</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">source</span> <span class="pl-s">"http://rubygems.org"</span>
 
-<div class="highlight highlight-source-ruby"><pre>source <span class="pl-s"><span class="pl-pds">"</span>http://rubygems.org<span class="pl-pds">"</span></span>
-
-<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>compass<span class="pl-pds">"</span></span>
-<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>guard<span class="pl-pds">"</span></span>
-<span class="pl-k">gem</span> <span class="pl-s"><span class="pl-pds">"</span>guard-compass<span class="pl-pds">"</span></span></pre></div>
-
+<span class="pl-en">gem</span> <span class="pl-s">"compass"</span>
+<span class="pl-en">gem</span> <span class="pl-s">"guard"</span>
+<span class="pl-en">gem</span> <span class="pl-s">"guard-compass"</span></pre></div>
 <p>Then run:</p>
-
-<div class="highlight highlight-source-ruby"><pre>bundle
-bundle exec compass init <span class="pl-k">--</span>syntax<span class="pl-k">=</span>sass
-bundle exec guard init</pre></div>
-
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">bundle</span>
+<span class="pl-en">bundle</span> <span class="pl-en">exec</span> <span class="pl-en">compass</span> <span class="pl-en">init</span> --<span class="pl-s1">syntax</span><span class="pl-c1">=</span><span class="pl-en">sass</span>
+<span class="pl-en">bundle</span> <span class="pl-en">exec</span> <span class="pl-en">guard</span> <span class="pl-en">init</span></pre></div>
 <p>By default, <code>compass</code> uses the scss syntax, but I prefer the indentation based
 sass syntax instead. Skip the <code>--syntax=sass</code> if you prefer the default. Edit
 your Guardfile to look like the following:</p>
-
-<div class="highlight highlight-source-ruby"><pre>guard <span class="pl-s"><span class="pl-pds">"</span>compass<span class="pl-pds">"</span></span> <span class="pl-k">do</span>
-  watch(<span class="pl-sr"><span class="pl-pds">%r{</span>sass/*<span class="pl-cce">\.</span>sass<span class="pl-pds">}</span></span>)
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">guard</span> <span class="pl-s">"compass"</span> <span class="pl-k">do</span>
+  <span class="pl-en">watch</span><span class="pl-kos">(</span><span class="pl-sr">%r{sass/*<span class="pl-cce">\.</span>sass}</span><span class="pl-kos">)</span>
 <span class="pl-k">end</span></pre></div>
-
 <p>Let's add our first sass file and check that our setup is working. Add a main.sass to your sass/ subdirectory with the following:</p>
-
 <pre><code>body
   background-color: red
 </code></pre>
-
 <p>Add a line to index.html in the head section to reference the compiled
 stylesheet. Notice that we're referencing the compiled css file, not the
 original sass source file.</p>
-
 <pre><code>&lt;link rel='stylesheet' type='text/css' href='stylesheets/main.css'&gt;
 </code></pre>
-
 <p>Now start guard with:</p>
-
 <pre><code>bundle exec guard
 </code></pre>
-
 <p>You should see your sass source files compile. Now whenever you make changes
 to your sass files, guard will pick them up and recompile your sources.</p>
-
-<h2>
-<a id="user-content-reusable-snippets" class="anchor" href="#reusable-snippets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reusable snippets</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Reusable snippets</h2><a id="user-content-reusable-snippets" class="anchor" aria-label="Permalink: Reusable snippets" href="#reusable-snippets"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When designing, it's common to have a chunk of markup that needs to be reused
 over and over. In our example, I'd like to see the design with multiple <code>post</code>
 elements at once. I could duplicate the markup several times, but that's a
@@ -157,53 +112,43 @@ pain, and becomes even more painful when you have to change all of the
 duplicated markup if you want to make a change. What we ideally want is to
 have a separate file for the reusable snippets that we can include as many
 times as we'd like.</p>
-
 <p>Serve does exactly that (and more). First let's get it installed by adding it
 to our Gemfile.</p>
-
 <pre><code>gem "serve"  # run "bundle" after editing
 </code></pre>
-
 <p>In serve, reusable snippets are called 'partials'. Partials live in a folder
 called <code>views</code> by default. To make a new partial for each individual blog
 post, we create a file named <code>_post.erb</code> with the html of a post:</p>
-
 <div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- in views/_post.erb --&gt;</span>
-&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">'</span>post<span class="pl-pds">'</span></span>&gt;
+<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>='<span class="pl-s">post</span>'<span class="pl-kos">&gt;</span>
   <span class="pl-c">&lt;!-- blog post goes here --&gt;</span>
-&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
-
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
 <p>Whenever we want to reference that partial, we can include it in our other
 templates by calling render. For example, if we want to list 5 posts per index page, we can use a simple loop:</p>
-
 <div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- in index.html --&gt;</span>
-&lt;<span class="pl-ent">html</span>&gt;
-  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
-  &lt;<span class="pl-ent">body</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
+<span class="pl-kos">&lt;</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">header</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">a</span> <span class="pl-c1">href</span>='<span class="pl-s">#</span>'<span class="pl-kos">&gt;</span>Rocky Road Blog<span class="pl-kos">&lt;/</span><span class="pl-ent">a</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">main</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">post-list</span>'<span class="pl-kos">&gt;</span>
         <span class="pl-c">&lt;!-- renders 5 post divs --&gt;</span>
-        &lt;%= 5.times.each do %&gt;
-          &lt;%= render 'post' %&gt;
-        &lt;% end %&gt;
-      &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-  &lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
+        <span class="pl-kos">&lt;</span>%= 5.times.each do %<span class="pl-kos">&gt;</span>
+          <span class="pl-kos">&lt;</span>%= render 'post' %<span class="pl-kos">&gt;</span>
+        <span class="pl-kos">&lt;</span>% end %<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">footer</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Copyright 2011 RockyRoadBlog. All rights reserved<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span></pre></div>
 <p>To see this in action, run <code>serve</code> in your terminal, and visit
 <code>http://localhost:4000</code>. You should see the blog index page with 5 posts in
 it.</p>
-
-<h2>
-<a id="user-content-layouts" class="anchor" href="#layouts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Layouts</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Layouts</h2><a id="user-content-layouts" class="anchor" aria-label="Permalink: Layouts" href="#layouts"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Our blog index page is starting to come together. But our blog will have other
 pages as well. There'll be an 'About' page and also a page to show a blog post
 and it's comments. These pages will share a lot of the same markup (the
@@ -212,55 +157,44 @@ each of these, we can create a layout. Think of a layout as an inside-out
 partial. Instead of specifying which parts are the same, you specify which
 part will change. To create our layout, add the following to <code>_layout.erb</code> in
 the views directory.</p>
-
 <div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- views/_layout.erb --&gt;</span>
-&lt;<span class="pl-ent">html</span>&gt;
-  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
-  &lt;<span class="pl-ent">body</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>header<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">a</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">'</span>#<span class="pl-pds">'</span></span>&gt;Rocky Road Blog&lt;/<span class="pl-ent">a</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>&gt;
-      &lt;%= yield %&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-    &lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>footer<span class="pl-pds">'</span></span>&gt;
-      &lt;<span class="pl-ent">p</span>&gt;Copyright 2011 RockyRoadBlog. All rights reserved&lt;/<span class="pl-ent">p</span>&gt;
-    &lt;/<span class="pl-ent">div</span>&gt;
-  &lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
+<span class="pl-kos">&lt;</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">header</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">a</span> <span class="pl-c1">href</span>='<span class="pl-s">#</span>'<span class="pl-kos">&gt;</span>Rocky Road Blog<span class="pl-kos">&lt;/</span><span class="pl-ent">a</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">main</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span>%= yield %<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">footer</span>'<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Copyright 2011 RockyRoadBlog. All rights reserved<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span></pre></div>
 <p>Now we can change <code>index.html</code> to:</p>
-
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">'</span>post-list<span class="pl-pds">'</span></span>&gt;
-  &lt;%= 5.times.each do %&gt;
-    &lt;%=  render 'post' %&gt;
-  &lt;% end %&gt;
-&lt;/<span class="pl-ent">div</span>&gt;</pre></div>
-
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>='<span class="pl-s">post-list</span>'<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span>%= 5.times.each do %<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span>%=  render 'post' %<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span>% end %<span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
 <p>If you try and view this in your browser, you'll notice that the loop didn't
 render the partial and still looks like ruby code. This is because serve
 determines what template language to run on a file based on it's file
 extension. So to run ruby code in our index template, we need to rename it to
 <code>index.html.erb</code></p>
-
 <p>To create our About page, we just need to put the html that's different in
 <code>about.erb</code></p>
-
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">h1</span>&gt;About&lt;/<span class="pl-ent">h1</span>&gt;
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">h1</span><span class="pl-kos">&gt;</span>About<span class="pl-kos">&lt;/</span><span class="pl-ent">h1</span><span class="pl-kos">&gt;</span>
 <span class="pl-c">&lt;!-- about us here --&gt;</span></pre></div>
-
 <p>Serve figures out the URL paths based on the filename, so you can view this
-new file at <a target="_blank" href="http://localhost:4000">http://localhost:4000</a></p>
-
-<h2>
-<a id="user-content-layouts-and-nested-paths" class="anchor" href="#layouts-and-nested-paths" aria-hidden="true"><span class="octicon octicon-link"></span></a>Layouts and Nested Paths</h2>
-
+new file at <a href="http://localhost:4000" rel="nofollow"></a><a href="http://localhost:4000" rel="nofollow">http://localhost:4000</a></p>
+<div class="markdown-heading"><h2 class="heading-element">Layouts and Nested Paths</h2><a id="user-content-layouts-and-nested-paths" class="anchor" aria-label="Permalink: Layouts and Nested Paths" href="#layouts-and-nested-paths"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Up til now, we've put our html files at the top level folder. This works until
 you have multiple pages and multiple layouts. Just like how it figures out
 URL's from filename, serve will also pickup nested folders as part of the URL.
 For example, if I wanted to create <code>/about/jerry</code> page that uses a different
 layout, I could create the following directory structure:</p>
-
 <pre><code>rrb
   _layout.erb
   show.html.erb     # show will use rrb/_layout.erb
@@ -268,39 +202,23 @@ layout, I could create the following directory structure:</p>
     _layout.erb
     jerry.html.erb  # jerry will use rrb/about/_layout.erb
 </code></pre>
-
-<h2>
-<a id="user-content-publishing-your-prototype" class="anchor" href="#publishing-your-prototype" aria-hidden="true"><span class="octicon octicon-link"></span></a>Publishing your prototype</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Publishing your prototype</h2><a id="user-content-publishing-your-prototype" class="anchor" aria-label="Permalink: Publishing your prototype" href="#publishing-your-prototype"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Once everything looks good, we still need to get feedback from people who may
 not have ruby setup. Serve has a nice export utility that will flatten your
 all your pages into static html files. To export your prototype, run:</p>
-
 <pre><code>serve export
 </code></pre>
-
 <p>This will dump everything into an <code>html</code> directory that you can zip up and
 share.</p>
-
-<h2>
-<a id="user-content-scaffolded-development" class="anchor" href="#scaffolded-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scaffolded development</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Scaffolded development</h2><a id="user-content-scaffolded-development" class="anchor" aria-label="Permalink: Scaffolded development" href="#scaffolded-development"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>serve is a great tool to use alongside ruby webapp development. Since it's a
 rack app, you can mount it alongside your Rails or Sinatra application and
 fill out the functionality as you go.</p>
-
-<h2>
-<a id="user-content-design-driven-prototyping" class="anchor" href="#design-driven-prototyping" aria-hidden="true"><span class="octicon octicon-link"></span></a>Design driven prototyping</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Design driven prototyping</h2><a id="user-content-design-driven-prototyping" class="anchor" aria-label="Permalink: Design driven prototyping" href="#design-driven-prototyping"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Prototyping out the flows and design of an application is a great way to
 explore how an application will work. Paper and photoshop prototypes are
 great, but actually being able to click through an HTML prototype can help the
 design and user experience process. The serve library makes it easy to build
 html prototypes by cutting down on the amount of setup work needed to be done.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

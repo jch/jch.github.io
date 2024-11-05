@@ -1,123 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-ruby-incompatible-encoding-errors" class="anchor" href="#ruby-incompatible-encoding-errors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ruby Incompatible Encoding Errors</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Ruby Incompatible Encoding Errors</h1><a id="user-content-ruby-incompatible-encoding-errors" class="anchor" aria-label="Permalink: Ruby Incompatible Encoding Errors" href="#ruby-incompatible-encoding-errors"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>String encodings is like air. Completely necessary and never on your mind
 until something goes wrong. Encoding bugs are painful and often feel like the
 black arts. Follow the jump for an aggregation of past experiences for solving
 these tricky problems.</p>
-
-<h2>
-<a id="user-content-background" class="anchor" href="#background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Background</h2><a id="user-content-background" class="anchor" aria-label="Permalink: Background" href="#background"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The first time you think of encodings in Ruby is probably the first time you
 see an exception along the lines of:</p>
-
 <pre><code>incompatible character encodings: ASCII-8BIT and UTF-8
 </code></pre>
-
-<p>Before you pull out your hair, I recommend reading <a href="http://blog.grayproductions.net/articles/understanding_m17n">James Edward Grey
+<p>Before you pull out your hair, I recommend reading <a href="http://blog.grayproductions.net/articles/understanding_m17n" rel="nofollow">James Edward Grey
 II's</a> in depth
-coverage on why and what encodings are. Markus Prinz's <a href="http://nuclearsquid.com/writings/ruby-1-9-encodings/">Working with Encodings
+coverage on why and what encodings are. Markus Prinz's <a href="http://nuclearsquid.com/writings/ruby-1-9-encodings/" rel="nofollow">Working with Encodings
 in Ruby 1.9</a> is also a
 good read. Go ahead, this article will wait.</p>
-
 <p>The core cause of the above error is when your code tries to mash two strings
 with different encodings together. For example, trying to glue a UTF-8 Chinese
 string to an ASCII-8BIT English string. They're hard to hunt down because the
 error is generated in C code and doesn't descend from the Exception class.
 This means you can't <code>rescue</code> the error to inspect it. Your best tool for
-finding the origin of the error is to learn about the <a href="http://ruby-doc.org/core-2.0/Encoding.html">Encoding</a>
+finding the origin of the error is to learn about the <a href="http://ruby-doc.org/core-2.0/Encoding.html" rel="nofollow">Encoding</a>
 module. Once you're familiar with that API, it's easy to inspect the encoding
 to check it's what you expected.</p>
-
-<div class="highlight highlight-source-ruby"><pre><span class="pl-s"><span class="pl-pds">"</span>some string<span class="pl-pds">"</span></span>.encoding
-<span class="pl-s"><span class="pl-pds">"</span>some string<span class="pl-pds">"</span></span>.force_encoding(<span class="pl-s"><span class="pl-pds">'</span>UTF-8<span class="pl-pds">'</span></span>)</pre></div>
-
-<h3>
-<a id="user-content-rails" class="anchor" href="#rails" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails</h3>
-
+<div class="highlight highlight-source-ruby"><pre><span class="pl-s">"some string"</span><span class="pl-kos">.</span><span class="pl-en">encoding</span>
+<span class="pl-s">"some string"</span><span class="pl-kos">.</span><span class="pl-en">force_encoding</span><span class="pl-kos">(</span><span class="pl-s">'UTF-8'</span><span class="pl-kos">)</span></pre></div>
+<div class="markdown-heading"><h3 class="heading-element">Rails</h3><a id="user-content-rails" class="anchor" aria-label="Permalink: Rails" href="#rails"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Rails defaults to UTF-8 for encoding. You can change it via application.rb
 with:</p>
-
-<div class="highlight highlight-source-ruby"><pre>config.encoding <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>UTF-8<span class="pl-pds">'</span></span></pre></div>
-
-<p>Yehuda Katz has a <a href="http://yehudakatz.com/2010/05/05/ruby-1-9-encodings-a-primer-and-the-solution-for-rails/">good write
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">encoding</span> <span class="pl-c1">=</span> <span class="pl-s">'UTF-8'</span></pre></div>
+<p>Yehuda Katz has a <a href="http://yehudakatz.com/2010/05/05/ruby-1-9-encodings-a-primer-and-the-solution-for-rails/" rel="nofollow">good write
 up</a>
 describing the problem. The long term solution is to have
 libraries that deal with external strings to respect
 <code>Encoding.default_internal</code></p>
-
-<h3>
-<a id="user-content-databases" class="anchor" href="#databases" aria-hidden="true"><span class="octicon octicon-link"></span></a>Databases</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Databases</h3><a id="user-content-databases" class="anchor" aria-label="Permalink: Databases" href="#databases"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>To make sure your database uses the correct encoding, set your connection
 adapter to the correct encoding:</p>
-
 <pre><code># config/database.yml
 development:
   encoding: unicode
 </code></pre>
-
-<h3>
-<a id="user-content-views" class="anchor" href="#views" aria-hidden="true"><span class="octicon octicon-link"></span></a>Views</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Views</h3><a id="user-content-views" class="anchor" aria-label="Permalink: Views" href="#views"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When template views are read in from the filesystem, it respects the global
 ruby default for encoding. This can be overridden by a special shebang-like
 declaration at the top of the file:</p>
-
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># encoding: utf-8</span></pre></div>
-
-<p>Check out <a href="http://api.rubyonrails.org/classes/ActionView/Template.html#method-i-encode-21">ActionView::Template#encode!</a>
+<p>Check out <a href="http://api.rubyonrails.org/classes/ActionView/Template.html#method-i-encode-21" rel="nofollow">ActionView::Template#encode!</a>
 for more details.</p>
-
 <p>If you're seeing an incompatible encoding error in a view, it's possible that
 it's caused by rendering a value from an external gem or string. Remember that
 the <code>render</code> method returns a string. A quick way to inspect that your
 partials are in the correct encoding is to save the result of a partial into a
 variable and print it's encoding:</p>
-
-<div class="highlight highlight-source-ruby"><pre><span class="pl-k">&lt;</span><span class="pl-k">%</span> output <span class="pl-k">=</span> render(<span class="pl-c1">:partial</span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>some/partial<span class="pl-pds">'</span></span>) <span class="pl-s"><span class="pl-pds">%&gt;</span></span>
-<span class="pl-s">&lt;%= output.encoding %<span class="pl-pds">&gt;</span></span></pre></div>
-
-<h3>
-<a id="user-content-heroku" class="anchor" href="#heroku" aria-hidden="true"><span class="octicon octicon-link"></span></a>Heroku</h3>
-
-<p>Don't <a href="http://stackoverflow.com/questions/7612912/set-utf-8-as-default-%0Astring-encoding-in-heroku">forget to set your environment
-variable</a> to the correct default encoding.</p>
-
+<div class="highlight highlight-source-ruby"><pre>&lt;% <span class="pl-s1">output</span> <span class="pl-c1">=</span> <span class="pl-en">render</span><span class="pl-kos">(</span><span class="pl-pds">:partial</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'some/partial'</span><span class="pl-kos">)</span> %&gt;
+&lt;%= <span class="pl-s1">output</span><span class="pl-kos">.</span><span class="pl-en">encoding</span> %&gt;</pre></div>
+<div class="markdown-heading"><h3 class="heading-element">Heroku</h3><a id="user-content-heroku" class="anchor" aria-label="Permalink: Heroku" href="#heroku"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Don't [forget to set your environment
+variable](<a href="http://stackoverflow.com/questions/7612912/set-utf-8-as-default-" rel="nofollow">http://stackoverflow.com/questions/7612912/set-utf-8-as-default-</a>
+string-encoding-in-heroku) to the correct default encoding.</p>
 <div class="highlight highlight-source-shell"><pre>$ heroku config:add LANG=en_US.UTF-8</pre></div>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

@@ -1,48 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-resque-cheatsheet" class="anchor" href="#resque-cheatsheet" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resque Cheatsheet</h1>
-
-<p><a href="/images/octocat_happy.gif" target="_blank"><img src="/images/octocat_happy.gif" style="max-width:100%;"></a>
-Coded and used by the <a href="http://github.com/">Github</a> team,
-<a href="http://github.com/defunkt/resque">Resque</a> is a Ruby queue for
+    <div class="markdown-heading"><h1 class="heading-element">Resque Cheatsheet</h1><a id="user-content-resque-cheatsheet" class="anchor" aria-label="Permalink: Resque Cheatsheet" href="#resque-cheatsheet"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/octocat_happy.gif"><img src="/images/octocat_happy.gif" style="max-width: 100%;"></a></p>
+Coded and used by the [Github](<a href="http://github.com/">http://github.com/</a>) team,
+[Resque](<a href="http://github.com/defunkt/resque">http://github.com/defunkt/resque</a>) is a Ruby queue for
 processing background jobs built on top of
-<a href="http://code.google.com/p/redis/">Redis</a>.  So far, I'm really enjoying
+[Redis](<a href="http://code.google.com/p/redis/" rel="nofollow">http://code.google.com/p/redis/</a>).  So far, I'm really enjoying
 the simple setup and simple API.  The documentation gives a lot of
 good background information, and it's been working well overall.
-Follow the jump for a day-to-day usage reference.</p>
-
-<p><br></p>
-
-<h2>
-<a id="user-content-status" class="anchor" href="#status" aria-hidden="true"><span class="octicon octicon-link"></span></a>Status</h2>
-
+Follow the jump for a day-to-day usage reference.
+<br>
+<div class="markdown-heading"><h2 class="heading-element">Status</h2><a id="user-content-status" class="anchor" aria-label="Permalink: Status" href="#status"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <pre><code>Resque.info
 Resque.queues
 Resque.redis
@@ -54,18 +38,12 @@ Resque.size(queue_name)
 #    Resque.peek(archive_queue, 59, 30)
 Resque.peek(queue_name, start=1, count=1)
 </code></pre>
-
-<h2>
-<a id="user-content-workers" class="anchor" href="#workers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Workers</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Workers</h2><a id="user-content-workers" class="anchor" aria-label="Permalink: Workers" href="#workers"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <pre><code>Resque.workers
 Resque.working
 Resque.remove_worker(worker_id) # find worker_id from one of the above methods
 </code></pre>
-
-<h2>
-<a id="user-content-queue-management" class="anchor" href="#queue-management" aria-hidden="true"><span class="octicon octicon-link"></span></a>Queue Management</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Queue Management</h2><a id="user-content-queue-management" class="anchor" aria-label="Permalink: Queue Management" href="#queue-management"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <pre><code># For testing a worker, I usually call the 'perform' method directly.
 #    Resque.enqueue(ArchiveWorker)
 #    Resque.enqueue(ArchiveWorker, 'matching', 'arguments')
@@ -73,37 +51,23 @@ Resque.enqueue(klass, *args)
 Resque.dequeue(klass, *args)
 Resque.remove_queue(queue_name)
 </code></pre>
-
-<h2>
-<a id="user-content-callbacks" class="anchor" href="#callbacks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Callbacks</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Callbacks</h2><a id="user-content-callbacks" class="anchor" aria-label="Permalink: Callbacks" href="#callbacks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <pre><code># Each of these can either take a block, or be assigned to with a Proc
 Resque.before_first_fork(&amp;blk)
 Resque.before_fork(&amp;blk)
 Resque.after_fork(&amp;blk)
 </code></pre>
-
-<h2>
-<a id="user-content-problems" class="anchor" href="#problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Problems</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Problems</h2><a id="user-content-problems" class="anchor" aria-label="Permalink: Problems" href="#problems"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Redis connects to wrong host - Redis connects to localhost:6379 by
 default. Customize this by doing the following:</p>
-
 <pre><code>Resque.redis = 'hostname:port:db'  # all 3 values are optional
 </code></pre>
-
 <p>Workers die stop after first batch completes - This is caused by the
 workers losing their connection to MySQL.  See <a href="http://gist.github.com/250080">this
 gist</a> for a fix and an explanation.
 Alternatively, you can add this line at the beginning of your
 'perform' method:</p>
-
 <pre><code>ActiveRecord::Base.reconnect!
 </code></pre>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

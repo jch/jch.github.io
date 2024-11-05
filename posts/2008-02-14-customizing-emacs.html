@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-customizing-emacs" class="anchor" href="#customizing-emacs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customizing Emacs</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Customizing Emacs</h1><a id="user-content-customizing-emacs" class="anchor" aria-label="Permalink: Customizing Emacs" href="#customizing-emacs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>My editor of choice is eight megs and constantly swapping.  I didn't
 meticulously choose my editor, but rather had one forced upon me
 freshman year in CS61A.  Being young and impressionable at the time, I
@@ -37,20 +25,15 @@ after day.  First it was coding, then notes, then email.  Now four
 years later, I'm basically married to my editor, for better or for
 worse.  For a complete reference of my .emacs file, see <a href="https://github.com/jch/dotfiles">this
 link</a>.</p>
-
-<h2>
-<a id="user-content-movement" class="anchor" href="#movement" aria-hidden="true"><span class="octicon octicon-link"></span></a>Movement</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Movement</h2><a id="user-content-movement" class="anchor" aria-label="Permalink: Movement" href="#movement"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>One of the most important features of an editor for a developer is
 ease to move point, emacs terminology for cursor, within a file and
 between files.  I'm glad I took that hour in 61A lab to go through the
 emacs tutorial (M-x tutorial) and learn the basics of movement.  In
 terms of customization, the only option I changed is mapping M-g  to
 'goto-line'.</p>
-
 <pre><code>(global-set-key "\M-g" 'goto-line)
 </code></pre>
-
 <p>Two feature I still tend to neglect to use are 'bookmarks' and 'tags'.
 Bookmarks allow you to save a specific location in a specific buffer,
 but the keybinding to set a bookmark is <em>hrm</em>, rather cumbersome.
@@ -58,94 +41,65 @@ Tags are this magical feature that I've had mixed results with.  It
 allows you to index and quickly jump to interesting places like
 function and class definitions.  Unfortunately, sometimes it also
 likes to index <em>uninteresting</em> places and jumps you to those.</p>
-
-<h2>
-<a id="user-content-text-manipulation" class="anchor" href="#text-manipulation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Text Manipulation</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Text Manipulation</h2><a id="user-content-text-manipulation" class="anchor" aria-label="Permalink: Text Manipulation" href="#text-manipulation"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Ever wanted to leverage the power of unix on some region of text?
 Trying using M-! (shell command), or M-| (shell command on region).
 As if that's not enough, if you prefix either of them with M-[k] for
 some number k, then the output of the command gets inserted at point.
 This is great for sorting (sort -n) on a bunch of imports or includes,
 and also for inserting useful snippets of text (which perl, date)</p>
-
 <p>Another amazing feature is rectangular editing:</p>
-
 <pre><code>C-x r t
 C-x r d
 </code></pre>
-
 <p>These two commands mean insert and delete respectively.  The two
 complementary use cases are to select the beginning of several lines
 and use 't' to insert a comment character and then use 'd' to delete
 them when you're done.  Sure you could use <code>M-x comment-region</code>, but
 sometimes that doesn't act quite right, and these two are better
 built-in to my muscle memory.</p>
-
 <p>Another super lazy trick is <code>M-/</code>.  This tries to complete the current
 word you're typing with words that are in other buffers.  If it's not
 the right one, just <code>M-/</code> to cycle to the next one.</p>
-
-<h2>
-<a id="user-content-look-and-feel" class="anchor" href="#look-and-feel" aria-hidden="true"><span class="octicon octicon-link"></span></a>Look and Feel</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Look and Feel</h2><a id="user-content-look-and-feel" class="anchor" aria-label="Permalink: Look and Feel" href="#look-and-feel"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Let's face it, to become a true hacker, you have to adopt some obscure
 interface that's so catered to you that it'll wow and gag everyone
 else who dares try to use it.  Such is the case of my own settings.  I
 didn't do too much to it, but even little things can make a big
 difference.</p>
-
 <p>My favorite quick thing is to change the text to be white on black:</p>
-
 <pre><code>(set-background-color "black")
 (set-foreground-color "white")
 </code></pre>
-
 <p>Next, I like syntax highlighting so I turn on the extremely poorly
 named:</p>
-
 <pre><code>(global-font-lock-mode t)
 </code></pre>
-
 <p>Then, I turn off a few things that I know I won't use:</p>
-
 <pre><code>(setq inhibit-startup-message t) ; I'm using emacs, duh
 (menu-bar-mode -1) ; menus can still be seen with M-`
 </code></pre>
-
-<h2>
-<a id="user-content-broken-things" class="anchor" href="#broken-things" aria-hidden="true"><span class="octicon octicon-link"></span></a>Broken Things</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Broken Things</h2><a id="user-content-broken-things" class="anchor" aria-label="Permalink: Broken Things" href="#broken-things"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Even though emacs can be all things to all people, there have been a
 few annoyances I can't figure out.  My worst beef is how backspace has
 different behavior wherever I go.  I understand that it's most likely
 because of the different shells and environments I'm using, but it's
 too bad emacs can't just magically figure it out for me.  Right now I
 have a line in my .emacs:</p>
-
 <pre><code>; fix annoying shell backspace problem
 ; 0 for ibook, 1 for imac
 (normal-erase-is-backspace-mode 1)
 </code></pre>
-
 <p>Note how I have to edit that value by hand or otherwise be doomed to
 forward-delete instead of backwards.</p>
-
-<h2>
-<a id="user-content-modularizing-emacs" class="anchor" href="#modularizing-emacs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modularizing .emacs</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Modularizing .emacs</h2><a id="user-content-modularizing-emacs" class="anchor" aria-label="Permalink: Modularizing .emacs" href="#modularizing-emacs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>.emacs is the config file that lives in your homedir and is loaded
 when Emacs starts.  I'll be honest and admit that my .emacs is pretty
 messy at the moment and needs a serious <em>refactor</em>.  I'm both
 delighted and exasperated that my config needs to be <em>programmed</em>.  I
-read <a href="http://a-nickels-worth.blogspot.com/2007/11/effective-emacs.html">this
+read <a href="http://a-nickels-worth.blogspot.com/2007/11/effective-emacs.html" rel="nofollow">this
 post</a>
 talking about some emacs tips, and I'm interested in learning more
 about autoload and optimizing some of the calls.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

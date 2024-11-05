@@ -1,36 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-rails-like-javascript-date-helpers" class="anchor" href="#rails-like-javascript-date-helpers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails-like Javascript Date Helpers</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Rails-like Javascript Date Helpers</h1><a id="user-content-rails-like-javascript-date-helpers" class="anchor" aria-label="Permalink: Rails-like Javascript Date Helpers" href="#rails-like-javascript-date-helpers"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I'm a fan of
-<a href="http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/Time/Calculations.html">ActiveSupport::CoreExtensions::Time::Calculations</a>.
+<a href="http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/Time/Calculations.html" rel="nofollow">ActiveSupport::CoreExtensions::Time::Calculations</a>.
 It gives you easy to use methods like <code>beginning_of_day</code>,
 <code>end_of_day</code>, <code>beginning_of_week</code>,
 <code>end_of_day</code>, etc.  These methods make date handling code
@@ -38,9 +26,7 @@ more concise and more readable.  I wanted the same benefits in
 Javascript, so I've ported over a subset of these methods and mixed
 them into Javascript's <code>Date</code> object.  Read on for the
 code.</p>
-
 <p>Here are a few examples of what you can do with these date extensions:</p>
-
 <pre><code>// Mon Jan 12 2009 13:30:00 GMT-0800 (PST)
 var monday = new Date(2009, 0, 12, 13, 30, 0);
 
@@ -61,9 +47,7 @@ wednesday.endOfWeek(); // Sat Jan 17 2009 23:59:59 GMT-0800 (PST)
 wednesday.beginningOfMont(); // Thu Jan 01 2009 00:00:00 GMT-0800 (PST)
 wednesday.endOfMonth(); // Sat Jan 31 2009 23:59:59 GMT-0800 (PST)
 </code></pre>
-
 <p>Here's the code:</p>
-
 <pre><code>Date.prototype.between = function(start, end) {
   return (start &lt;= this) &amp;&amp; (end &gt;= this);
 };
@@ -121,14 +105,8 @@ Date.prototype.endOfMonth = function() {
   return newDate.endOfDay();
 };
 </code></pre>
-
 <p>I did not need every method that ActiveSupport provided, so I stuck
 with implementing only the ones I needed.  It's pretty straightforward
 to write the rest of the methods if they're needed.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

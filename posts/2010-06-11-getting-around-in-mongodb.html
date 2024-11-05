@@ -1,76 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-getting-around-in-mongodb" class="anchor" href="#getting-around-in-mongodb" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Around in MongoDB</h1>
-
-<p><a href="http://mongodb.com"><img src="/images/mongodb.png" style="max-width:100%;"></a>
-I started working with <a href="http://www.mongodb.org">MongoDB</a> a few days
+    <div class="markdown-heading"><h1 class="heading-element">Getting Around in MongoDB</h1><a id="user-content-getting-around-in-mongodb" class="anchor" aria-label="Permalink: Getting Around in MongoDB" href="#getting-around-in-mongodb"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="http://mongodb.com" rel="nofollow"><img src="/images/mongodb.png" style="max-width: 100%;"></a>
+I started working with <a href="http://www.mongodb.org" rel="nofollow">MongoDB</a> a few days
 ago.  To oversimplify, think of Mongo as a really big and fast hash
 that gets saved to disk. It lets you query, retrieve, and manipulate
-data in Javascript and <a href="http://en.wikipedia.org/wiki/JSON">JSON</a>.  I
+data in Javascript and <a href="http://en.wikipedia.org/wiki/JSON" rel="nofollow">JSON</a>.  I
 had a ton of work to do, so I didn't get a chance to explore the
 technology as much as I would've liked.  Today, after getting a solid
 night's sleep, I got a chance to experiment more.  Read on to get some
 quick tips about writing Mongo queries and generating reports from the
 Mongo shell.</p>
-
 <p>When I first started interacting with Mongo, I used the Ruby
-<a href="http://mongoid.org/">Mongoid</a> adapter.  It gave me a familiar
+<a href="http://mongoid.org/" rel="nofollow">Mongoid</a> adapter.  It gave me a familiar
 ActiveRecord interface so I could accomplish things like:</p>
-
 <pre><code>Beer.all(:conditions =&gt; { :style =&gt; "stout" })
 </code></pre>
-
 <p>But it also gave me a sneak peak at Mongo's 'criteria' API for querying</p>
-
 <pre><code>Beer.criteria.where(:style =&gt; "stout")
 </code></pre>
-
 <p>It's worthwhile to note that criterias are lazily loaded, meaning
 that the query isn't performed until you actually need to access the
 data.</p>
-
 <pre><code>Beer.criteria.where(:style =&gt; "stout")  # doesn't hit mongo
 Beer.criteria.where(:style =&gt; "stout").first.drink!  # executes actual query
 </code></pre>
-
 <p>This was all fine and dandy, but just like learning SQL and
 ActiveRecord, having an understanding of the underlying system gives
-you a better idea of what you can do.  So I busted out the <a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell">mongo
+you a better idea of what you can do.  So I busted out the <a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell" rel="nofollow">mongo
 shell</a>
 and started running queries.  The
-<a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial">tutorial</a> was
+<a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial" rel="nofollow">tutorial</a> was
 a good starting point for familiarizing myself with how to connect to
 mongo, executing some queries, and printing out results.  My favorite
 feature was that the mongo shell doubled as a Javascript interpreter.
 I was able to write JS to manipulate the query results:</p>
-
 <pre><code>function map(arr, func) {
   var collection = [];
   if(arr &amp;&amp; arr.length) {
@@ -89,22 +69,18 @@ db.beers.find().forEach(function(beer) {
   });
 });
 </code></pre>
-
 <p>I got pretty tired of copying and pasting this script every time I
 edited it.  Thankfully, mongo shell lets you pass in script files to
 execute:</p>
-
 <pre><code>&gt; mongo --help
 MongoDB shell version: 1.4.0
 usage: mongo [options] [db address] [file names (ending in .js)
 </code></pre>
-
 <p>This little feature enabled me to write more complex scripts and tweak
 to my heart's content.  Something was still missing though.  I love
 Javascript as a language, but nowadays, I've grown so accustomed to
 jQuery that I'll start typing jQuery assuming it's available even when
 it's not.</p>
-
 <pre><code>db.beers.find().forEach(function(beer) {
   // CURSES! JQuery isn't available :(
   $(beer.ingredients).each(function() {
@@ -112,20 +88,15 @@ it's not.</p>
   });
 })
 </code></pre>
-
 <p>My next genius idea: load jQuery as the first script:</p>
-
 <pre><code>&gt; mongo beerdb jquery-1.4.2.min.js reporting.js
 JS Error: ReferenceError: window is not defined jquery-1.4.2.min.js:153
 failed to load: jquery-1.4.2.min.js
 </code></pre>
-
 <p>Noooooo! It makes a lot of sense that jQuery would assume a browser
 environment, but I was hoping that it wouldn't require it for the nice
 utility functions.</p>
-
 <p>To get the job done, I wrote myself a small utility library:</p>
-
 <pre><code>$ = {
   // &gt; $.map([1,2,3,4], function(x) { return x*x; }
   // [1,4,9,16]
@@ -154,37 +125,25 @@ utility functions.</p>
   },
 }
 </code></pre>
-
 <p>This didn't buy me the full power of JQuery, but at the same time, I
 was pretty happy I was able to quickly whip together some JS and get
 the reports I needed.</p>
-
 <p>Does anyone know of a JS library that buys you a lot of core library
-features and fixes, but doesn't assume a browser?  I looked at <a href="http://ejohn.org/blog/bringing-the-browser-to-the-server/">John
+features and fixes, but doesn't assume a browser?  I looked at <a href="http://ejohn.org/blog/bringing-the-browser-to-the-server/" rel="nofollow">John
 Resig's
 Env.js</a>,
 but even that assumes that you're running JS in
-<a href="http://www.mozilla.org/rhino/">Rhino</a>.  What other Mongo tricks do
+<a href="http://www.mozilla.org/rhino/" rel="nofollow">Rhino</a>.  What other Mongo tricks do
 people find useful?</p>
-
-<h2>
-<a id="user-content-reference" class="anchor" href="#reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reference</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Reference</h2><a id="user-content-reference" class="anchor" aria-label="Permalink: Reference" href="#reference"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Here's the order I recommend reading the Mongo documentation.  The
 Advanced Queries link was especially useful.</p>
-
 <ul>
-<li><a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial">Mongo Tutorial</a></li>
-<li><a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell">Overview - The MongoDB Interactive Shell</a></li>
-<li><a href="http://www.mongodb.org/display/DOCS/dbshell+Reference">dbshell Reference</a></li>
-<li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries">Advanced Queries</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/Tutorial#Tutorial" rel="nofollow">Mongo Tutorial</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/Overview+-+The+MongoDB+Interactive+Shell" rel="nofollow">Overview - The MongoDB Interactive Shell</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/dbshell+Reference" rel="nofollow">dbshell Reference</a></li>
+<li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries" rel="nofollow">Advanced Queries</a></li>
 </ul>
-
 <p><em>All databases are fictional. No beers were harmed in the making of this blog post.</em></p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

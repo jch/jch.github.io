@@ -1,62 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-css-tips-and-tricks" class="anchor" href="#css-tips-and-tricks" aria-hidden="true"><span class="octicon octicon-link"></span></a>CSS Tips and Tricks</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">CSS Tips and Tricks</h1><a id="user-content-css-tips-and-tricks" class="anchor" aria-label="Permalink: CSS Tips and Tricks" href="#css-tips-and-tricks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>These aren't organized in any way for now.  Maybe when I collect
 enough of them, I'll create a cookbook of some kind.</p>
-
-<h3>
-<a id="user-content-centering-within-a-block-element" class="anchor" href="#centering-within-a-block-element" aria-hidden="true"><span class="octicon octicon-link"></span></a>Centering within a Block Element</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Centering within a Block Element</h3><a id="user-content-centering-within-a-block-element" class="anchor" aria-label="Permalink: Centering within a Block Element" href="#centering-within-a-block-element"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <div id="user-content-outer">
   <div id="user-content-centered">
       <p>Le Awesome!</p>
       <p>Poo poo!</p>
   </div>
 </div>
-
-<h3>
-<a id="user-content-clearing-block-elements" class="anchor" href="#clearing-block-elements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clearing Block Elements</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Clearing Block Elements</h3><a id="user-content-clearing-block-elements" class="anchor" aria-label="Permalink: Clearing Block Elements" href="#clearing-block-elements"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The clear attribute of block elements specify whether anything can
 occur to the <em>left</em> or <em>right</em> or <em>both</em> (either side) of a block
 element.  For example, if a div has 'clear: left' set on it, then no
 element will be allowed to be left of it.  If there is, then the
 cleared element will be pushed down to the next line.</p>
-
-<h3>
-<a id="user-content-spacing" class="anchor" href="#spacing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Spacing</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Spacing</h3><a id="user-content-spacing" class="anchor" aria-label="Permalink: Spacing" href="#spacing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Spacing is really important and can be hard to remember at first, but
 it's really intuitive after you learn it:</p>
-
 <pre><code>  Margin
   +-----Border---------------------------------------+
   |           Padding                                |
@@ -69,15 +47,9 @@ it's really intuitive after you learn it:</p>
   |                                                  |
   +--------------------------------------------------+
 </code></pre>
-
 <ul>
-<li><a href="http://www.noupe.com/css/using-css-to-do-anything-50-creative-examples-and-tutorials.html">CSS to do anything</a></li>
-<li><a href="http://ryanfait.com/resources/footer-stick-to-bottom-of-page/">Sticky Bottom Footer</a></li>
+<li><a href="http://www.noupe.com/css/using-css-to-do-anything-50-creative-examples-and-tutorials.html" rel="nofollow">CSS to do anything</a></li>
+<li><a href="http://ryanfait.com/resources/footer-stick-to-bottom-of-page/" rel="nofollow">Sticky Bottom Footer</a></li>
 </ul>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

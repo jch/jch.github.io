@@ -1,79 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-rails-flash-with-ajax" class="anchor" href="#rails-flash-with-ajax" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rails Flash with Ajax</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Rails Flash with Ajax</h1><a id="user-content-rails-flash-with-ajax" class="anchor" aria-label="Permalink: Rails Flash with Ajax" href="#rails-flash-with-ajax"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>One small annoyance about working with the
-<a href="http://api.rubyonrails.org/classes/ActionController/Flash.html">flash</a>
+<a href="http://api.rubyonrails.org/classes/ActionController/Flash.html" rel="nofollow">flash</a>
 in Rails is that it only works well if you render separate pages per
 action.  The flash falls apart if you do an Ajax call and render an
 RJS template or some inline javascript.  The flash won't show up when
 it should, and it'll show up on some other page when you don't want it
 to.  I made 2 small changes to my app to make flash behave better when
 an Ajax call is made.</p>
-
 <p>The first trick is something I learned at work.  First, we need to
 extract the rendering of the flash into a partial in
 'app/views/layouts/_flash.html.erb'.  This will allow us to render the
 flash in a normal template, but also allow us to replace the flash in
 an inline render.  In my main template, I do a normal:</p>
-
 <pre><code>&lt;div id="flash_messages"&gt;
 &lt;%= render :partial =&gt; 'layouts/flash' %&gt;
 &lt;/div&gt;
 </code></pre>
-
 <p>To refresh the flash when an Ajax request happens, I add a
 'reload_flash' method to ApplicationHelper:</p>
-
 <pre><code>def reload_flash
   page.replace "flash_messages", :partial =&gt; 'layouts/flash'
 end
 </code></pre>
-
 <p>Then from my RJS templates or from a <code>render :update</code>
 block, I can call the reload_flash to refresh the flash inline:</p>
-
 <pre><code># within a controller action
 render :update do |page|
   flash[:notice] = "Entering 'beast mode'..."
   page.reload_flash
 end
 </code></pre>
-
 <p>This all seems fine and dandy until you visit another page.
 Unfortunately, the flash is not cleared because you haven't visited
 another action, so you end up with the flash message redundantly
 displaying a 2nd time.  To fix this, I added an
 <code>after_filter</code> to <code>ApplicationController</code> to
 clear the flash after an action if it was an Ajax request:</p>
-
 <pre><code>class ApplicationController &lt; ActionController::Base
   after_filter :discard_flash_if_xhr
 
@@ -83,19 +63,12 @@ clear the flash after an action if it was an Ajax request:</p>
   end
 end
 </code></pre>
-
 <p>Easy isn't it?  The catch here is to remember to call
 <code>reload_flash</code> whenever you're doing an inline render.</p>
-
 <p>Another useful tip plugin for working with the flash is the
-<a href="http://www.robbyonrails.com/articles/2008/08/29/flash-message-conductor">flash-message-conductor</a>
+<a href="http://www.robbyonrails.com/articles/2008/08/29/flash-message-conductor" rel="nofollow">flash-message-conductor</a>
 plugin.  I use it to controll the logic of when to show the flash, and
 also control some animations for hiding and showing the flash.  It's a
 nice simple plugin.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

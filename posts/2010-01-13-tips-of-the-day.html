@@ -1,116 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-tips-of-the-day" class="anchor" href="#tips-of-the-day" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tips of the Day</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Tips of the Day</h1><a id="user-content-tips-of-the-day" class="anchor" aria-label="Permalink: Tips of the Day" href="#tips-of-the-day"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>backspace in GNU screen with Apple Terminal, SSH, and Ubuntu</li>
 <li>jquery tooltip plugins</li>
 <li>django stuff</li>
 </ul>
-
-<h2>
-<a id="user-content-its-just-a-backspace" class="anchor" href="#its-just-a-backspace" aria-hidden="true"><span class="octicon octicon-link"></span></a>It's just a backspace</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">It's just a backspace</h2><a id="user-content-its-just-a-backspace" class="anchor" aria-label="Permalink: It's just a backspace" href="#its-just-a-backspace"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Is it too much to ask for backspace to mean backwards-delete?
 Apparently it is, because there are entire bug threads and forum posts
 dedicated to the issue.  I finally got mine working with the following
 in my .screenrc:</p>
-
 <pre><code>bindkey -d ^? stuff ^H
 </code></pre>
-
-<p>Thanks to <a href="http://www.deadlock.it/linux/fix-gnu-screen-backspace-misinterpretation/">this blog
+<p>Thanks to <a href="http://www.deadlock.it/linux/fix-gnu-screen-backspace-misinterpretation/" rel="nofollow">this blog
 post</a>.
 The original post also maps ^@, but that conflicts with ctrl-space
 set-mark in emacs. It also appears to be working for me without that
 second line.</p>
-
 <p>The other solution that made backspace work was</p>
-
 <pre><code>alias screen='TERM=screen screen'
 </code></pre>
-
 <p>But this solution screwed up the status bar colors on the bottom of my
 screen.</p>
-
 <p>Something that was somewhat useful in helping debug this problem was
 figuring out what backspace actually mapped to in Terminal, in a ssh
 shell, and in screen.  To display a non-printing character, start with
 ^v (control-v), then type the non-printing letter (backspace).  What I
 got were:</p>
-
 <pre><code>Terminal: ^?
 SSH:      ^?
 screen:   ^[[3~
 </code></pre>
-
 <p>It's amazing how many mappings people suggested in the forums, and how
 all of them didn't work.  My guess is that YMMV and you just need to
 try all of them until you get one that works.  Here's some others I
 tried:</p>
-
 <pre><code>bindkey -k kb stuff "<!-- #content -->10"
 bindkey -k kb stuff "77"
 </code></pre>
-
 <p>And other variations with ^?, ^H, and ^[[3~.</p>
-
-<h2>
-<a id="user-content-jquery-tooltips" class="anchor" href="#jquery-tooltips" aria-hidden="true"><span class="octicon octicon-link"></span></a>jQuery Tooltips</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">jQuery Tooltips</h2><a id="user-content-jquery-tooltips" class="anchor" aria-label="Permalink: jQuery Tooltips" href="#jquery-tooltips"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I ended up choosing
-<a href="http://pupunzi.open-lab.com/mb-jquery-components/mb-tooltip/">mbTooltips</a>
+<a href="http://pupunzi.open-lab.com/mb-jquery-components/mb-tooltip/" rel="nofollow">mbTooltips</a>
 for this specific application because it's relatively lightweight (4k
-minified, with 8k of dependencies).  The original <a href="http://www.learningjquery.com/2006/10/updated-plugin-jtip">jTips
+minified, with 8k of dependencies).  The original <a href="http://www.learningjquery.com/2006/10/updated-plugin-jtip" rel="nofollow">jTips
 plugin</a>
 that was in use was a whopping 187k AND used AJAX requests to get
 tooltip data.  jTips is also unmaintained.  Personally, I would just
 use the default 'title' attribute on HTML elements for tooltips, and
 style them appropriately.</p>
-
-<h2>
-<a id="user-content-django-stuff" class="anchor" href="#django-stuff" aria-hidden="true"><span class="octicon octicon-link"></span></a>Django Stuff</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Django Stuff</h2><a id="user-content-django-stuff" class="anchor" aria-label="Permalink: Django Stuff" href="#django-stuff"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>To do redirects:</p>
-
 <pre><code># You'd think redirects wouldn't need to be explicitly imported...
 from django.http import HttpResponseRedirect
 return HttpResponseRedirect("/")
 </code></pre>
-
-<p><a href="http://docs.djangoproject.com/en/dev/topics/forms/">Form models, form helpers, form
+<p><a href="http://docs.djangoproject.com/en/dev/topics/forms/" rel="nofollow">Form models, form helpers, form
 processing</a></p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

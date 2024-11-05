@@ -1,73 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-building-streaming-rest-apis-with-ruby" class="anchor" href="#building-streaming-rest-apis-with-ruby" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building Streaming REST APIs with Ruby</h1>
-
-<p><a href="/images/ben-and-jerrys-ice-cream.png" target="_blank"><img align="right" src="/images/ben-and-jerrys-ice-cream.png" style="max-width:100%;"></a>
-Twitter popularized the term "firehose API", to mean a realtime stream of data sent through a persistent connection. But even if you're not a realtime service, streaming APIs are great for pushing data from the backend to clients. They reduce resource usage because the server can decide when it's a good time to send a incremental chunk of data. They can also improve the responsiveness of your user experience.  The same HTTP API can be reused to power multiple different apps. For example, you could write your web frontend with a Javascript frameworks like <a href="http://documentcloud.github.com/backbone/">Backbone.js</a>, but reuse the same API to power a native iOS application. Follow the jump to read about how streaming APIs work, and how you can write one with <a href="https://github.com/intridea/rack-stream">Rack::Stream</a>.</p>
-
-<h3>
-<a id="user-content-tldr" class="anchor" href="#tldr" aria-hidden="true"><span class="octicon octicon-link"></span></a>TL;DR</h3>
-
+    <div class="markdown-heading"><h1 class="heading-element">Building Streaming REST APIs with Ruby</h1><a id="user-content-building-streaming-rest-apis-with-ruby" class="anchor" aria-label="Permalink: Building Streaming REST APIs with Ruby" href="#building-streaming-rest-apis-with-ruby"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/ben-and-jerrys-ice-cream.png"><img align="right" src="/images/ben-and-jerrys-ice-cream.png" style="max-width: 100%;"></a></p>
+Twitter popularized the term "firehose API", to mean a realtime stream of data sent through a persistent connection. But even if you're not a realtime service, streaming APIs are great for pushing data from the backend to clients. They reduce resource usage because the server can decide when it's a good time to send a incremental chunk of data. They can also improve the responsiveness of your user experience.  The same HTTP API can be reused to power multiple different apps. For example, you could write your web frontend with a Javascript frameworks like [Backbone.js](<a href="http://documentcloud.github.com/backbone/">http://documentcloud.github.com/backbone/</a>), but reuse the same API to power a native iOS application. Follow the jump to read about how streaming APIs work, and how you can write one with [Rack::Stream](<a href="https://github.com/intridea/rack-stream">https://github.com/intridea/rack-stream</a>).
+<div class="markdown-heading"><h3 class="heading-element">TL;DR</h3><a id="user-content-tldr" class="anchor" aria-label="Permalink: TL;DR" href="#tldr"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><a href="https://github.com/intridea/rack-stream">Rack::Stream</a> is rack middleware that lets you write streaming API endpoints that understand HTTP, WebSockets, and EventSource. It comes with a DSL and can be used alongside other rackable web frameworks such as Sinatra and Grape.</p>
-
-<h3>
-<a id="user-content-whats-streaming-http" class="anchor" href="#whats-streaming-http" aria-hidden="true"><span class="octicon octicon-link"></span></a>What's Streaming HTTP?</h3>
-
-<p>Normally, when an HTTP request is made, the server closes the connection when it's done processing the request. For streaming HTTP, also known as <a href="http://en.wikipedia.org/wiki/Comet_(programming)">Comet</a>, the main difference is that the server doesn't close the connection and can continue sending data to the client at a later time.</p>
-
-<p><a href="https://camo.githubusercontent.com/0d65abf5fe5f23fce56be88d75938d581b180dcb/687474703a2f2f662e636c2e6c792f6974656d732f32503079334f304f3144305632313162327034302f6e6f726d616c2d687474702e706e67" target="_blank"><img src="https://camo.githubusercontent.com/0d65abf5fe5f23fce56be88d75938d581b180dcb/687474703a2f2f662e636c2e6c792f6974656d732f32503079334f304f3144305632313162327034302f6e6f726d616c2d687474702e706e67" alt="normal http" data-canonical-src="http://f.cl.ly/items/2P0y3O0O1D0V211b2p40/normal-http.png" style="max-width:100%;"></a></p>
-
-<p><a href="https://camo.githubusercontent.com/da1a975c9e5a96976c7a85e5bfff363f3e306cb8/687474703a2f2f662e636c2e6c792f6974656d732f307530333166314e30583170334d3358317430422f73747265616d696e672d687474702e706e67" target="_blank"><img src="https://camo.githubusercontent.com/da1a975c9e5a96976c7a85e5bfff363f3e306cb8/687474703a2f2f662e636c2e6c792f6974656d732f307530333166314e30583170334d3358317430422f73747265616d696e672d687474702e706e67" alt="streaming http" data-canonical-src="http://f.cl.ly/items/0u031f1N0X1p3M3X1t0B/streaming-http.png" style="max-width:100%;"></a></p>
-
-<p>To prevent the connection from closing, rack-stream uses Thin's <a href="http://macournoyer.com/blog/2009/06/04/pusher-and-async-with-thin/">'async.callback'</a> to defer closing the connection until either the server decides to close the connection, or the client disconnects.</p>
-
-<h3>
-<a id="user-content-rackstream" class="anchor" href="#rackstream" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rack::Stream</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">What's Streaming HTTP?</h3><a id="user-content-whats-streaming-http" class="anchor" aria-label="Permalink: What's Streaming HTTP?" href="#whats-streaming-http"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Normally, when an HTTP request is made, the server closes the connection when it's done processing the request. For streaming HTTP, also known as <a href="http://en.wikipedia.org/wiki/Comet_(programming)" rel="nofollow">Comet</a>, the main difference is that the server doesn't close the connection and can continue sending data to the client at a later time.</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9583bd40a0d3e71a18f9789202c3241bc48cdfc97ad56ad84211e1b2b51ea03e/687474703a2f2f662e636c2e6c792f6974656d732f32503079334f304f3144305632313162327034302f6e6f726d616c2d687474702e706e67"><img src="https://camo.githubusercontent.com/9583bd40a0d3e71a18f9789202c3241bc48cdfc97ad56ad84211e1b2b51ea03e/687474703a2f2f662e636c2e6c792f6974656d732f32503079334f304f3144305632313162327034302f6e6f726d616c2d687474702e706e67" alt="normal http" data-canonical-src="http://f.cl.ly/items/2P0y3O0O1D0V211b2p40/normal-http.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/37990baf2035a33b104112c5c1242f331a87910fbc465531412a9ac53df3faa6/687474703a2f2f662e636c2e6c792f6974656d732f307530333166314e30583170334d3358317430422f73747265616d696e672d687474702e706e67"><img src="https://camo.githubusercontent.com/37990baf2035a33b104112c5c1242f331a87910fbc465531412a9ac53df3faa6/687474703a2f2f662e636c2e6c792f6974656d732f307530333166314e30583170334d3358317430422f73747265616d696e672d687474702e706e67" alt="streaming http" data-canonical-src="http://f.cl.ly/items/0u031f1N0X1p3M3X1t0B/streaming-http.png" style="max-width: 100%;"></a></p>
+<p>To prevent the connection from closing, rack-stream uses Thin's <a href="http://macournoyer.com/blog/2009/06/04/pusher-and-async-with-thin/" rel="nofollow">'async.callback'</a> to defer closing the connection until either the server decides to close the connection, or the client disconnects.</p>
+<div class="markdown-heading"><h3 class="heading-element">Rack::Stream</h3><a id="user-content-rackstream" class="anchor" aria-label="Permalink: Rack::Stream" href="#rackstream"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><a href="https://github.com/intridea/rack-stream">Rack::Stream</a> is rack middleware that lets you write streaming HTTP endpoints that can understand multiple protocols. Multiple protocols means that you can write an API endpoint that works with curl, but that same endpoint would also works with WebSockets in the browser. The simplest streaming API you can make is:</p>
-
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config.ru</span>
 <span class="pl-c"># run with `thin start -p 9292`</span>
-<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>rack-stream<span class="pl-pds">'</span></span>
+<span class="pl-en">require</span> <span class="pl-s">'rack-stream'</span>
 
-<span class="pl-k">class</span> <span class="pl-en">App</span>
-  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
-    [<span class="pl-c1">200</span>, {<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>text/plain<span class="pl-pds">'</span></span>}, [<span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span> <span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>World<span class="pl-pds">"</span></span>]]
+<span class="pl-k">class</span> <span class="pl-v">App</span>
+  <span class="pl-k">def</span> <span class="pl-en">call</span><span class="pl-kos">(</span><span class="pl-s1">env</span><span class="pl-kos">)</span>
+    <span class="pl-kos">[</span><span class="pl-c1">200</span><span class="pl-kos">,</span> <span class="pl-kos">{</span><span class="pl-s">'Content-Type'</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'text/plain'</span><span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">[</span><span class="pl-s">"Hello"</span><span class="pl-kos">,</span> <span class="pl-s">" "</span><span class="pl-kos">,</span> <span class="pl-s">"World"</span><span class="pl-kos">]</span><span class="pl-kos">]</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span>
 
-use <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>
-run <span class="pl-c1">App</span></pre></div>
-
+<span class="pl-en">use</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>
+<span class="pl-en">run</span> <span class="pl-v">App</span></pre></div>
 <p>If you ran this basic rack app, you could then use curl to stream it's response:</p>
-
 <div class="highlight highlight-source-shell"><pre><span class="pl-k">&gt;</span> curl -i -N http://localhost:9292/
 
 HTTP/1.1 200 OK
@@ -77,29 +50,24 @@ Connection: close
 Server: thin 1.3.1 codename Triple Espresso
 
 Hello World</pre></div>
-
-<p>This isn't very exciting, but you'll notice that the <code>Transfer-Encoding</code> for the response is set to <code>chunked</code>. By default, rack-stream will take any downstream application's response bodies and stream them over in chunks. You can read more about <a href="http://en.wikipedia.org/wiki/Chunked_transfer_encoding">chunked transfer encoding on Wikipedia</a>.</p>
-
+<p>This isn't very exciting, but you'll notice that the <code>Transfer-Encoding</code> for the response is set to <code>chunked</code>. By default, rack-stream will take any downstream application's response bodies and stream them over in chunks. You can read more about <a href="http://en.wikipedia.org/wiki/Chunked_transfer_encoding" rel="nofollow">chunked transfer encoding on Wikipedia</a>.</p>
 <p>Let's spice it up a bit and build an actual firehose. This next application will keep sending data to the client until the client disconnects:</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">require</span> <span class="pl-s">'rack-stream'</span>
 
-<div class="highlight highlight-source-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>rack-stream<span class="pl-pds">'</span></span>
+<span class="pl-k">class</span> <span class="pl-v">Firehose</span>
+  <span class="pl-en">include</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>::<span class="pl-c1">DSL</span>
 
-<span class="pl-k">class</span> <span class="pl-en">Firehose</span>
-  <span class="pl-k">include</span> <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>::<span class="pl-c1">DSL</span>
-
-  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
-    <span class="pl-c1">EM</span>.add_periodic_timer(<span class="pl-c1">0.1</span>) {
-      chunk <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>Chunky Monkey<span class="pl-pds">"</span></span>
-    }
-    [<span class="pl-c1">200</span>, {<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>text/plain<span class="pl-pds">'</span></span>}, [<span class="pl-s"><span class="pl-pds">'</span>Hello<span class="pl-pds">'</span></span>]]
+  <span class="pl-k">def</span> <span class="pl-en">call</span><span class="pl-kos">(</span><span class="pl-s1">env</span><span class="pl-kos">)</span>
+    <span class="pl-c1">EM</span><span class="pl-kos">.</span><span class="pl-en">add_periodic_timer</span><span class="pl-kos">(</span><span class="pl-c1">0.1</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
+      <span class="pl-en">chunk</span> <span class="pl-s">"<span class="pl-cce">\n</span>Chunky Monkey"</span>
+    <span class="pl-kos">}</span>
+    <span class="pl-kos">[</span><span class="pl-c1">200</span><span class="pl-kos">,</span> <span class="pl-kos">{</span><span class="pl-s">'Content-Type'</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'text/plain'</span><span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">[</span><span class="pl-s">'Hello'</span><span class="pl-kos">]</span><span class="pl-kos">]</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span>
 
-use <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>
-run <span class="pl-c1">Firehose</span></pre></div>
-
+<span class="pl-en">use</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>
+<span class="pl-en">run</span> <span class="pl-v">Firehose</span></pre></div>
 <p>The first thing to notice is the Firehose rack endpoint includes <code>Rack::Stream::DSL</code>. This are convenience methods that allow you to access <code>env['rack.stream']</code>, which is injected into <code>env</code> whenever you <code>use Rack::Stream</code>. When a request comes in, the <code>#call</code> method schedules a timer that runs every 0.1 seconds and uses the <code>#chunk</code> method to stream data. If you run curl, you would see:</p>
-
 <div class="highlight highlight-source-shell"><pre><span class="pl-k">&gt;</span> curl -i -N http://localhost:9292/
 
 HTTP/1.1 200 OK
@@ -111,38 +79,34 @@ Hello
 Chunky Monkey
 Chunky Monkey
 Chunky Monkey
-<span class="pl-c"># ... more monkeys</span></pre></div>
-
+<span class="pl-c"><span class="pl-c">#</span> ... more monkeys</span></pre></div>
 <p>rack-stream also allows you to register callbacks for manipulating response chunks, and controlling when something is sent with different callbacks. Here's a more advanced example with callbacks added:</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">require</span> <span class="pl-s">'rack-stream'</span>
 
-<div class="highlight highlight-source-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>rack-stream<span class="pl-pds">'</span></span>
+<span class="pl-k">class</span> <span class="pl-v">Firehose</span>
+  <span class="pl-en">include</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>::<span class="pl-c1">DSL</span>
 
-<span class="pl-k">class</span> <span class="pl-en">Firehose</span>
-  <span class="pl-k">include</span> <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>::<span class="pl-c1">DSL</span>
-
-  <span class="pl-k">def</span> <span class="pl-en">call</span>(<span class="pl-smi">env</span>)
-    after_open <span class="pl-k">do</span>
-      chunk <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>Chunky Monkey<span class="pl-pds">"</span></span>
-      close  <span class="pl-c"># start closing the connection</span>
+  <span class="pl-k">def</span> <span class="pl-en">call</span><span class="pl-kos">(</span><span class="pl-s1">env</span><span class="pl-kos">)</span>
+    <span class="pl-en">after_open</span> <span class="pl-k">do</span>
+      <span class="pl-en">chunk</span> <span class="pl-s">"<span class="pl-cce">\n</span>Chunky Monkey"</span>
+      <span class="pl-en">close</span>  <span class="pl-c"># start closing the connection</span>
     <span class="pl-k">end</span>
 
-    before_chunk <span class="pl-k">do </span>|<span class="pl-smi">chunks</span>|
-      chunks.map(<span class="pl-k">&amp;</span><span class="pl-c1">:upcase</span>)  <span class="pl-c"># manipulate chunks</span>
+    <span class="pl-en">before_chunk</span> <span class="pl-k">do</span> |<span class="pl-s1">chunks</span>|
+      <span class="pl-s1">chunks</span><span class="pl-kos">.</span><span class="pl-en">map</span><span class="pl-kos">(</span>&amp;<span class="pl-pds">:upcase</span><span class="pl-kos">)</span>  <span class="pl-c"># manipulate chunks</span>
     <span class="pl-k">end</span>
 
-    before_close <span class="pl-k">do</span>
-      chunk <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>Goodbye!<span class="pl-pds">"</span></span>  <span class="pl-c"># send something before we close</span>
+    <span class="pl-en">before_close</span> <span class="pl-k">do</span>
+      <span class="pl-en">chunk</span> <span class="pl-s">"<span class="pl-cce">\n</span>Goodbye!"</span>  <span class="pl-c"># send something before we close</span>
     <span class="pl-k">end</span>
 
-    [<span class="pl-c1">200</span>, {<span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span> =&gt; <span class="pl-s"><span class="pl-pds">'</span>text/plain<span class="pl-pds">'</span></span>}, [<span class="pl-s"><span class="pl-pds">'</span>Hello<span class="pl-pds">'</span></span>]]
+    <span class="pl-kos">[</span><span class="pl-c1">200</span><span class="pl-kos">,</span> <span class="pl-kos">{</span><span class="pl-s">'Content-Type'</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'text/plain'</span><span class="pl-kos">}</span><span class="pl-kos">,</span> <span class="pl-kos">[</span><span class="pl-s">'Hello'</span><span class="pl-kos">]</span><span class="pl-kos">]</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span>
 
-use <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>
-run <span class="pl-c1">Firehose</span></pre></div>
-
+<span class="pl-en">use</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>
+<span class="pl-en">run</span> <span class="pl-v">Firehose</span></pre></div>
 <p>If you ran curl now, you would see:</p>
-
 <div class="highlight highlight-source-shell"><pre><span class="pl-k">&gt;</span> curl -i -N http://localhost:9292/
 
 HTTP/1.1 200 OK
@@ -153,90 +117,71 @@ Server: thin 1.3.1 codename Triple Espresso
 HELLO
 CHUNKY MONKEY
 GOODBYE<span class="pl-k">!</span></pre></div>
-
 <p>For details about the callbacks, see <a href="https://github.com/intridea/rack-stream">the project page</a>.</p>
-
 <p>Up until this point, I've only used curl to demonstrate hitting the rack endpoint, but one of the big benefits of rack-stream is that it'll automatically recognize WebSocket and EventSource requests and stream through those as well. For example, you could write an html file that accesses that same endpoint:</p>
-
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">html</span>&gt;
-&lt;<span class="pl-ent">body</span>&gt;
-<span class="pl-s1">  &lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">'</span>text/javascript<span class="pl-pds">'</span></span>&gt;</span>
-<span class="pl-s1">    <span class="pl-k">var</span> socket       <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">WebSocket</span>(<span class="pl-s"><span class="pl-pds">'</span>ws://localhost:9292/<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s1">    <span class="pl-c1">socket</span>.<span class="pl-en">onopen</span>    <span class="pl-k">=</span> <span class="pl-k">function</span>()  {<span class="pl-c1">alert</span>(<span class="pl-s"><span class="pl-pds">"</span>socket opened<span class="pl-pds">"</span></span>)};</span>
-<span class="pl-s1">    <span class="pl-c1">socket</span>.<span class="pl-en">onmessage</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">m</span>) {<span class="pl-c1">alert</span>(<span class="pl-smi">m</span>.<span class="pl-c1">data</span>)};</span>
-<span class="pl-s1">    <span class="pl-c1">socket</span>.<span class="pl-en">onclose</span>   <span class="pl-k">=</span> <span class="pl-k">function</span>()  {<span class="pl-c1">alert</span>(<span class="pl-s"><span class="pl-pds">"</span>socket closed<span class="pl-pds">"</span></span>)};</span>
-<span class="pl-s1">  &lt;/<span class="pl-ent">script</span>&gt;</span>
-&lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">script</span> <span class="pl-c1">type</span>='<span class="pl-s">text/javascript</span>'<span class="pl-kos">&gt;</span>
+    <span class="pl-k">var</span> <span class="pl-s1">socket</span>       <span class="pl-c1">=</span> <span class="pl-k">new</span> <span class="pl-v">WebSocket</span><span class="pl-kos">(</span><span class="pl-s">'ws://localhost:9292/'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
+    <span class="pl-s1">socket</span><span class="pl-kos">.</span><span class="pl-en">onopen</span>    <span class="pl-c1">=</span> <span class="pl-k">function</span><span class="pl-kos">(</span><span class="pl-kos">)</span>  <span class="pl-kos">{</span><span class="pl-en">alert</span><span class="pl-kos">(</span><span class="pl-s">"socket opened"</span><span class="pl-kos">)</span><span class="pl-kos">}</span><span class="pl-kos">;</span>
+    <span class="pl-s1">socket</span><span class="pl-kos">.</span><span class="pl-en">onmessage</span> <span class="pl-c1">=</span> <span class="pl-k">function</span><span class="pl-kos">(</span><span class="pl-s1">m</span><span class="pl-kos">)</span> <span class="pl-kos">{</span><span class="pl-en">alert</span><span class="pl-kos">(</span><span class="pl-s1">m</span><span class="pl-kos">.</span><span class="pl-c1">data</span><span class="pl-kos">)</span><span class="pl-kos">}</span><span class="pl-kos">;</span>
+    <span class="pl-s1">socket</span><span class="pl-kos">.</span><span class="pl-en">onclose</span>   <span class="pl-c1">=</span> <span class="pl-k">function</span><span class="pl-kos">(</span><span class="pl-kos">)</span>  <span class="pl-kos">{</span><span class="pl-en">alert</span><span class="pl-kos">(</span><span class="pl-s">"socket closed"</span><span class="pl-kos">)</span><span class="pl-kos">}</span><span class="pl-kos">;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">script</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">body</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">html</span><span class="pl-kos">&gt;</span></pre></div>
 <p>Whether you access the endpoint with curl, ajax, or WebSockets, your backend API logic doesn't have to change.</p>
-
 <p>For the last example, I'll show a basic chat application using Grape and Rails. The <a href="https://github.com/intridea/rack-stream/tree/master/examples">full runnable source</a> is included in the <code>examples/rails</code> directory.</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">require</span> <span class="pl-s">'grape'</span>
+<span class="pl-en">require</span> <span class="pl-s">'rack/stream'</span>
+<span class="pl-en">require</span> <span class="pl-s">'redis'</span>
+<span class="pl-en">require</span> <span class="pl-s">'redis/connection/synchrony'</span>
 
-<div class="highlight highlight-source-ruby"><pre><span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>grape<span class="pl-pds">'</span></span>
-<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>rack/stream<span class="pl-pds">'</span></span>
-<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>redis<span class="pl-pds">'</span></span>
-<span class="pl-k">require</span> <span class="pl-s"><span class="pl-pds">'</span>redis/connection/synchrony<span class="pl-pds">'</span></span>
+<span class="pl-k">class</span> <span class="pl-c1">API</span> &lt; <span class="pl-v">Grape</span>::<span class="pl-c1">API</span>
+  <span class="pl-en">default_format</span> <span class="pl-pds">:txt</span>
 
-<span class="pl-k">class</span> <span class="pl-en">API<span class="pl-e"> &lt; Grape::API</span></span>
-  default_format <span class="pl-c1">:txt</span>
-
-  helpers <span class="pl-k">do</span>
-    <span class="pl-k">include</span> <span class="pl-c1">Rack</span>::<span class="pl-c1">Stream</span>::<span class="pl-c1">DSL</span>
+  <span class="pl-en">helpers</span> <span class="pl-k">do</span>
+    <span class="pl-en">include</span> <span class="pl-v">Rack</span>::<span class="pl-v">Stream</span>::<span class="pl-c1">DSL</span>
 
     <span class="pl-k">def</span> <span class="pl-en">redis</span>
-      <span class="pl-smi">@redis</span> <span class="pl-k">||=</span> <span class="pl-c1">Redis</span>.<span class="pl-k">new</span>
+      <span class="pl-c1">@redis</span> ||= <span class="pl-v">Redis</span><span class="pl-kos">.</span><span class="pl-en">new</span>
     <span class="pl-k">end</span>
 
-    <span class="pl-k">def</span> <span class="pl-en">build_message</span>(<span class="pl-smi">text</span>)
-      redis.rpush <span class="pl-s"><span class="pl-pds">'</span>messages<span class="pl-pds">'</span></span>, text
-      redis.ltrim <span class="pl-s"><span class="pl-pds">'</span>messages<span class="pl-pds">'</span></span>, <span class="pl-c1">0</span>, <span class="pl-c1">50</span>
-      redis.publish <span class="pl-s"><span class="pl-pds">'</span>messages<span class="pl-pds">'</span></span>, text
-      text
+    <span class="pl-k">def</span> <span class="pl-en">build_message</span><span class="pl-kos">(</span><span class="pl-s1">text</span><span class="pl-kos">)</span>
+      <span class="pl-en">redis</span><span class="pl-kos">.</span><span class="pl-en">rpush</span> <span class="pl-s">'messages'</span><span class="pl-kos">,</span> <span class="pl-s1">text</span>
+      <span class="pl-en">redis</span><span class="pl-kos">.</span><span class="pl-en">ltrim</span> <span class="pl-s">'messages'</span><span class="pl-kos">,</span> <span class="pl-c1">0</span><span class="pl-kos">,</span> <span class="pl-c1">50</span>
+      <span class="pl-en">redis</span><span class="pl-kos">.</span><span class="pl-en">publish</span> <span class="pl-s">'messages'</span><span class="pl-kos">,</span> <span class="pl-s1">text</span>
+      <span class="pl-s1">text</span>
     <span class="pl-k">end</span>
   <span class="pl-k">end</span>
 
-  resources <span class="pl-c1">:messages</span> <span class="pl-k">do</span>
-    get <span class="pl-k">do</span>
-      after_open <span class="pl-k">do</span>
+  <span class="pl-en">resources</span> <span class="pl-pds">:messages</span> <span class="pl-k">do</span>
+    <span class="pl-en">get</span> <span class="pl-k">do</span>
+      <span class="pl-en">after_open</span> <span class="pl-k">do</span>
         <span class="pl-c"># subscribe after_open b/c this runs until the connection is closed</span>
-        redis.subscribe <span class="pl-s"><span class="pl-pds">'</span>messages<span class="pl-pds">'</span></span> <span class="pl-k">do </span>|<span class="pl-smi">on</span>|
-          on.message <span class="pl-k">do </span>|<span class="pl-smi">channel</span>, <span class="pl-smi">msg</span>|
-            chunk msg
+        <span class="pl-en">redis</span><span class="pl-kos">.</span><span class="pl-en">subscribe</span> <span class="pl-s">'messages'</span> <span class="pl-k">do</span> |<span class="pl-s1">on</span>|
+          <span class="pl-s1">on</span><span class="pl-kos">.</span><span class="pl-en">message</span> <span class="pl-k">do</span> |<span class="pl-s1">channel</span><span class="pl-kos">,</span> <span class="pl-s1">msg</span>|
+            <span class="pl-en">chunk</span> <span class="pl-s1">msg</span>
           <span class="pl-k">end</span>
         <span class="pl-k">end</span>
       <span class="pl-k">end</span>
 
-      status <span class="pl-c1">200</span>
-      header <span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>application/json<span class="pl-pds">'</span></span>
-      chunk <span class="pl-k">*</span>redis.lrange(<span class="pl-s"><span class="pl-pds">'</span>messages<span class="pl-pds">'</span></span>, <span class="pl-c1">0</span>, <span class="pl-c1">50</span>)
-      <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>
+      <span class="pl-en">status</span> <span class="pl-c1">200</span>
+      <span class="pl-en">header</span> <span class="pl-s">'Content-Type'</span><span class="pl-kos">,</span> <span class="pl-s">'application/json'</span>
+      <span class="pl-en">chunk</span> *<span class="pl-en">redis</span><span class="pl-kos">.</span><span class="pl-en">lrange</span><span class="pl-kos">(</span><span class="pl-s">'messages'</span><span class="pl-kos">,</span> <span class="pl-c1">0</span><span class="pl-kos">,</span> <span class="pl-c1">50</span><span class="pl-kos">)</span>
+      <span class="pl-s">""</span>
     <span class="pl-k">end</span>
 
-    post <span class="pl-k">do</span>
-      status <span class="pl-c1">201</span>
-      build_message(params[<span class="pl-c1">:text</span>])
+    <span class="pl-en">post</span> <span class="pl-k">do</span>
+      <span class="pl-en">status</span> <span class="pl-c1">201</span>
+      <span class="pl-en">build_message</span><span class="pl-kos">(</span><span class="pl-en">params</span><span class="pl-kos">[</span><span class="pl-pds">:text</span><span class="pl-kos">]</span><span class="pl-kos">)</span>
     <span class="pl-k">end</span>
   <span class="pl-k">end</span>
 <span class="pl-k">end</span></pre></div>
-
-<p>This example uses redis pubsub to push out messages that are created from <code>#post</code>. Thanks to <a href="http://www.igvita.com/2010/03/22/untangling-evented-code-with-ruby-fibers/">em-synchrony</a>, requests are not blocked when no messages are being sent. It's important do the redis subscribe after the connection has been opened. Otherwise, the initial response won't be sent.</p>
-
-<h3>
-<a id="user-content-what-about-socketio" class="anchor" href="#what-about-socketio" aria-hidden="true"><span class="octicon octicon-link"></span></a>What about socket.io?</h3>
-
+<p>This example uses redis pubsub to push out messages that are created from <code>#post</code>. Thanks to <a href="http://www.igvita.com/2010/03/22/untangling-evented-code-with-ruby-fibers/" rel="nofollow">em-synchrony</a>, requests are not blocked when no messages are being sent. It's important do the redis subscribe after the connection has been opened. Otherwise, the initial response won't be sent.</p>
+<div class="markdown-heading"><h3 class="heading-element">What about socket.io?</h3><a id="user-content-what-about-socketio" class="anchor" aria-label="Permalink: What about socket.io?" href="#what-about-socketio"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>socket.io is great because it provides many transport fallbacks to give maximum compatibility with many different browsers, but its pubsub interface is too low level for capturing common app semantics. The application developer doesn't have nice REST features like HTTP verbs, resource URIs, parameter and response encoding, and request headers.</p>
-
 <p>The goal of rack-stream is to provide clean REST-like semantics when you're developing, but allow you to swap out different transport protocols. Currently, it supports normal HTTP, WebSockets, and EventSource. But the goal is to support more protocols over time and allow custom protocols. This architecture allows socket.io to become another protocol handler that can be plugged into rack-stream. If you wanted to use Pusher as a protocol, that could also be written as a handler for rack-stream.</p>
-
-<h3>
-<a id="user-content-summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Summary</h3><a id="user-content-summary" class="anchor" aria-label="Permalink: Summary" href="#summary"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>rack-stream aims to be a thin abstraction that lets Ruby developers write streaming APIs with their preferred frameworks. I plan to broaden support and test against common use cases and popular frameworks like Sinatra and Rails. If you have any questions or comments, feel free to <a href="https://github.com/intridea/rack-stream/issues">submit an issue</a> or leave a comment below!</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-project-readme-y-u-no-have" class="anchor" href="#project-readme-y-u-no-have" aria-hidden="true"><span class="octicon octicon-link"></span></a>PROJECT README, Y U NO HAVE?</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">PROJECT README, Y U NO HAVE?</h1><a id="user-content-project-readme-y-u-no-have" class="anchor" aria-label="Permalink: PROJECT README, Y U NO HAVE?" href="#project-readme-y-u-no-have"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Pick any popular open source library. It'll have more documentation than your
 application code - I guarantee it. Test and documentation are both
 acknowledged as good development practices. But unlike testing, documentation
@@ -38,9 +26,7 @@ their code is self documenting. Additionally, the tests become a kind of
 runnable documentation. But there's several lessons we can apply to our
 private application code from open source documentation. Today, we'll start
 the conversation with the lowest hanging fruits - the README.</p>
-
-<p><a href="https://camo.githubusercontent.com/526608dec35521b2b844ad4299a4d0dca4378c19/687474703a2f2f662e636c2e6c792f6974656d732f317a3357316f30713430325a31343171327732582f31313531363934352e6a7067" target="_blank"><img src="https://camo.githubusercontent.com/526608dec35521b2b844ad4299a4d0dca4378c19/687474703a2f2f662e636c2e6c792f6974656d732f317a3357316f30713430325a31343171327732582f31313531363934352e6a7067" data-canonical-src="http://f.cl.ly/items/1z3W1o0q402Z141q2w2X/11516945.jpg" style="max-width:100%;"></a></p>
-
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f308868ff605f7cf20ea2aa454d39b32004fe49c242b88d05ebe3b5b46e3c316/687474703a2f2f662e636c2e6c792f6974656d732f317a3357316f30713430325a31343171327732582f31313531363934352e6a7067"><img src="https://camo.githubusercontent.com/f308868ff605f7cf20ea2aa454d39b32004fe49c242b88d05ebe3b5b46e3c316/687474703a2f2f662e636c2e6c792f6974656d732f317a3357316f30713430325a31343171327732582f31313531363934352e6a7067" data-canonical-src="http://f.cl.ly/items/1z3W1o0q402Z141q2w2X/11516945.jpg" style="max-width: 100%;"></a></p>
 <p>Pick any popular open source library. It'll have more documentation than your
 application code - I guarantee it. Test and documentation are both
 acknowledged as good development practices. But unlike testing, documentation
@@ -50,29 +36,22 @@ their code is self documenting. Additionally, the tests become a kind of
 runnable documentation. But there's several lessons we can apply to our
 private application code from open source documentation. Today, we'll start
 the conversation with the lowest hanging fruits - the README.</p>
-
 <p>The lack of a good README is one of my major pet peeves. When starting on a
 new project, more often than not, I'll find myself staring at this README:</p>
-
 <pre><code>== Welcome to Rails
 
 Rails is a web-application framework that includes everything needed to
 create database-backed web applications according to the
 Model-View-Control pattern.
 </code></pre>
-
 <p>That's a fantastic README introduction... for the Rails framework. But it also
 happens to be the default scaffold README for every new Rails project. Think
 of a README as a first impression of your project. Just like open source
 projects, your README should introduce the project the new developers.</p>
-
 <p>Take 5 minutes of your time to write a README that explains the following
 things:</p>
-
 <p><strong>What is it?</strong></p>
-
 <p>A short elevator pitch about your application. Examples:</p>
-
 <ul>
 <li>
 <a href="https://github.com/travis-ci/travis-ci/blob/master/README.textile">Travis</a>
@@ -80,7 +59,7 @@ is an attempt to create an open-source, distributed build system for the
 Ruby community that allows open-source projects to register their
 repository and have their test-suites run on demand...</li>
 <li>
-<a href="http://rubydoc.info/docs/yard/frames/file/README.md">YARD</a> is a
+<a href="http://rubydoc.info/docs/yard/frames/file/README.md" rel="nofollow">YARD</a> is a
 documentation generation tool for the Ruby programming language. It
 enables the user to generate consistent, usable documentation that can be
 exported to a number of formats very easily, and also supports extending
@@ -91,13 +70,10 @@ solution for Ruby on Rails. It was originally developed by Sean Schofield
 and is now maintained by a dedicated core team. You can find out more
 about by visiting the Spree e-commerce project page.</li>
 </ul>
-
 <p><strong>How do I set it up?</strong></p>
-
 <p>List any dependencies your project has, both libraries it depends on, as well
 as external services it uses. Also remember to include any commands to start
 required services. Example:</p>
-
 <pre><code>Development Setup
 
 # install redis, mysql
@@ -112,30 +88,21 @@ rake db:setup
 foreman start
 # visit: http://localhost:3000
 </code></pre>
-
 <p><strong>Project Workflow and Tips</strong></p>
-
 <p>Usually, I like to add an additional section for developers to add tips and
 tricks that help with their day to day workflow. The notes listed in this
 section are optional and individual developers can choose to use them or not.</p>
-
 <p><strong>Seed and Test Data</strong></p>
-
 <p>Often times, existing developers and stakeholders will have their environments configured
 and won't remember what seed data the system assumes to exist. Versioning a gzip dump
 of the test data is perfect for someone to come along and get a sense of what the
 app data looks like.</p>
-
 <p><strong>Who do I contact for help?</strong></p>
-
 <p>If the project is a client project, it's good to list the stakeholders and
 their roles. It's also a good place to put down the names and contact
 information for members who may have worked on the project in the past.</p>
-
 <p><strong>Relevant links</strong></p>
-
 <p>A list of links to other sources of documentation or project management tools.</p>
-
 <ul>
 <li>bug tracker</li>
 <li>comps, wireframes, and design prototypes</li>
@@ -143,14 +110,8 @@ information for members who may have worked on the project in the past.</p>
 <li>staging, qa environments</li>
 <li>other servers</li>
 </ul>
-
 <p>Having a good README can help you onboard developers faster and have a single
 starting point for your project. It's easy and fast to write, so go forth and
 write yours today!</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

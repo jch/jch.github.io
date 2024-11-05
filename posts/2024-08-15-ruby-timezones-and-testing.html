@@ -1,32 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <div class="markdown-heading"><h1 class="heading-element">Ruby timezones and testing</h1><a id="user-content-ruby-timezones-and-testing" class="anchor" aria-label="Permalink: Ruby timezones and testing" href="#ruby-timezones-and-testing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+    <div class="markdown-heading"><h1 class="heading-element">Ruby timezones and testing</h1><a id="user-content-ruby-timezones-and-testing" class="anchor" aria-label="Permalink: Ruby timezones and testing" href="#ruby-timezones-and-testing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I had a test in <a href="https://jch.app" rel="nofollow">jch.app</a> which fetched data by date, and kept
 being off by one day. The minimal failing test case became:</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-v">Timecop</span><span class="pl-kos">.</span><span class="pl-en">freeze</span><span class="pl-kos">(</span><span class="pl-s">"2024/03/15"</span><span class="pl-kos">)</span> <span class="pl-k">do</span>
@@ -86,10 +76,5 @@ timecop's travel functionality, I decided to remove the dependency.</p>
 <li><a href="https://thoughtbot.com/blog/its-about-time-zones" rel="nofollow">Thoughtbot: It's about timezones</a></li>
 <li><a href="https://github.com/travisjeffery/timecop/pull/416">Timecop PR #416: ActiveSupport Date.current differs from Date.today when Time.zone is set</a></li>
 </ul>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

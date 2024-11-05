@@ -1,49 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-mini-apps-galore" class="anchor" href="#mini-apps-galore" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mini-apps Galore!</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Mini-apps Galore!</h1><a id="user-content-mini-apps-galore" class="anchor" aria-label="Permalink: Mini-apps Galore!" href="#mini-apps-galore"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I'm warming up to the idea of using small webapps that do <em>less</em>.
 Instead of full blown behemoth applications that take a lot of time to
 learn and configure, they're more in the spirit of Unix tools or perl
 one-liners.  Here's three that I came across that show quite a bit of
 promise.</p>
-
-<h2>
-<a id="user-content-hoptoad" class="anchor" href="#hoptoad" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hoptoad</h2>
-
-<p><a href="/images/hoptoadapp.png">
-   <img src="/images/hoptoadapp-thumb.png" alt="hoptoad main page with a listing of unresolved exceptions from my application" style="max-width:100%;">
-</a></p>
-
+<div class="markdown-heading"><h2 class="heading-element">Hoptoad</h2><a id="user-content-hoptoad" class="anchor" aria-label="Permalink: Hoptoad" href="#hoptoad"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<a href="/images/hoptoadapp.png">
+   <img src="/images/hoptoadapp-thumb.png" alt="hoptoad main page with a listing of unresolved exceptions from my application" style="max-width: 100%;">
+</a>
 <p>Think of Hoptoad as a beautiful and functional wrapper around
-<a href="http://agilewebdevelopment.com/plugins/exception_notifier">exception
+<a href="http://agilewebdevelopment.com/plugins/exception_notifier" rel="nofollow">exception
 notifier</a>.
 Only rather than installing exception notifier per application,
 Hoptoad is a single stop for all your broken app needs.  Setup is as
@@ -53,37 +37,29 @@ in Hoptoad's simple web interface, or subscribe to the provided RSS
 feeds.  Each exception gets a summary view, some environment context,
 and a full backtrace.  If you wanted to munge on that exception data
 some more, they include an
-<a href="http://whatcodecraves.hoptoadapp.com/pages/api">API</a> to access the
+<a href="http://whatcodecraves.hoptoadapp.com/pages/api" rel="nofollow">API</a> to access the
 site.</p>
-
-<h2>
-<a id="user-content-pingmymap" class="anchor" href="#pingmymap" aria-hidden="true"><span class="octicon octicon-link"></span></a>PingMyMap</h2>
-
-<p><a href="/images/pingmymap.png">
-  <img src="/images/pingmymap-thumb.png" alt="listing of what sites pingmymap sent my sitemap to" style="max-width:100%;">
-</a></p>
-
+<div class="markdown-heading"><h2 class="heading-element">PingMyMap</h2><a id="user-content-pingmymap" class="anchor" aria-label="Permalink: PingMyMap" href="#pingmymap"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<a href="/images/pingmymap.png">
+  <img src="/images/pingmymap-thumb.png" alt="listing of what sites pingmymap sent my sitemap to" style="max-width: 100%;">
+</a>
 <p>I came across PingMyMap when I was cleaning up my sitemap generator.
-At the time I only used Google's <a href="https://www.google.com/webmasters/tools/docs/en/sitemap-generator.html">python sitemap
+At the time I only used Google's <a href="https://www.google.com/webmasters/tools/docs/en/sitemap-generator.html" rel="nofollow">python sitemap
 generator</a>.
 I'm not hell-bent on SEO, but I figured it wouldn't hurt for people to
 be able to find my site if it actually helps them.  PingMyMap doesn't
 offer any tips or tools for optimizing your site.  For an app that
-deals with <a href="http://www.sitemaps.org/">sitemaps</a>, it doesn't even offer
+deals with <a href="http://www.sitemaps.org/" rel="nofollow">sitemaps</a>, it doesn't even offer
 you a tool to generate a sitemap!  Instead all this mini app does is
 take an existing sitemap and send it off to 5 search engines that it
 knows about.  It provides an
-<a href="http://pingmymap.com/documentation/#api">API</a> for you to post the
+<a href="http://pingmymap.com/documentation/#api" rel="nofollow">API</a> for you to post the
 actual sitemap, and then it'll tell you whether it was successful or
 not in submitting your sitemap to those search engines.</p>
-
-<h2>
-<a id="user-content-disqus" class="anchor" href="#disqus" aria-hidden="true"><span class="octicon octicon-link"></span></a>Disqus</h2>
-
-<p><a href="/images/disqus.png">
-  <img src="/images/disqus-thumb.png" alt="disqus showing list of comments for this blog article" style="max-width:100%;">
-</a></p>
-
+<div class="markdown-heading"><h2 class="heading-element">Disqus</h2><a id="user-content-disqus" class="anchor" aria-label="Permalink: Disqus" href="#disqus"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<a href="/images/disqus.png">
+  <img src="/images/disqus-thumb.png" alt="disqus showing list of comments for this blog article" style="max-width: 100%;">
+</a>
 <p>To play with Disqus, simply post a comment to this blog article :).
 Like the other two examples above, Disqus offloads the common tasks of
 'comments' into a shared webapp.  You can manage comments you get from
@@ -96,26 +72,17 @@ One of the main reasons why I disliked Blogger was that functionality
 wasn't always guaranteed.  Disqus shows promise because they also
 <em>plan</em> on having APIs for accessing their app, but only time can show
 if this one's a keeper.</p>
-
 <p>For the record, I had the exact same idea for a webapp like Disqus for
 a long time.  I even spent an evening a few days ago prototyping out a
 super raw version.  My raw version let you do all kinds of crazy
 stuff... including XSS attacks, off-site AJAX calls, and SQL injection
 attacks :)</p>
-
-<h2>
-<a id="user-content-wrap-up" class="anchor" href="#wrap-up" aria-hidden="true"><span class="octicon octicon-link"></span></a>Wrap up</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Wrap up</h2><a id="user-content-wrap-up" class="anchor" aria-label="Permalink: Wrap up" href="#wrap-up"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Even though these 3 apps do very different things, they all share a
 very similar <em>feel</em>.  They don't try to do everything, they're simple
 to setup, and best of all, they're extendable and hackable through
 their APIs.  It might not be the kind of extensibility that a
 full-blown open source project provides, but with the shallow learning
 curve, it's the <em>right</em> amount of extensibility to get stuff done.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

@@ -1,68 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-rspecing-acts_as_state_machine" class="anchor" href="#rspecing-acts_as_state_machine" aria-hidden="true"><span class="octicon octicon-link"></span></a>RSpec'ing acts_as_state_machine</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">RSpec'ing acts_as_state_machine</h1><a id="user-content-rspecing-acts_as_state_machine" class="anchor" aria-label="Permalink: RSpec'ing acts_as_state_machine" href="#rspecing-acts_as_state_machine"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>One of my favorite plugins I've seen so far is
-<a href="http://agilewebdevelopment.com/plugins/acts_as_state_machine">acts_as_state_machine</a>.
+<a href="http://agilewebdevelopment.com/plugins/acts_as_state_machine" rel="nofollow">acts_as_state_machine</a>.
 It's a dead simple way to model the different states your models can be
 in.  It also lets you register callbacks to when a model enters,
 entered, or leaves a particular state.  It's absolutely fantasic until
 I have to test it.  Then it becomes an absolute nightmare.</p>
-
 <p>The first intuitive, but horrifically wrong idea is to stub out the
 current state:</p>
-
 <pre><code>@model.stub!(:state).and_return('old_state')
 @model.some_event!
 @model.state.should == 'new_state'
 </code></pre>
-
 <p>The problem with this is the mock will always return old_state, even
 if some_event! caused @model to go into new_state.</p>
-
 <p>A less intuitive, but workable solution is to check that the
 transition event was fired:</p>
-
 <pre><code>@model.should_receive(:update_attribute).with(@model.class.state_column, "matched")
 </code></pre>
-
 <p>This is a little nicer, but kind of obscures the intention of the
 test.  So ideally, I'd like to be able to say something like:</p>
-
 <pre><code>@model.should transition_to('matched').from('draft')
 </code></pre>
-
 <p>Thankfully, the crappy RSpec documentation does cover this case.  It
-was easy to write a <a href="http://rspec.rubyforge.org/rdoc/classes/Spec/Matchers.html">custom expection
+was easy to write a <a href="http://rspec.rubyforge.org/rdoc/classes/Spec/Matchers.html" rel="nofollow">custom expection
 matcher</a>:</p>
-
 <pre><code>module ActsAsStateMachineMatchers
   class Transition
     def initialize(expected)
@@ -95,7 +74,6 @@ matcher</a>:</p>
   end
 end
 </code></pre>
-
 <p>This is one step away from my ideal case because I was too lazy to a
 Spec::Mocks::Methods with a corresponding
 Spec::Mocks::MessageExpectation, which is what 'should_receive' and
@@ -103,10 +81,5 @@ Spec::Mocks::MessageExpectation, which is what 'should_receive' and
 could write the analogous 'should_transition_to', and 'from'.  This
 might be a good excuse to open a github account and play with that too
 :)</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

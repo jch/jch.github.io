@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-rubies-to-prevent-devops-mayhem" class="anchor" href="#rubies-to-prevent-devops-mayhem" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rubies to Prevent Devops Mayhem</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Rubies to Prevent Devops Mayhem</h1><a id="user-content-rubies-to-prevent-devops-mayhem" class="anchor" aria-label="Permalink: Rubies to Prevent Devops Mayhem" href="#rubies-to-prevent-devops-mayhem"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <div>
 
 
@@ -39,7 +27,6 @@
 
 
 </div>
-
 <p>You've just written a masterpiece of a web app. It's fun, it's viral,
 and it's useful. It's clearly going to be "Sliced Bread 2.0". But what
 comes next is a series of unforeseen headaches. You'll outgrow your
@@ -51,10 +38,7 @@ leave you faster than it takes to start a flamewar in #offrails. But
 wait! Just as Ruby helped you build your killer app, Ruby can also
 help you manage your infrastructure as your app grows. Read on for a
 list of useful gems every webapp should have.</p>
-
-<h3>
-<a id="user-content-backups" class="anchor" href="#backups" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backups</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Backups</h3><a id="user-content-backups" class="anchor" aria-label="Permalink: Backups" href="#backups"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When you make a coding mistake, you can revert to a good known
 commit. But when disaster wrecks havoc with your data, you better have
 an offsite backup ready to minimize your losses. Enter the <a href="https://github.com/meskyanichi/backup/">backups
@@ -66,10 +50,7 @@ PostgreSQL, Mongo, Redis, and more), and where you want to store it
 can specify how many backups you'd like to keep in rotation, and
 there's various extras like gzip compression, and notifiers for when
 backups are created or failed to create.</p>
-
-<h3>
-<a id="user-content-cron-jobs" class="anchor" href="#cron-jobs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cron Jobs</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Cron Jobs</h3><a id="user-content-cron-jobs" class="anchor" aria-label="Permalink: Cron Jobs" href="#cron-jobs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Having backups configured doesn't make you any less absent minded
 about running your backups. The first remedy that jumps to mind is
 editing your crontab. But man, it's hard to remember the format on
@@ -77,16 +58,12 @@ that sucker. If only there was a Ruby wrapper around
 cron... Fortunately there is! Thanks to the <a href="https://github.com/javan/whenever">whenever
 gem</a>, you can define repetitious
 tasks in a Ruby script.</p>
-
-<h3>
-<a id="user-content-cloud-services" class="anchor" href="#cloud-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cloud Services</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Cloud Services</h3><a id="user-content-cloud-services" class="anchor" aria-label="Permalink: Cloud Services" href="#cloud-services"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>With the number of cloud services available today, it's becoming more
 common to have your entire infrastructure hosted in the cloud. Many of
 these services offer API's to help you tailor and control your
 environments programmatically.  Having API's is great, but it's tough
 to keep them all in your head.</p>
-
 <p>The <a href="https://github.com/geemus/fog">fog gem</a> is the one API to rule
 them all.  It provides a consistent interface to several cloud
 services. There are specific adapters for each cloud service. By
@@ -97,79 +74,59 @@ replacing your credentials and changing the service name. You can
 create real cloud servers, or create mock ones for testing. Even if
 you don't use any cloud services, fog has adapters for non-cloud
 servers and filesystems.</p>
-
-<h3>
-<a id="user-content-exception-handling" class="anchor" href="#exception-handling" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exception Handling</h3>
-
-<p><a href="http://hoptoadapp.com/pages/home">Hoptoad</a> is a household name in the
+<div class="markdown-heading"><h3 class="heading-element">Exception Handling</h3><a id="user-content-exception-handling" class="anchor" aria-label="Permalink: Exception Handling" href="#exception-handling"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="http://hoptoadapp.com/pages/home" rel="nofollow">Hoptoad</a> is a household name in the
 Ruby community. It catches exceptions created by your app, and sends
 them into a pretty web interface and other notifications. If you can't
 use Hoptoad because of a firewall, check out the self-hostable
 <a href="https://github.com/relevance/errbit">Errbit</a>.</p>
-
-<h3>
-<a id="user-content-monitoring" class="anchor" href="#monitoring" aria-hidden="true"><span class="octicon octicon-link"></span></a>Monitoring</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Monitoring</h3><a id="user-content-monitoring" class="anchor" aria-label="Permalink: Monitoring" href="#monitoring"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>When your infrastructure isn't running smoothly, it better be raising
 all kinds of alarms and sirens to get someone to fix it. Two popular
-monitoring solutions are <a href="http://god.rubyforge.org/">God</a>, and
+monitoring solutions are <a href="http://god.rubyforge.org/" rel="nofollow">God</a>, and
 <a href="https://github.com/k33l0r/monit">Monit</a>. God lets you configure which
 services you want to monitor in Ruby, and the Monit gem gives you an
 interface to query services you have registered with
-<a href="http://mmonit.com/monit/">Monit</a>. If you have a Ruby script that
+<a href="http://mmonit.com/monit/" rel="nofollow">Monit</a>. If you have a Ruby script that
 you'd like to have running like a traditional Unix daemon, check out
-the <a href="http://daemons.rubyforge.org/">daemons gem</a>. It wraps around your
+the <a href="http://daemons.rubyforge.org/" rel="nofollow">daemons gem</a>. It wraps around your
 existing Ruby script and gives you a 'start', 'stop', 'restart'
 command line interface that makes it easier to monitor. Don't forget
 to monitor your background services, it sucks to have all your users
 find your broken server before you do.</p>
-
-<h3>
-<a id="user-content-staging" class="anchor" href="#staging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Staging</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Staging</h3><a id="user-content-staging" class="anchor" aria-label="Permalink: Staging" href="#staging"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Your application is happily running in production, but all of a
 sudden, it decides to implode on itself for a specific user when they
 update their avatar. Try as you might, you just can't reproduce the
 bug locally. You could do some cowboy debugging on production, but
 you'll end up dropping your entire database on accident. Oops.</p>
-
 <p>It's times like these that you'll be thankful you have a staging
 environment setup. If you use capistrano, make sure to check out how
-to use capistrano-ext gem, and its <a href="http://weblog.jamisbuck.org/2007/7/23/capistrano-multistage">multi-stage deploy
+to use capistrano-ext gem, and its <a href="http://weblog.jamisbuck.org/2007/7/23/capistrano-multistage" rel="nofollow">multi-stage deploy
 functionality</a>.
 To reproduce your bug on the same data, you can use the <a href="https://github.com/ricardochimal/taps">taps
 gem</a> to transfer your data from
 your production database to your staging database. If you're using
-Heroku <a href="http://devcenter.heroku.com/articles/taps">then it's already
+Heroku <a href="http://devcenter.heroku.com/articles/taps" rel="nofollow">then it's already
 built-in</a>.</p>
-
 <p>Before you start testing your mailers on staging, do all of your users
 a favor and install the <a href="https://github.com/myronmarston/mail_safe">mail_safe
 gem</a>. It stubs out
 ActionMailer so that your users don't get your testing spam. It also
 lets you send emails to your own email address for testing.</p>
-
-<h3>
-<a id="user-content-cli-tools" class="anchor" href="#cli-tools" aria-hidden="true"><span class="octicon octicon-link"></span></a>CLI Tools</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">CLI Tools</h3><a id="user-content-cli-tools" class="anchor" aria-label="Permalink: CLI Tools" href="#cli-tools"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><a href="https://github.com/wycats/thor">Thor</a> is a good foundation for
 writing CLI utilities in Ruby. It has interfaces for manipulating
 files and directories, parsing command line options, and manipulating
 processes.</p>
-
-<h3>
-<a id="user-content-deployment" class="anchor" href="#deployment" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deployment</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Deployment</h3><a id="user-content-deployment" class="anchor" aria-label="Permalink: Deployment" href="#deployment"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><a href="https://github.com/capistrano/capistrano">Capistrano</a> helps you
 deploy your application, and
-<a href="http://wiki.opscode.com/display/chef/Home">Chef</a> configures and
+<a href="http://wiki.opscode.com/display/chef/Home" rel="nofollow">Chef</a> configures and
 deploys your servers and services. If you use
-<a href="http://vagrantup.com/">Vagrant</a> for managing development virtual
+<a href="http://vagrantup.com/" rel="nofollow">Vagrant</a> for managing development virtual
 machines, you can reuse your Chef cookbooks for production.</p>
-
-<h2>
-<a id="user-content-conclusion" class="anchor" href="#conclusion" aria-hidden="true"><span class="octicon octicon-link"></span></a>Conclusion</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Conclusion</h2><a id="user-content-conclusion" class="anchor" aria-label="Permalink: Conclusion" href="#conclusion"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>All of these gems help us maintain our application infrastructure in a
 robust way. It frees us from running one-off scripts and hacks in
 production and gives us a repeatable process for managing everything
@@ -177,10 +134,5 @@ our app runs on. And on top of all the awesome functionality these
 tools provide, we can also write Ruby to interact with them and
 version control them alongside our code. So for your next killer
 webapp, don't forget to add some killer devops to go along with it.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

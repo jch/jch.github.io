@@ -1,54 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-pry-productivity-from-your-code" class="anchor" href="#pry-productivity-from-your-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pry Productivity From Your Code</h1>
-
-<p><a href="https://camo.githubusercontent.com/d13b4d1e803a845f29f0a1b8c4c719b88f8587a7/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067" target="_blank"><img align="right" src="https://camo.githubusercontent.com/d13b4d1e803a845f29f0a1b8c4c719b88f8587a7/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067" data-canonical-src="https://img.skitch.com/20120229-bb7gyjs7138q6yh47h2wea7cus.jpg" style="max-width:100%;"></a></p>
-
+    <div class="markdown-heading"><h1 class="heading-element">Pry Productivity From Your Code</h1><a id="user-content-pry-productivity-from-your-code" class="anchor" aria-label="Permalink: Pry Productivity From Your Code" href="#pry-productivity-from-your-code"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ea9799eb497552dc2db5cc19df7142d9b11d44bcd600ed7cdb57efdf8224cb4d/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067"><img align="right" src="https://camo.githubusercontent.com/ea9799eb497552dc2db5cc19df7142d9b11d44bcd600ed7cdb57efdf8224cb4d/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067" data-canonical-src="https://img.skitch.com/20120229-bb7gyjs7138q6yh47h2wea7cus.jpg" style="max-width: 100%;"></a></p>
 <p>You've heard of Pry right? It's a full-featured alternative to the classic IRB shell that we use in Ruby, and it's <strong>awesome sauce</strong>. If you've ever felt like you wanted a crowbar to pry open your code during runtime... well, Pry is your answer.</p>
-
 <p>Pry is essentially a REPL (read–eval–print loop) tool that you can use to examine and debug your code. One of the best features is that local variables are available to Pry, saving you from recreating them as you normally would in an IRB session.</p>
-
-<h3>
-<a id="user-content-installing-pry" class="anchor" href="#installing-pry" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing Pry</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Installing Pry</h3><a id="user-content-installing-pry" class="anchor" aria-label="Permalink: Installing Pry" href="#installing-pry"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I like to install pry into the global gemset since it's a tool even when I'm outside of a Rails project</p>
-
 <pre><code>rvm use @global
 gem install pry
 </code></pre>
-
-<h3>
-<a id="user-content-replacing-irb-with-pry" class="anchor" href="#replacing-irb-with-pry" aria-hidden="true"><span class="octicon octicon-link"></span></a>Replacing IRB with Pry</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Replacing IRB with Pry</h3><a id="user-content-replacing-irb-with-pry" class="anchor" aria-label="Permalink: Replacing IRB with Pry" href="#replacing-irb-with-pry"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>In your application initialization, add the following to replace IRB with pry by default. For example, Rails would add this code to config/initializers/pry.rb</p>
-
 <pre><code>begin
   require "pry"
   IRB = pry
@@ -56,29 +34,14 @@ rescue
   # do nothing if pry fails to load
 end
 </code></pre>
-
-<h3>
-<a id="user-content-replacing-ruby-debug-with-pry" class="anchor" href="#replacing-ruby-debug-with-pry" aria-hidden="true"><span class="octicon octicon-link"></span></a>Replacing ruby-debug with Pry</h3>
-
-<p>Between different versions of Ruby, installing and requiring ruby-debug can lead to annoying problems. 1.8.7 uses ruby-debug, 1.9.2 requires ruby-debug19, and 1.9.3 <a href="http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug">blows up</a> when you try to use ruby-debug19. ruby-debug also depends on the linecache gem, which <a href="http://beginrescueend.com/support/troubleshooting/">sometimes requires extra work to use with rvm</a> and sometimes fails in environments when the native extensions fail to build.</p>
-
+<div class="markdown-heading"><h3 class="heading-element">Replacing ruby-debug with Pry</h3><a id="user-content-replacing-ruby-debug-with-pry" class="anchor" aria-label="Permalink: Replacing ruby-debug with Pry" href="#replacing-ruby-debug-with-pry"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Between different versions of Ruby, installing and requiring ruby-debug can lead to annoying problems. 1.8.7 uses ruby-debug, 1.9.2 requires ruby-debug19, and 1.9.3 <a href="http://blog.wyeworks.com/2011/11/1/ruby-1-9-3-and-ruby-debug" rel="nofollow">blows up</a> when you try to use ruby-debug19. ruby-debug also depends on the linecache gem, which <a href="http://beginrescueend.com/support/troubleshooting/" rel="nofollow">sometimes requires extra work to use with rvm</a> and sometimes fails in environments when the native extensions fail to build.</p>
 <p>Instead, skip all that headache with Pry! Anywhere you would use a 'debugger' statement, just call:</p>
-
 <pre><code>binding.pry
 </code></pre>
-
 <p>'binding' is a reference to the current local context. Enter 'exit' when you're finished with debugging, and the code will resume executing</p>
-
-<h3>
-<a id="user-content-additional-features" class="anchor" href="#additional-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional features</h3>
-
-<p>Pry has a ton of other productivity boosters built in. You can drop into a shell temporarily, browse docs without leaving your shell, edit and reload code, and send code snippets up to <a href="http://gist.github.com">gist</a>. For a full listing, check out <a href="http://rubydoc.info/github/pry/pry/master/file/README.markdown">their README</a></p>
-
+<div class="markdown-heading"><h3 class="heading-element">Additional features</h3><a id="user-content-additional-features" class="anchor" aria-label="Permalink: Additional features" href="#additional-features"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Pry has a ton of other productivity boosters built in. You can drop into a shell temporarily, browse docs without leaving your shell, edit and reload code, and send code snippets up to <a href="http://gist.github.com">gist</a>. For a full listing, check out <a href="http://rubydoc.info/github/pry/pry/master/file/README.markdown" rel="nofollow">their README</a></p>
 <p>There's a ton of documentation for Pry and a growing community around it; if you're interested in jumping in be sure to start at their <a href="http://pry.github.com/">Github page</a> for links to tutorials, screencasts, FAQs and a Wiki!</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

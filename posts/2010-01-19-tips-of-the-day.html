@@ -1,62 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-tips-of-the-day" class="anchor" href="#tips-of-the-day" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tips of the Day</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Tips of the Day</h1><a id="user-content-tips-of-the-day" class="anchor" aria-label="Permalink: Tips of the Day" href="#tips-of-the-day"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>debugging django SQL problems</li>
 <li>documenting convention for Rails routes</li>
 </ul>
-
-<h2>
-<a id="user-content-debugging-django-sql-problems" class="anchor" href="#debugging-django-sql-problems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debugging Django SQL problems</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Debugging Django SQL problems</h2><a id="user-content-debugging-django-sql-problems" class="anchor" aria-label="Permalink: Debugging Django SQL problems" href="#debugging-django-sql-problems"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>You can install <a href="http://github.com/robhudson/django-debug-toolbar">Django debug toolbar
 middleware</a>, or you
 can set a breakpoint and inspect queries that have been run on the
 current database connection:</p>
-
 <pre><code>from django import db
 db.connection.queries[0]['sql']
 </code></pre>
-
 <p>'queries' is an array of dicts.  The useful keys on the dict are 'sql'
 and 'raw_sql'.</p>
-
-<h2>
-<a id="user-content-documenting-convention-for-rails-routes" class="anchor" href="#documenting-convention-for-rails-routes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documenting Convention for Rails Routes</h2>
-
-<p>I started a mini-hackathon for a <a href="http://beerpad.heroku.com">beer review
+<div class="markdown-heading"><h2 class="heading-element">Documenting Convention for Rails Routes</h2><a id="user-content-documenting-convention-for-rails-routes" class="anchor" aria-label="Permalink: Documenting Convention for Rails Routes" href="#documenting-convention-for-rails-routes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I started a mini-hackathon for a <a href="http://beerpad.heroku.com" rel="nofollow">beer review
 app</a> I've wanted to write for a while.
 While I was scaffolding, I thought it'd be useful to document the
 routes inline with their controller:</p>
-
 <pre><code>class ReviewsController &lt; ApplicationController
   # beer_reviews(@beer) =&gt; GET /beers/:beer_id/reviews
   def index
@@ -73,16 +52,10 @@ routes inline with their controller:</p>
   end
 end
 </code></pre>
-
 <p>The benefit is that for any given controller you can always add
 '_path' or '_url' to the end of the comment without having to run rake
 routes and grepping for the controller/action pair.  This convention
 also lets you see every possible way of accessing a given action
 instead of only the basic method.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

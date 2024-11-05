@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-capify-my-app" class="anchor" href="#capify-my-app" aria-hidden="true"><span class="octicon octicon-link"></span></a>Capify my App</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Capify my App</h1><a id="user-content-capify-my-app" class="anchor" aria-label="Permalink: Capify my App" href="#capify-my-app"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>After a complete Saturday of vegging out, I decided to accomplish
 something today.  My initial target was to pull Craigslist rental
-listings for my <a href="http://housing.whatcodecraves.com/">housing app</a>, but
+listings for my <a href="http://housing.whatcodecraves.com/" rel="nofollow">housing app</a>, but
 that led to me learning more about plugins, which somehow led me to
 reading about Capistrano.  Yak shave, anyone?</p>
-
-<p>I blazed through the book <a href="http://www.amazon.com/gp/product/0978739205?ie=UTF8&amp;tag=what0d-20&amp;linkCode=as2&amp;camp=1789&amp;creative=9325&amp;creativeASIN=0978739205">Deploying
-Rails Applications: A Step-by-Step Guide (Facets of Ruby)</a><a href="https://camo.githubusercontent.com/c0e56c7c0372404f2c326bedc221c70556fad5a3/687474703a2f2f7777772e6173736f632d616d617a6f6e2e636f6d2f652f69723f743d7768617430642d3230266c3d617332266f3d3126613d30393738373339323035" target="_blank"><img src="https://camo.githubusercontent.com/c0e56c7c0372404f2c326bedc221c70556fad5a3/687474703a2f2f7777772e6173736f632d616d617a6f6e2e636f6d2f652f69723f743d7768617430642d3230266c3d617332266f3d3126613d30393738373339323035" width="1" height="1" border="0" alt="" data-canonical-src="http://www.assoc-amazon.com/e/ir?t=what0d-20&amp;l=as2&amp;o=1&amp;a=0978739205" style="max-width:100%;"></a>.  I skimmed through the first 4 chapters
+<p>I blazed through the book <a href="http://www.amazon.com/gp/product/0978739205?ie=UTF8&amp;tag=what0d-20&amp;linkCode=as2&amp;camp=1789&amp;creative=9325&amp;creativeASIN=0978739205" rel="nofollow">Deploying
+Rails Applications: A Step-by-Step Guide (Facets of Ruby)</a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c39a836ead426243152886a5a3f2b4ecc27f22fefe13912cfbe2159a4b27dccf/687474703a2f2f7777772e6173736f632d616d617a6f6e2e636f6d2f652f69723f743d7768617430642d3230266c3d617332266f3d3126613d30393738373339323035"><img src="https://camo.githubusercontent.com/c39a836ead426243152886a5a3f2b4ecc27f22fefe13912cfbe2159a4b27dccf/687474703a2f2f7777772e6173736f632d616d617a6f6e2e636f6d2f652f69723f743d7768617430642d3230266c3d617332266f3d3126613d30393738373339323035" width="1" height="1" border="0" alt="" data-canonical-src="http://www.assoc-amazon.com/e/ir?t=what0d-20&amp;l=as2&amp;o=1&amp;a=0978739205" style="max-width: 100%;"></a>.  I skimmed through the first 4 chapters
 because they didn't present anything new to me.  I spent much more
 time reading through chapter 5: the what, why, and how of Capistrano.
 After my first reading, I decided to test it out with my Dreamhost
 setup of housing app to try my luck.</p>
-
 <p>One thing that threw me off initially was roles.  Roles are simply
 different servers that are involed in the deployment.  Each Capistrano
 recipe is run for all roles by default.  For example, the deploy:setup
@@ -51,20 +37,16 @@ recipe on both my :db and :app roles.  I couldn't find a way of adding
 an exception to what roles an <em>existing</em> recipe is run on, so I
 removed the :db role entirely.  I didn't have a use for a :db role
 anyways, but I could see that as a problem in the future.</p>
-
 <p>Next, I wrote a small task to keep database.yml the same between
 deployments:</p>
-
 <pre><code>task :fix\_config, :except =&gt; { :no\_release =&gt; true } do
   run "ln -s #{shared_path}/config/database.yml #{release\_path}/config/database.yml"
 end
 
 after 'deploy:symlink', 'fix_config'
 </code></pre>
-
 <p>I also overrode the deploy:restart task to fit with Phusion
 Passenger.</p>
-
 <pre><code>namespace(:deploy) do
   desc "Restart Passenger.  The file is deleted when it restarts"
   task :restart do
@@ -72,16 +54,14 @@ Passenger.</p>
   end
 end
 </code></pre>
-
 <p>After that, it was clear sailing.  The deployments were unacceptably
 slow because a checkout of my project is 62MB (darn your edge
 rails!). I found the Rails site
-<a href="http://manuals.rubyonrails.com/read/chapter/97">guide</a> to Capistrano
-to be very good.  The same can't be said for the main <a href="http://www.capify.org/">Capistrano
+<a href="http://manuals.rubyonrails.com/read/chapter/97" rel="nofollow">guide</a> to Capistrano
+to be very good.  The same can't be said for the main <a href="http://www.capify.org/" rel="nofollow">Capistrano
 site</a>.  The saving grace for that is all the
 methods are well commented and straightfoward if you read through the
 Capistrano source.</p>
-
 <p>If I had to summarize Capistrano, I'd call it an interpreter for a
 Rake-like domain specific language to records and play back commands.
 Specifically, it's useful for Rails deployment because it automates
@@ -93,10 +73,5 @@ It's especially easy to pick up if you've written any Rake tasks in
 the past.  I can see how Capistrano can be useful outside of Rails
 projects as well.  It's simply a great little tool for automating
 commands.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

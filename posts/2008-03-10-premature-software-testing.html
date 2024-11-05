@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-premature-software-testing" class="anchor" href="#premature-software-testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Premature Software Testing</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Premature Software Testing</h1><a id="user-content-premature-software-testing" class="anchor" aria-label="Permalink: Premature Software Testing" href="#premature-software-testing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>I've fallen victim to it a few times now and would like to remind
 myself of the causes and consequences.  Don't get me wrong, I love
 testing and have attempted/done/failed at it ever since CS61B.  I've
 used standardized test frameworks, hackish quickie frameworks from
 school, and created my own small frameworks for specific projects.
 Testing is a good thing.</p>
-
 <p>But there is such a thing as testing too early.  My most recent mishap
 happened during my internship.  I finished a tool that I thought did
 what I want, and fully tested it.  Well, the plus side was that it was
@@ -46,7 +33,6 @@ something wrong.  Then instead of having tests that could support me
 as I refactored, I ended up with an extra set of barriers that kept me
 constrained to wrong solutions.  In other words, I believed in my
 tests and this slowed down my redesign towards a correct solution.</p>
-
 <p>Another time this happened to me was during cs164 while I was writing
 an Earley parser.  This one cut me deep because the solution just
 happened to work against the cases I specified in my tests.  Then
@@ -54,58 +40,65 @@ about one week before the due date, I noticed that I misread the
 original paper and implemented a system with different semantics.  All
 the tests that exercised individual methods were scrapped.  In the
 end, all tests were scrapped :(</p>
-
 <p>I lost many hours on both those mistakes, but I have noticed different
 cases when I'm more successful.  Here are some guidelines I think work
 well:</p>
-
-<h2>
-<a id="user-content-when-to-start-testing" class="anchor" href="#when-to-start-testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>When to Start Testing</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">When to Start Testing</h2><a id="user-content-when-to-start-testing" class="anchor" aria-label="Permalink: When to Start Testing" href="#when-to-start-testing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
-<li><p>start testing when you start coding for real.</p></li>
-<li><p>start coding <em>for real</em> after you've read and re-read your
+<li>
+<p>start testing when you start coding for real.</p>
+</li>
+<li>
+<p>start coding <em>for real</em> after you've read and re-read your
 spec enough times to recite it backwards.  Think of a design, think of
-how use cases would fare against that design.</p></li>
-<li><p>if there are sections of the design that are ambiguous, or if you
+how use cases would fare against that design.</p>
+</li>
+<li>
+<p>if there are sections of the design that are ambiguous, or if you
 aren't sure of what tools to use to implement something, explore with
 quick dummy code and take notes.  Don't even bother putting the dummy
 code in your repo, or actual directory... It'll only tempt you to keep
-crappy code.  Throw the code away, but keep the notes.</p></li>
-<li><p>with design doc, and notes from exploring in hand, try writing some
+crappy code.  Throw the code away, but keep the notes.</p>
+</li>
+<li>
+<p>with design doc, and notes from exploring in hand, try writing some
 real code.  If you find yourself rewriting a ton of stuff repeatedly,
-you didn't design/explore your problem space enough before starting.</p></li>
-<li><p>when exploring concepts and designs, it's a good idea to explore
+you didn't design/explore your problem space enough before starting.</p>
+</li>
+<li>
+<p>when exploring concepts and designs, it's a good idea to explore
 what test strategies are appropriate.  I say appropriate because
 there'll always be some gigantic mammoth of a testing framework with
 more features than your project needs and a configuration and learning
 curve to match.  Sometimes, the framework that's "just right" is one
-that you glue together.</p></li>
+that you glue together.</p>
+</li>
 </ul>
-
-<h2>
-<a id="user-content-how-to-test" class="anchor" href="#how-to-test" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to Test</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">How to Test</h2><a id="user-content-how-to-test" class="anchor" aria-label="Permalink: How to Test" href="#how-to-test"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>There are plenty of good guides out there on 'what' to test, but I
 think many of them provide examples that are too trivial and brittle
 against refactoring.</p>
-
 <ul>
-<li><p>when testing data models, focus on getting consistent domains, and
+<li>
+<p>when testing data models, focus on getting consistent domains, and
 lightweight models.  If it's hard to test, it might indicate a flaw
-in your design.</p></li>
-<li><p>unit testing is fantastic, but double check that the methods you're
+in your design.</p>
+</li>
+<li>
+<p>unit testing is fantastic, but double check that the methods you're
 testing are actually relevant and useful.  A correct method doesn't
 imply a useful one.  Also, instead of tying very strictly with method
 names, it can be more readable and flexible to describe your test in
-terms of the action or mutation.</p></li>
-<li><p>don't strictly focus on unit testing.  Do the functional tests in
+terms of the action or mutation.</p>
+</li>
+<li>
+<p>don't strictly focus on unit testing.  Do the functional tests in
 parallel to expose useless methods and flawed interactions early on.
 The same applies for integration tests.  Also, the sooner you
 communicate with modules written by other members of your team, the
-better.</p></li>
+better.</p>
+</li>
 </ul>
-
 <p>We all knew that testing too late or not testing at all can cause
 cancer, but there is such a thing as testing too early.  It wastes
 your time, and may restrict you to a suboptimal or incorrect design.
@@ -115,10 +108,5 @@ naturally encourage you to think about tests, and those tests can then
 verify your implementation.  Testing is like eating your vegetables:
 it's good for your health in the long run, but eating too much or the
 wrong kind will give you the runs.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

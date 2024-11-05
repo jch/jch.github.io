@@ -1,38 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-the-software-maintenance-light" class="anchor" href="#the-software-maintenance-light" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Software Maintenance Light</h1>
+    <div class="markdown-heading"><h1 class="heading-element">The Software Maintenance Light</h1><a id="user-content-the-software-maintenance-light" class="anchor" aria-label="Permalink: The Software Maintenance Light" href="#the-software-maintenance-light"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 
-
-
-<p><a href="/images/check_engine.jpg" target="_blank"><img src="/images/check_engine.jpg" alt="check engine light" style="max-width:100%;"></a>
-My cute little box car, <a href="/images/chucksmall.jpg">Chuck</a>, came with an
+<p><a target="_blank" rel="noopener noreferrer" href="/images/check_engine.jpg"><img src="/images/check_engine.jpg" alt="check engine light" style="max-width: 100%;"></a></p>
+My cute little box car, [Chuck](/images/chucksmall.jpg), came with an
 owners manual.  Inside this little book, it lists all the mileage
 intervals when Chuck should be serviced.  At 30,000 miles, you replace
 the spark plugs, rotate tires, inspect the brakes, etc.  In addition
@@ -45,10 +32,9 @@ Heck, if it's too much to ask for software to be as reliable as a
 Toyota, then I wish software could be as reliable as a mid-90's Chevy
 Cavalier.  How could it be that an engine that explodes thousands of
 times per minute for multiple decades over hundreds of thousands of
-miles in all types of unpredictable weather conditions be <em>more</em>
+miles in all types of unpredictable weather conditions be *more*
 reliable than software?  Then it hit me.  Software applications lack
-<strong>regular maintenance</strong>.</p>
-
+**regular maintenance**.
 <p>Even with the best development practices, I feel that many software
 projects are missing this concept of maintenance.  Once a feature is
 completed, it won't be touched again until a) the feature breaks, or
@@ -57,85 +43,61 @@ holistic look at the entire app to make sure there aren't future
 problem spots.  Going back to the car analogy, when you go for regular
 maintenance, the entire car is checked over to identify future problem
 spots so you don't have an unexpected catastrophe on the road.</p>
-
 <p>So like Chuck's owner's manual, I propose the following "Software
 Maintenance Schedule":</p>
-
-<h2>
-<a id="user-content-always" class="anchor" href="#always" aria-hidden="true"><span class="octicon octicon-link"></span></a>Always</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Always</h2><a id="user-content-always" class="anchor" aria-label="Permalink: Always" href="#always"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Anytime code is changed, no matter how seemingly innoculous the change
 is, there is room for error.  These tasks should be run whenever you
 touch the codebase.</p>
-
 <ul>
-<li>run all your tests - check out <a href="http://en.wikipedia.org/wiki/Continuous_integration">continuous
+<li>run all your tests - check out <a href="http://en.wikipedia.org/wiki/Continuous_integration" rel="nofollow">continuous
 integration</a>.
-For Ruby, I've tried out <a href="http://integrityapp.com/">Integrity</a> and
-<a href="http://cruisecontrolrb.thoughtworks.com/">CruiseControl rb</a>.</li>
+For Ruby, I've tried out <a href="http://integrityapp.com/" rel="nofollow">Integrity</a> and
+<a href="http://cruisecontrolrb.thoughtworks.com/" rel="nofollow">CruiseControl rb</a>.</li>
 </ul>
-
-<h2>
-<a id="user-content-daily" class="anchor" href="#daily" aria-hidden="true"><span class="octicon octicon-link"></span></a>Daily</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Daily</h2><a id="user-content-daily" class="anchor" aria-label="Permalink: Daily" href="#daily"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The daily tasks are ones that are too bulky to run per file save.
 They're good for ensuring the consistency of the entire system.</p>
-
 <ul>
 <li>backup the codebase and production data to a secure offsite location</li>
 <li>run regression tests</li>
 <li>fix hoptoad errors - for large problems, file it into your ticketing system.</li>
 <li>deploy code to staging environments</li>
 </ul>
-
 <p>I like to have the staging environment closely reflect the actual
 production environment.  In fact, the ideal way is to have the staging
 environment be cloned nightly from production.  Take care to scrub out
 sensitive information so you don't accidentally mass email your live
 production users ;)</p>
-
-<h2>
-<a id="user-content-weekly" class="anchor" href="#weekly" aria-hidden="true"><span class="octicon octicon-link"></span></a>Weekly</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Weekly</h2><a id="user-content-weekly" class="anchor" aria-label="Permalink: Weekly" href="#weekly"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>The end of the week is a good time to step back from coding and admire
 your team's handiwork.  Unfocus your eyes, take your hands off the
 keyboard and just make sure you wrote what you actually intended.</p>
-
 <ul>
 <li>release into production</li>
 <li>refactoring - spend an afternoon with snacks and drinks and comb over TODOs, OPTIMIZEs, and FIXMEs.</li>
 <li>evaluate metrics and analytics to identify performance and potential problems</li>
 </ul>
-
 <p>I don't think releasing into production weekly is for everyone, but I
 do believe that keeping your stable production codebase closely in
 sync with your stable development codebase is a good way to keep
 production bugs from queueing into a nasty long list.</p>
-
-<p>Tools like <a href="http://www.hoptoadapp.com/">Hoptoad</a> and <a href="http://www.newrelic.com/">New Relic
+<p>Tools like <a href="http://www.hoptoadapp.com/" rel="nofollow">Hoptoad</a> and <a href="http://www.newrelic.com/" rel="nofollow">New Relic
 RPM</a> are a great way to be notified about
 potential future problems.</p>
-
-<h2>
-<a id="user-content-monthly" class="anchor" href="#monthly" aria-hidden="true"><span class="octicon octicon-link"></span></a>Monthly</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Monthly</h2><a id="user-content-monthly" class="anchor" aria-label="Permalink: Monthly" href="#monthly"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>test a deployment from scratch</li>
 <li>clear out crufty data - old sessions, tmp files</li>
 <li>automate common tasks</li>
 </ul>
-
 <p>Testing a deployment from scratch is useful in making sure that if a
 new developer comes on, he can bootstrap the app.  I like writing new
 automation tasks only after I notice the tasks being repetitive.  It's
 good not to do this all the time and cut into development time.</p>
-
-<h2>
-<a id="user-content-releasely" class="anchor" href="#releasely" aria-hidden="true"><span class="octicon octicon-link"></span></a>Releasely</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Releasely</h2><a id="user-content-releasely" class="anchor" aria-label="Permalink: Releasely" href="#releasely"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Do these tasks <em>before</em> you actually overwrite your current production
 codebase with new code.</p>
-
 <ul>
 <li>tag codebase</li>
 <li>test rigorously in staging</li>
@@ -143,14 +105,10 @@ codebase with new code.</p>
 <li>run sanity test of data</li>
 <li>run regression tests</li>
 </ul>
-
-<h2>
-<a id="user-content-quarterly" class="anchor" href="#quarterly" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quarterly</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Quarterly</h2><a id="user-content-quarterly" class="anchor" aria-label="Permalink: Quarterly" href="#quarterly"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>see if there are worthwhile tech stack upgrades - web server, libraries, database, etc</li>
 </ul>
-
 <p>It's easy to stick with a working system and keep developing off on
 top of an understood foundtain.  However, in doing so, you might be
 missing out on some really useful innovations that have been released.
@@ -159,16 +117,10 @@ into every release, but we do upgrade Rails and Passenger every other
 stable release or so.  Keeping up with your programming community
 helps you and your project stay up to date on the latest security and
 performance problems.</p>
-
 <p>I think all my guidelines are common sense items that good development
 teams already do.  What worries me is that there isn't a good
 convention about <em>how often</em> these tasks are done.  After all, it's
 much easier to check for problems when the maintenance light comes on,
 rather than to wait for your engine to fall out.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

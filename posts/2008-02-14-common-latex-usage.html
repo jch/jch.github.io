@@ -1,105 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-common-latex-usage" class="anchor" href="#common-latex-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Common Latex Usage</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Common Latex Usage</h1><a id="user-content-common-latex-usage" class="anchor" aria-label="Permalink: Common Latex Usage" href="#common-latex-usage"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Since high school, I've used word processors less and less.  I hate
 how slow they load, I hate how annoying and proprietary the formats
 are, I hate how ugly they end up printing and how hard it is to
 customize my documents.  Enter Latex.</p>
-
-<h2>
-<a id="user-content-overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
-
-<p>Wikipedia defines <a href="http://en.wikipedia.org/wiki/LaTeX">Latex</a> to be:</p>
-
+<div class="markdown-heading"><h2 class="heading-element">Overview</h2><a id="user-content-overview" class="anchor" aria-label="Permalink: Overview" href="#overview"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Wikipedia defines <a href="http://en.wikipedia.org/wiki/LaTeX" rel="nofollow">Latex</a> to be:</p>
 <blockquote>
 <p>LaTeX is a document markup language and document
 preparation system for the TeX typesetting program.</p>
 </blockquote>
-
 <p>In practice, I like to think of it as a document processor plugin for
 the editor of your choice.  Instead of only being able to edit essays,
 you can edit any type of document you like, be it a math formula
 cheatsheet, or a full page banner.</p>
-
 <p>My history with Latex has been far from ideal, but I've come to terms
 with the downsides enough that I can use it exclusively.  Here are the
 pros and cons as far as I see it:</p>
-
-<h3>
-<a id="user-content-cons" class="anchor" href="#cons" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cons</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Cons</h3><a id="user-content-cons" class="anchor" aria-label="Permalink: Cons" href="#cons"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
-<li><p>Learning a new language - Instead of using menus to apply formatting
+<li>
+<p>Learning a new language - Instead of using menus to apply formatting
 and styles to sections of a document, Latex uses tags to <em>describe</em>
 the semantics of the sections of document.  This requires the user
-to learn a set of tags and environments.</p></li>
-<li><p>Anti-visual - Latex's about as far from WYSIWYG as possible.  In
+to learn a set of tags and environments.</p>
+</li>
+<li>
+<p>Anti-visual - Latex's about as far from WYSIWYG as possible.  In
 fact, you can't even preview your document as your typing it.  Sure
 you can install an emacs mode for preview, and you could have 'xdvi'
 running to keep a continuous preview of your document, but the fact
 you have to 'compile' the document means an unavoidable wait.  If
 you're a person who can't work without a live preview, don't even
-bother with Latex.</p></li>
-<li><p>Anti-portable, Anti-collaboration - If your friends don't use Latex,
+bother with Latex.</p>
+</li>
+<li>
+<p>Anti-portable, Anti-collaboration - If your friends don't use Latex,
 hell, I'd be surprised if they've even heard of it, then you can
 only give them the unmodifiable output PDF.  They can't directly
-edit your draft as they would in Word and send it back to you.</p></li>
-<li><p>Focus on layout rather than semantics - Latex is the opposite of
+edit your draft as they would in Word and send it back to you.</p>
+</li>
+<li>
+<p>Focus on layout rather than semantics - Latex is the opposite of
 HTML in that you have to control every bit of formatting yourself.
 It really clutters up the document and isn't nearly as easy to
-maintain if the document is updated often.</p></li>
+maintain if the document is updated often.</p>
+</li>
 </ul>
-
-<h3>
-<a id="user-content-pros" class="anchor" href="#pros" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pros</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Pros</h3><a id="user-content-pros" class="anchor" aria-label="Permalink: Pros" href="#pros"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
-<li><p>Super-portable (output) - everyone worth talking to will be able to
-open PDFs.  You also be print-perfect output, everytime.</p></li>
-<li><p>Anti-bloat - choose your editor, compile when you feel like it.</p></li>
-<li><p>Semantic documents - the ability to restyle your document, but with
-more control than CSS offers.</p></li>
+<li>
+<p>Super-portable (output) - everyone worth talking to will be able to
+open PDFs.  You also be print-perfect output, everytime.</p>
+</li>
+<li>
+<p>Anti-bloat - choose your editor, compile when you feel like it.</p>
+</li>
+<li>
+<p>Semantic documents - the ability to restyle your document, but with
+more control than CSS offers.</p>
+</li>
 </ul>
-
-<h3>
-<a id="user-content-common-commands" class="anchor" href="#common-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Common Commands</h3>
-
+<div class="markdown-heading"><h3 class="heading-element">Common Commands</h3><a id="user-content-common-commands" class="anchor" aria-label="Permalink: Common Commands" href="#common-commands"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <ul>
 <li>\documentclass{article}</li>
 <li>\usepackage{fullpage, amsmath}</li>
 </ul>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>

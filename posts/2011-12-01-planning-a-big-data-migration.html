@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags always come first -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <!-- Google fonts -->
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-
-    <!-- Minimize overriden styles for easy maintenance. Add classes to layouts
-    where possible so content is style agnostic -->
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    <div class="container" role="banner">
-      <header>
-        <a href="/" class="home">Jerry Cheung</a>
-        <nav class="nav nav-inline pull-xs-right">
-          <a class="nav-link" href="/projects">Projects</a>
-          <a class="nav-link" href="/about">About</a>
-        </nav>
-      </header>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
 
-      <h1>
-<a id="user-content-planning-a-big-data-migration" class="anchor" href="#planning-a-big-data-migration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Planning a Big Data Migration</h1>
-
+    <div class="markdown-heading"><h1 class="heading-element">Planning a Big Data Migration</h1><a id="user-content-planning-a-big-data-migration" class="anchor" aria-label="Permalink: Planning a Big Data Migration" href="#planning-a-big-data-migration"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>It doesn't matter if data is being migrated from SQL to NoSQL, from flat
 files to key-value store, or from XML to an object database, or every
 permutation of any data store to any other data store. What stays constant is
@@ -36,7 +24,6 @@ the fact that data migrations are scary and painful. Without the right strategy,
 data migration will leave you with inconsistent data, strange errors, and very
 angry users. Read on for a data migration checklist that'll save you days of
 headache.</p>
-
 <p>It doesn't matter if data is being migrated from SQL to NoSQL, from flat
 files to key-value store, or from XML to an object database, or every
 permutation of any data store to any other data store. What stays constant is
@@ -44,20 +31,14 @@ the fact that data migrations are scary and painful. Without the right strategy,
 data migration will leave you with inconsistent data, strange errors, and very
 angry users. Read on for a data migration checklist that'll save you days of
 headache.</p>
-
-<h2>
-<a id="user-content-backup" class="anchor" href="#backup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backup</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Backup</h2><a id="user-content-backup" class="anchor" aria-label="Permalink: Backup" href="#backup"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Before even considering a massive destructive mutation of your data, you
 should have working backups. The keyword is <strong>"working"</strong>. Take production
 dumps of your data, and make sure you can load the same data on a cloned
 environment. If anything goes wrong when migration day comes along, these
 backups will be your last line of defense. Backups are also useful for doing
 practice runs of a migration.</p>
-
-<h2>
-<a id="user-content-logging" class="anchor" href="#logging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Logging</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Logging</h2><a id="user-content-logging" class="anchor" aria-label="Permalink: Logging" href="#logging"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Create a logger that logs to a separate place from your application logs
 that's specific for the migration. When the migration is running, the logger
 should warn on strange data and error on exceptional cases. To keep the log
@@ -65,28 +46,19 @@ useful, it's important not to flood it with debugging information. Log only
 the most important details needed for troubleshooting problems: a timestamp,
 an id reference to the failing record, and a brief description of the failure
 reason.</p>
-
-<h2>
-<a id="user-content-atomicity" class="anchor" href="#atomicity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Atomicity</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Atomicity</h2><a id="user-content-atomicity" class="anchor" aria-label="Permalink: Atomicity" href="#atomicity"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Regardless of whether the destination data store supports transactions or not,
 the migration should always define an invariant for when a record is
 successfully imported. If this invariant is broken, then whatever has been
 done to break the invariant should be undone so that your data isn't in some
 zombie half consistent state.</p>
-
-<h2>
-<a id="user-content-idempotence" class="anchor" href="#idempotence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Idempotence</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Idempotence</h2><a id="user-content-idempotence" class="anchor" aria-label="Permalink: Idempotence" href="#idempotence"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Not strictly the definition of
-<a href="http://en.wikipedia.org/wiki/Idempotence">idempotence</a>, but similar to
+<a href="http://en.wikipedia.org/wiki/Idempotence" rel="nofollow">idempotence</a>, but similar to
 maintaining consistency, your code should be able to handle re-migrating the
 same data. If the migration crashes halfway, having this property allows you
 restart and import again without worrying about weird state issues.</p>
-
-<h2>
-<a id="user-content-batch-processing" class="anchor" href="#batch-processing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Batch Processing</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Batch Processing</h2><a id="user-content-batch-processing" class="anchor" aria-label="Permalink: Batch Processing" href="#batch-processing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Having atomicity and idempotence lets your migration be split up into smaller
 migrations. Instead of migrating a million records in an all-or-nothing
 migration and crossing your fingers, you can split them up into small 500
@@ -94,33 +66,19 @@ record batches. If any single batch fails, you can redo just that single
 batch, rather than redo the entire migration. This also allows you to balance
 the migration across more resources like multiprocessors, different servers,
 and different slave databases.</p>
-
-<h2>
-<a id="user-content-validation" class="anchor" href="#validation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Validation</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Validation</h2><a id="user-content-validation" class="anchor" aria-label="Permalink: Validation" href="#validation"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>After a migration is complete, it's important to be able to validate that
 everything is still working. This means running your test suite, your
 integration tests, and also logging in as existing users and clicking around.</p>
-
-<h2>
-<a id="user-content-live-migrations" class="anchor" href="#live-migrations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Live Migrations</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Live Migrations</h2><a id="user-content-live-migrations" class="anchor" aria-label="Permalink: Live Migrations" href="#live-migrations"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Running a migration with scheduled downtime is hard enough as it is, but in
 certain applications, a big chunk of downtime is unacceptable. If this is the
 case, then it's critical to add bookkeeping code that tracks which records has
 been migrated and which haven't. This allows you to query and incrementally
 upgrade parts of your system while co-existing with old data and old code.</p>
-
-<h2>
-<a id="user-content-plan-ahead" class="anchor" href="#plan-ahead" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plan Ahead</h2>
-
+<div class="markdown-heading"><h2 class="heading-element">Plan Ahead</h2><a id="user-content-plan-ahead" class="anchor" aria-label="Permalink: Plan Ahead" href="#plan-ahead"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Data migrations will always be a chore. But with the right strategy, at least
 it'll be one that can be finished, rather than something that drags along and
 repeatedly slows down your whole team.</p>
-    </div>
-
-    <!-- jQuery first, then Bootstrap JS. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
   </body>
 </html>
