@@ -51,7 +51,7 @@
   <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Try entering some long and short numbers...<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
   <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">class</span>="<span class="pl-s">currency</span>" <span class="pl-c1">inputmode</span>="<span class="pl-s">decimal</span>" <span class="pl-c1">type</span>="<span class="pl-s">text</span>" <span class="pl-c1">value</span>="<span class="pl-s">1234.56</span>" <span class="pl-c1">style</span>="<span class="pl-s">padding: 0.5em; font-size: 1.2em</span>"<span class="pl-kos">&gt;</span>
 <span class="pl-kos">&lt;/</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span></pre></div>
-<div class="highlight highlight-source-js"><pre><span class="pl-c1">&lt;</span><span class="pl-ent">script</span> <span class="pl-c1">id</span><span class="pl-c1">=</span><span class="pl-s">"currencyJs"</span> <span class="pl-c1">type</span><span class="pl-c1">=</span><span class="pl-s">"module"</span><span class="pl-c1">&gt;</span>
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">&lt;</span><span class="pl-s1">script</span> <span class="pl-c1">id</span><span class="pl-c1">=</span><span class="pl-s">"currencyJs"</span> <span class="pl-c1">type</span><span class="pl-c1">=</span><span class="pl-s">"module"</span><span class="pl-c1">&gt;</span>
   const iso_4217 = <span class="pl-kos">{</span>
     <span class="pl-s">'en-US'</span>: <span class="pl-s">'USD'</span><span class="pl-kos">,</span>
     <span class="pl-s">'en-GB'</span>: <span class="pl-s">'GBP'</span><span class="pl-kos">,</span>
@@ -92,7 +92,7 @@
     <span class="pl-kos">}</span>
 
     format() <span class="pl-kos">{</span>
-      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">raw</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-en">value</span><span class="pl-kos">;</span>
+      <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">raw</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span><span class="pl-kos">;</span>
 
       <span class="pl-k">if</span> <span class="pl-kos">(</span><span class="pl-c1">!</span><span class="pl-en">isNaN</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span><span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos"></span> <span class="pl-kos">{</span>
         <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span> <span class="pl-c1">=</span> <span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">formatter</span><span class="pl-kos">.</span><span class="pl-en">format</span><span class="pl-kos">(</span><span class="pl-smi">this</span><span class="pl-kos">.</span><span class="pl-c1">element</span><span class="pl-kos">.</span><span class="pl-c1">value</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
@@ -105,7 +105,7 @@
   <span class="pl-kos">}</span><span class="pl-kos">;</span>
 
   <span class="pl-k">new</span> <span class="pl-v">CurrencyInput</span><span class="pl-kos">(</span><span class="pl-smi">document</span><span class="pl-kos">.</span><span class="pl-s1">querySelector</span><span class="pl-kos">(</span>'<span class="pl-kos">.</span><span class="pl-s1">currency</span>'<span class="pl-kos">)</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
-<span class="pl-c1">&lt;</span><span class="pl-c1">/</span><span class="pl-ent">script</span><span class="pl-c1">&gt;</span></pre></div>
+<span class="pl-kos">&lt;/</span><span class="pl-s1">script</span><span class="pl-c1">&gt;</span></pre></div>
 <div class="markdown-heading"><h2 class="heading-element">5. Form submits a number</h2><a id="user-content-5-form-submits-a-number" class="anchor" aria-label="Permalink: 5. Form submits a number" href="#5-form-submits-a-number"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>To submit a number and display a formatted value, I create a 2nd input element and toggle the visibility on focus and blur. The formatted input does not have a <code>name</code> attribute, so it is not submitted with the form, while the original input keeps the number value. This is more complex, but keeps the changes localized at the input element so the form does not need to be aware. It's also a progressive enhancement of the original input, allowing it to work without javascript.</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/currency-input.gif"><img src="/images/currency-input.gif" width="220" height="480" style="max-width: 100%;"></a></p>

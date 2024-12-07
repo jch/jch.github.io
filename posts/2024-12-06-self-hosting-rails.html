@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Self hosting Rails on a Mac</h1><a id="user-content-self-hosting-rails-on-a-mac" class="anchor" aria-label="Permalink: Self hosting Rails on a Mac" href="#self-hosting-rails-on-a-mac"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="https://jch.app" rel="nofollow">https://jch.app</a> now runs on a 2016 Macbook Pro.</p>
+<p>I feel warm and fuzzy keeping this 8 year old mac out of the e-waste bin. The app is low traffic, but it nonetheless strained the $7/month Digital Ocean VPS. While it's no Apple silicon or raspberry pi in efficiency, the laptop draws a modest 15-20W, translating to ~$3/month at my utility rates.</p>
+<p>I kept the existing OSX install to keep my development and production environments similar. While I love linux, I wanted to avoid troubleshooting apple hardware issues. My dad gave me a free thinkpad t480s which would make a nice linux dev machine, but that's a story for another day.</p>
+<p>Roughly, the steps are:</p>
+<ol>
+<li>DNS resolves your domain name to your server IP address</li>
+<li>Router forwards requests to your server</li>
+<li>Server knows to update DNS if IP address changes</li>
+</ol>
+<p>My notes list the domain as <code>m.jch.app</code> because the base domain <code>jch.app</code> pointed at production. Once everything was migrated, I updated the configs to point at the base domain.</p>
+<div class="markdown-heading"><h2 class="heading-element">Forward ports</h2><a id="user-content-forward-ports" class="anchor" aria-label="Permalink: Forward ports" href="#forward-ports"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ol>
+<li>Configure router to assign a static IP address to server by it's MAC address</li>
+<li>Forward public web (80, 443) and ssh (22), or all ports to server.</li>
+</ol>
+<p>By default, Safari uses Private Relay which will mask your public IP if you try to search for it.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> `what is my public ip address command line`</span>
+$ curl ifconfig.co
+
+- Router settings
+  - Device Info
+    - WAN (PUBLIC_IP x.x.x.x)
+  - Advanced Setup
+    - Static IP Lease, server MAC address, 192.168.1.2 (some static IP)
+    - NAT
+      - DMZ Host 192.168.1.2 (this updates without a reboot, forwards all ports to this host)
+
+<span class="pl-c"><span class="pl-c">#</span> verify port forwarding works from somewhere outside of your network</span>
+$ nc -zv PUBLIC_IP 22</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Dyanmic DNS</h2><a id="user-content-dyanmic-dns" class="anchor" aria-label="Permalink: Dyanmic DNS" href="#dyanmic-dns"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I'm using Cloudflare for DNS, which has an API.</p>
+<ul>
+<li>
+<a href="https://github.com/qdm12/ddns-updater">https://github.com/qdm12/ddns-updater</a>
+<ul>
+<li>v2.8.1 static binary</li>
+<li>config/data.json for cloudflare config</li>
+</ul>
+<div class="highlight highlight-source-json"><pre>{
+  <span class="pl-ent">"settings"</span>: [
+    {
+      <span class="pl-ent">"provider"</span>: <span class="pl-s"><span class="pl-pds">"</span>cloudflare<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"proxied"</span>: <span class="pl-c1">true</span>,
+      <span class="pl-ent">"zone_identifier"</span>: <span class="pl-s"><span class="pl-pds">"</span>cloudflare dash &gt; m.jch.app &gt; scroll down to Zone ID<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"domain"</span>: <span class="pl-s"><span class="pl-pds">"</span>m.jch.app<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"ttl"</span>: <span class="pl-c1">600</span>,
+      <span class="pl-ent">"token"</span>: <span class="pl-s"><span class="pl-pds">"</span>cloudflare dash &gt; m.jch.app &gt; API &gt; Get your API token &gt; Edit Zone DNS<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"ip_version"</span>: <span class="pl-s"><span class="pl-pds">"</span>ipv4<span class="pl-pds">"</span></span>,
+      <span class="pl-ent">"ipv6_suffix"</span>: <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>
+    }
+  ]
+}</pre></div>
+</li>
+<li>Cloudflare &gt; m.jch.app &gt; DNS
+<ul>
+<li>Verify A record m.jch.app points to PUBLIC_IP</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Host configuration</h2><a id="user-content-host-configuration" class="anchor" aria-label="Permalink: Host configuration" href="#host-configuration"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>OSX &gt; Network
+<ul>
+<li>Ethernet device
+<ul>
+<li>Verify IP 192.168.1.2 statically assigned by MAC</li>
+</ul>
+</li>
+<li>Firewall enabled
+<ul>
+<li>Options (each should prompt to be added as exception)
+<ul>
+<li>ddns-updater_2.8.1_darwin_amd64</li>
+<li>ruby</li>
+<li>thrust</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>/etc/hosts
+<ul>
+<li>192.168.1.2 m.jch.app (otherwise built-in router httpd will respond)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Rails</h2><a id="user-content-rails" class="anchor" aria-label="Permalink: Rails" href="#rails"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># Gemfile</span>
+<span class="pl-en">gem</span> <span class="pl-s">"thruster"</span>  <span class="pl-c"># https://github.com/basecamp/thruster</span>
+
+<span class="pl-c"># config/application.rb</span>
+<span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">hosts</span> &lt;&lt; <span class="pl-s">"m.jch.app"</span>
+<span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">logger</span> <span class="pl-c1">=</span> <span class="pl-v">Logger</span><span class="pl-kos">.</span><span class="pl-en">new</span><span class="pl-kos">(</span><span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">paths</span><span class="pl-kos">[</span><span class="pl-s">'log'</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">first</span><span class="pl-kos">,</span> <span class="pl-c1">1</span><span class="pl-kos">,</span> <span class="pl-c1">100</span><span class="pl-kos">.</span><span class="pl-en">megabytes</span><span class="pl-kos">)</span>
+
+<span class="pl-c"># config/environments/production.rb</span>
+<span class="pl-c"># assets will be cached by thruster</span>
+<span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">public_file_server</span><span class="pl-kos">.</span><span class="pl-en">enabled</span> <span class="pl-c1">=</span> <span class="pl-c1">true</span>
+<span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">public_file_server</span><span class="pl-kos">.</span><span class="pl-en">headers</span> <span class="pl-c1">=</span> <span class="pl-kos">{</span>
+  <span class="pl-s">'Cache-Control'</span> <span class="pl-c1">=&gt;</span> <span class="pl-s">'public, s-maxage=31536000, max-age=15552000'</span><span class="pl-kos">,</span>
+  <span class="pl-s">'Expires'</span> <span class="pl-c1">=&gt;</span> <span class="pl-c1">1</span><span class="pl-kos">.</span><span class="pl-en">year</span><span class="pl-kos">.</span><span class="pl-en">from_now</span><span class="pl-kos">.</span><span class="pl-en">to_formatted_s</span><span class="pl-kos">(</span><span class="pl-pds">:rfc822</span><span class="pl-kos">)</span>
+<span class="pl-kos">}</span>
+
+<span class="pl-c"># config/master.key from digital ocean</span></pre></div>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Starting server in development for testing</span>
+$ DEBUG=1 TLS_DOMAIN=m.jch.app thrust bin/rails server
+$ curl -Iv https://m.jch.app
+
+<span class="pl-c"><span class="pl-c">#</span> Starting server in production</span>
+DEBUG=1 TLS_DOMAIN=jch.app caffeinate -s thrust bin/rails server -e production
+$ curl -Iv https://m.jch.app</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Deployment</h2><a id="user-content-deployment" class="anchor" aria-label="Permalink: Deployment" href="#deployment"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Previously, I had deployment setup with Kamal and containers. With development and production being the same, I wrote a bash script for simplicity. Deploys take ~13 seconds.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#!</span>/usr/bin/env bash</span>
+<span class="pl-c"><span class="pl-c">#</span> bin/deploy</span>
+<span class="pl-c1">set</span> -e
+
+APP_ROOT=<span class="pl-s"><span class="pl-pds">$(</span>dirname <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$0</span><span class="pl-pds">"</span></span><span class="pl-pds">)</span></span>/..
+<span class="pl-c1">cd</span> <span class="pl-smi">$APP_ROOT</span>
+<span class="pl-c1">source</span> <span class="pl-smi">$APP_ROOT</span>/.env
+
+git stash <span class="pl-k">&gt;</span> /dev/null
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Pulling the latest changes...<span class="pl-pds">"</span></span>
+git pull
+<span class="pl-c1">echo</span>
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Bundling dependencies...<span class="pl-pds">"</span></span>
+BUNDLE_DEPLOYMENT=1 BUNDLE_WITHOUT=development:test BUNDLE_WITHOUT_DOCUMENTATION=true bin/bundle
+<span class="pl-c1">echo</span>
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Migrating the database...<span class="pl-pds">"</span></span>
+bin/rails db:migrate
+<span class="pl-c1">echo</span>
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Precompiling assets...<span class="pl-pds">"</span></span>
+bin/rails assets:precompile
+<span class="pl-c1">echo</span>
+
+bin/rails runner <span class="pl-s"><span class="pl-pds">"</span>puts 'Checking app loads...'<span class="pl-pds">"</span></span>
+<span class="pl-c1">echo</span>
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Restarting the app...<span class="pl-pds">"</span></span>
+touch tmp/restart.txt
+<span class="pl-c1">echo</span>
+
+<span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">"</span>Cleaning up old logs...<span class="pl-pds">"</span></span>
+rm log/<span class="pl-k">*</span>.log.<span class="pl-k">*</span> <span class="pl-k">2&gt;</span>/dev/null <span class="pl-k">||</span> <span class="pl-c1">true</span>
+<span class="pl-c1">echo</span></pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Processes</h2><a id="user-content-processes" class="anchor" aria-label="Permalink: Processes" href="#processes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>These are run in a <code>screen</code> session for access via ssh. <code>caffeinate</code> keeps the mac awake.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> ddns-updater<span class="pl-k">;</span> ./ddns-updater_2.8.1_darwin_amd64
+<span class="pl-c1">cd</span> roboplan<span class="pl-k">;</span> DEBUG=1 TLS_DOMAIN=m.jch.app RAILS_ENV=production WEB_CONCURRENCY=4 RAILS_MAX_THREADS=1 caffeinate -s thrust bin/rails server
+htop  <span class="pl-c"><span class="pl-c">#</span> F4 Filter 'puma'</span>
+<span class="pl-c1">cd</span> roboplan<span class="pl-k">;</span> tail -f log/production.log</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Backups</h2><a id="user-content-backups" class="anchor" aria-label="Permalink: Backups" href="#backups"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="highlight highlight-source-shell"><pre>$ crontab -l
+0 8 <span class="pl-k">*</span> <span class="pl-k">*</span> 1-5 /Users/jch/roboplan/bin/backup</pre></div>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#!</span>/usr/bin/env bash</span>
+<span class="pl-c"><span class="pl-c">#</span> bin/backup</span>
+<span class="pl-c1">set</span> -e
+
+APP_ROOT=<span class="pl-s"><span class="pl-pds">$(</span>dirname <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$0</span><span class="pl-pds">"</span></span><span class="pl-pds">)</span></span>/..
+<span class="pl-c1">source</span> <span class="pl-smi">$APP_ROOT</span>/.env
+
+<span class="pl-k">if</span> [ <span class="pl-k">-n</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$1</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span>
+  BACKUP_ROOT=<span class="pl-smi">$1</span>
+<span class="pl-k">else</span>
+  BACKUP_ROOT=<span class="pl-smi">$APP_ROOT</span>/backups
+<span class="pl-k">fi</span>
+
+mkdir -p <span class="pl-smi">$BACKUP_ROOT</span>
+ls -t <span class="pl-smi">$BACKUP_ROOT</span> <span class="pl-k">|</span> tail -n +11 <span class="pl-k">|</span> xargs rm -rf
+
+BACKUP_DIR=<span class="pl-smi">$BACKUP_ROOT</span>/<span class="pl-smi">${POSTGRES_DB}</span>_<span class="pl-s"><span class="pl-pds">$(</span>date +%Y-%m-%d<span class="pl-pds">)</span></span>
+NUM_JOBS=<span class="pl-s"><span class="pl-pds">$(</span>/usr/sbin/sysctl -n hw.physicalcpu <span class="pl-k">2&gt;</span>/dev/null <span class="pl-k">||</span> <span class="pl-c1">echo</span> 1<span class="pl-pds">)</span></span>
+
+pg_dump <span class="pl-smi">$POSTGRES_DB</span> --format=d --jobs=<span class="pl-smi">$NUM_JOBS</span> --clean --no-owner --if-exists --file <span class="pl-smi">$BACKUP_DIR</span> <span class="pl-k">&gt;</span> /dev/null
+
+find <span class="pl-smi">$BACKUP_ROOT</span> -type d <span class="pl-k">|</span> xargs du -sh</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Benchmarks</h2><a id="user-content-benchmarks" class="anchor" aria-label="Permalink: Benchmarks" href="#benchmarks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>ruby 3.3.5</li>
+<li>rails 7.1.2</li>
+<li>postgresql 17.0</li>
+<li>disable wifi to ensure testing on ethernet interface</li>
+<li>run multiple times to warm up servers</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> 1 worker, 3 threads (baseline from digital ocean)</span>
+$ wrk -t10 -c100 -d30s https://m.jch.app
+Running 30s <span class="pl-c1">test</span> @ https://m.jch.app
+  10 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    41.68ms   93.04ms   1.81s    99.34%
+    Req/Sec    23.56     14.24    70.00     68.77%
+  2510 requests <span class="pl-k">in</span> 30.08s, 46.16MB <span class="pl-c1">read</span>
+  Socket errors: connect 0, <span class="pl-c1">read</span> 0, write 0, timeout 234
+Requests/sec:     83.43
+Transfer/sec:      1.53MB
+
+<span class="pl-c"><span class="pl-c">#</span> 4 workers, 1 thread on mac (roughly ~3x, more threads don't help)</span>
+$ TLS_DOMAIN=m.jch.com RAILS_MAX_THREADS=1 WEB_CONCURRENCY=4 RAILS_ENV=production thrust bin/rails server
+$ wrk -t10 -c100 -d30s https://m.jch.app
+Running 30s <span class="pl-c1">test</span> @ https://m.jch.app
+  10 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+     Latency    29.96ms  128.94ms   1.92s    98.38%
+     Req/Sec    46.60     36.89   220.00     71.97%
+  8074 requests <span class="pl-k">in</span> 30.10s, 148.47MB <span class="pl-c1">read</span>
+  Socket errors: connect 0, <span class="pl-c1">read</span> 0, write 0, timeout 814
+Requests/sec:    268.21
+Transfer/sec:      4.93MB</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Development</h2><a id="user-content-development" class="anchor" aria-label="Permalink: Development" href="#development"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Access development server from phone or other devices for testing. These are part of <code>bin/setup</code></p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Jerrys-MacBook-Pro, accessible at Jerrys-MacBook-Pro.local via mDNS</span>
+scutil --get LocalHostName
+scutil --set LocalHostName roboplan-dev  <span class="pl-c"><span class="pl-c">#</span> roboplan-dev.local</span>
+
+<span class="pl-c"><span class="pl-c">#</span> Firewall configuration, still bit wonky</span>
+sudo codesign --force --sign - <span class="pl-s"><span class="pl-pds">$(</span>which ruby<span class="pl-pds">)</span></span>
+sudo /usr/libexec/ApplicationFirewall/socketfilterfw --add <span class="pl-s"><span class="pl-pds">$(</span>which ruby<span class="pl-pds">)</span></span>
+sudo /usr/libexec/ApplicationFirewall/socketfilterfw --listapps
+
+<span class="pl-c"><span class="pl-c">#</span> Test firewall and dns</span>
+ruby -run -e httpd <span class="pl-c1">.</span> -p 3000
+curl http://localhost:3000
+curl http://<span class="pl-s"><span class="pl-pds">$(</span>ifconfig <span class="pl-k">|</span> grep 192 <span class="pl-k">|</span> awk <span class="pl-s"><span class="pl-pds">'</span>{print $2}<span class="pl-pds">'</span></span><span class="pl-pds">)</span></span>:3000
+curl http://roboplan-dev.local:3000</pre></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># config/development.rb</span>
+<span class="pl-en">config</span><span class="pl-kos">.</span><span class="pl-en">hosts</span> &lt;&lt; <span class="pl-s">`scutil --get LocalHostName`</span><span class="pl-kos">.</span><span class="pl-en">strip</span> + <span class="pl-s">'.local'</span></pre></div>
+<p>Thank you for stopping by and reading, and I hope you this inspires you to save some old hardware too.</p>
+  </body>
+</html>
