@@ -229,6 +229,15 @@ Requests/sec:    268.21
 Transfer/sec:      4.93MB
 ```
 
+## Power management
+
+I thought the battery would be a nice UPS in case of a power outage, but it's completely shot. I realized this one day when our robovac bumped the power adapter loose and the site went down. No plans to replace the battery because this generation of laptop required replacing the entire top case (keyboard / battery).
+
+```sh
+$ pmset -g batt | grep -v "drawing from 'AC Power'" && osascript -e 'tell application "Messages" to send "Ack! Powers out" to buddy "jollyjerry@gmail.com"'
+
+```
+
 ## Development
 
 Access development server from phone or other devices for testing. These are part of `bin/setup`

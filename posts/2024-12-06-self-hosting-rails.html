@@ -229,6 +229,10 @@ Running 30s <span class="pl-c1">test</span> @ https://m.jch.app
   Socket errors: connect 0, <span class="pl-c1">read</span> 0, write 0, timeout 814
 Requests/sec:    268.21
 Transfer/sec:      4.93MB</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Power management</h2><a id="user-content-power-management" class="anchor" aria-label="Permalink: Power management" href="#power-management"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I thought the battery would be a nice UPS in case of a power outage, but it's completely shot. I realized this one day when our robovac bumped the power adapter loose and the site went down. No plans to replace the battery because this generation of laptop required replacing the entire top case (keyboard / battery).</p>
+<div class="highlight highlight-source-shell"><pre>$ pmset -g batt <span class="pl-k">|</span> grep -v <span class="pl-s"><span class="pl-pds">"</span>drawing from 'AC Power'<span class="pl-pds">"</span></span> <span class="pl-k">&amp;&amp;</span> osascript -e <span class="pl-s"><span class="pl-pds">'</span>tell application "Messages" to send "Ack! Powers out" to buddy "jollyjerry@gmail.com"<span class="pl-pds">'</span></span>
+</pre></div>
 <div class="markdown-heading"><h2 class="heading-element">Development</h2><a id="user-content-development" class="anchor" aria-label="Permalink: Development" href="#development"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Access development server from phone or other devices for testing. These are part of <code>bin/setup</code></p>
 <div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Jerrys-MacBook-Pro, accessible at Jerrys-MacBook-Pro.local via mDNS</span>
