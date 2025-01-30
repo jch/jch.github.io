@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/main.css">
+  </head>
+  <body>
+    <header>
+      <nav class="site-nav">
+        <a href="/">blog</a>
+        <a href="/projects">projects</a>
+        <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Building an accessible search page with progressive enhancements</h1><a id="user-content-building-an-accessible-search-page-with-progressive-enhancements" class="anchor" aria-label="Permalink: Building an accessible search page with progressive enhancements" href="#building-an-accessible-search-page-with-progressive-enhancements"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>This article documents what I learned building a search page for stocks, ETFs, and other securities for <a href="https://jch.app" rel="nofollow">https://jch.app</a>. I start with built-in HTML elements and attributes for accessibility, add CSS for layout and visual design, and progressively enhance the user experience with Turbo, and one line of javascript. At the end, I'll talk about some experiments that led to dead ends and share interesting links and references.</p>
+<div class="markdown-heading"><h2 class="heading-element">HTML and CSS</h2><a id="user-content-html-and-css" class="anchor" aria-label="Permalink: HTML and CSS" href="#html-and-css"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Here's the basic form.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- GET /securities --&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">search</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">form</span> <span class="pl-c1">action</span>="<span class="pl-s">/securities</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">search</span>" <span class="pl-c1">name</span>="<span class="pl-s">q</span>" <span class="pl-c1">placeholder</span>="<span class="pl-s">Search</span>" <span class="pl-c1">autocomplete</span>=<span class="pl-s">off</span> <span class="pl-c1">spellcheck</span>=<span class="pl-s">false</span> <span class="pl-kos">/&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">button</span><span class="pl-kos">&gt;</span>Search<span class="pl-kos">&lt;/</span><span class="pl-ent">button</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">search</span><span class="pl-kos">&gt;</span></pre></div>
+<p>If a user wants to see the price of VTI (Vanguard Total Market Index Fund), they would enter 'VTI' and hit enter, or click 'Search'. A few observations:</p>
+<ol>
+<li>The default <code>method</code> for a <code>form</code> is <code>GET</code>, so submitting this form takes the browser to <code>/securities?q=VTI</code>
+</li>
+<li>
+<code>button</code> is associated with the form and submits by default</li>
+<li>
+<code>&lt;search&gt;</code> hints for screen readers, and/or add a <code>role=search</code> on the form</li>
+<li>
+<code>spellcheck=false</code> turns off the angry squiggles in Edge because VTI isn't a word</li>
+</ol>
+<p>On the backend, I take the <code>q</code> parameter, do a database lookup, and render the same template with the search results below. Each search result will have a name, full name, current price, and percentage change today.</p>
+<p>The plan was to layout each search result like:</p>
+<pre><code>+-------------------------------------+
+| VTI                         $301.30 |
+| Vanguard Total Market I...   -0.30% |
++-------------------------------------+
+</code></pre>
+<p>This layout can be made with flexbox or grid. I experimented with both and found flexbox to be easier to read.</p>
+<p>The entire page has a maximum width for readability to keep the name and price close enough. I've focused on a mobile layout, but this could turn into an <code>&lt;aside&gt;</code> sidebar in the future. One highlight is to change grid/flex item's default <code>min-width</code> to stay inside the container and allow <code>text-overflow</code> to work.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+  <span class="pl-ent">main</span> {
+    <span class="pl-c1">max-width</span><span class="pl-kos">:</span> <span class="pl-c1">350<span class="pl-smi">px</span></span>; <span class="pl-c">/* for readability */</span>
+    <span class="pl-c1">margin-inline</span><span class="pl-kos">:</span> auto; <span class="pl-c">/* centers the container on wider viewports */</span>
+  }
+<span class="pl-kos">&lt;/</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">main</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>...<span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+
+  <span class="pl-c">&lt;!-- full width so results with short names stretch --&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>="<span class="pl-s">search-result-list</span>" <span class="pl-c1">class</span>="<span class="pl-s">w-full</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-c">&lt;!-- flexbox or grid here --&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">search-result</span>"<span class="pl-kos">&gt;</span>
+      ...
+      <span class="pl-kos">&lt;</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+        .<span class="pl-c1">fullname</span> {
+          <span class="pl-c1">whitespace</span><span class="pl-kos">:</span> nowrap; <span class="pl-c">/* so search results have a consistent height */</span>
+          <span class="pl-c1">min-width</span><span class="pl-kos">:</span> auto; <span class="pl-c">/* or zero b/c the default for flex/grid items is `fit-content` */</span>
+          <span class="pl-c1">overflow</span><span class="pl-kos">:</span> hidden; <span class="pl-c">/* prevent long names from colliding into the prices */</span>
+          <span class="pl-c1">text-overflow</span><span class="pl-kos">:</span> ellipsis; <span class="pl-c">/* add the `...` */</span>
+        }
+      <span class="pl-kos">&lt;/</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">p</span> <span class="pl-c1">class</span>="<span class="pl-s">fullname</span>"<span class="pl-kos">&gt;</span>Vanguard Total Market Index Fund<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+      ...
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">main</span><span class="pl-kos">&gt;</span></pre></div>
+<p>Once I had search results, the next piece was 'watching' or 'unwatching' a stock. Each watched stock would have a check next to it, and clicking on that would toggle whether it was watched.</p>
+<pre><code>+-----+-------------------------------------+
++ [x] | VTI                         $301.30 |
++     | Vanguard Total Market I...   -0.30% |
++-----+-------------------------------------+
+</code></pre>
+<p>My first idea was to build this as a checkbox and enhance it with javascript to submit on click. However, I realized it makes sense to watch one stock at a time. The default behavior for a <code>&lt;button&gt;</code> within a form is to submit the form, skipping the need for javascript.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">search-result</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">form</span> <span class="pl-c1">action</span>="<span class="pl-s">/securities</span>" <span class="pl-c1">method</span>="<span class="pl-s">post</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">button</span> <span class="pl-c1">aria-label</span>="<span class="pl-s">Watch VTI</span>"<span class="pl-kos">&gt;</span>&amp;plus;<span class="pl-kos">&lt;/</span><span class="pl-ent">button</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+  <span class="pl-c">&lt;!-- security details --&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
+<p>Testing it in a screen reader, I liked having the name of the action with the name of the security announced. I played around with having the button on the left vs right, and found it more aesthetic and intuitive on the left close to the name. It felt like you're "watching VTI". The tab order also felt natural, allowing user to navigate each result and it's details. I could use <code>flex-direction</code> to flip the order and make a left-handed or right-handed setting. With my iPhone 13 mini, it's a natural reach for the button, but something to consider for different devices.</p>
+<p>Visually, I used html entities for <code>&amp;plus;</code> and <code>&amp;check;</code> to represent whether something is watched. I've recently enjoyed using html entities, and emoji as icons rather than svgs or images. There are differences across platforms, but they present a familiar representation specific to the platform. So a check mark looks different in Safari vs Chrome, and different still on Edge on Windows. But each of those will look familiar to users on that platform. It's also easier to maintain because what's rendered matches what's in code.</p>
+<p>Speaking of icons, I added a magnifying glass emoji to the left of the search input. It's less customizable than an svg icon, but I found it visually pleasing. I reduced the opacity so it wasn't shouting for attention. I started with a small shadow on the search input to give it a raised look, but once I added the magnifying glass, I went for a minimal single bottom border.</p>
+<div class="markdown-heading"><h2 class="heading-element">Progressive enhancement</h2><a id="user-content-progressive-enhancement" class="anchor" aria-label="Permalink: Progressive enhancement" href="#progressive-enhancement"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>At this point, the search form works. It doesn't need javascript. It uses vanilla HTML elements and attributes that works across browsers. The markup has aria attributes to add semantics for assistive technologies, and doesn't mess with the logical ordering of elements.</p>
+<p>To enhance the user experience, I use Turbo to add:</p>
+<ol>
+<li>Search as you type</li>
+<li>Morphing elements for smoothness</li>
+<li>Subtle animations</li>
+<li>Live preview of stock prices</li>
+</ol>
+<p>To implement search as you type, I submit the search form when the input changes <code>oninput="this.form.requestSubmit()"</code>.  This is the one line of javascript that I wrote. I considered debouncing the events to avoid too many requests to the backend, but found it unnecessary once I limited each search to ~10 results. Between search as you type, and the search icon, I removed the 'Search' button to reduce clutter further.</p>
+<p>There is a distinction between <code>form.submit</code> and <code>form.requestSubmit</code>. The latter works as if a user clicked submit, which is necessary for Turbo.</p>
+<p>Each search input change adds to the browser history. So a search for 'VTI' adds:</p>
+<ol>
+<li>/securities?q=V</li>
+<li>/securities?q=VT</li>
+<li>/securities?q=VTI</li>
+</ol>
+<p>Adding <code>data-turbo-action="replace"</code> on the form configures it <code>replace</code> the entry in the browser history rather than the default <code>advance</code> that adds a new entry on the stack.</p>
+<p>Turbo's default behavior on forms and links adds subtle animations between page transitions. Since the search form renders the same page when it's submitted, I enable morphing:</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">meta</span> <span class="pl-c1">name</span>="<span class="pl-s">turbo-refresh-method</span>" <span class="pl-c1">content</span>="<span class="pl-s">morph</span>"<span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">head</span><span class="pl-kos">&gt;</span></pre></div>
+<p>With search results limited to 15, there weren't enough elements to make a noticeable difference even when I typed or cleared the input quickly. One side effect is that the search input is not replaced between different pages. However, I left a <code>data-turbo-permanent</code> attribute on the input because it documents that the element should be kept between turbo visits, and won't regress if I change the refresh method back to the default. This was also necessary for <code>autofocus</code> to not reset the cursor position.</p>
+<p>There's additional opportunity to use view transitions to fine tune the search results instead of the default cross fade, but again, it didn't seem worth the effort with a capped number of results.</p>
+<p>Here's the final search as you type form without styles for readability. Note the input value comes from the backend, but can also be populated with javascript from <code>window.location.search</code>. Though the latter would make it tricky to maintain cursor position.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">form</span> <span class="pl-c1">id</span>="<span class="pl-s">search-form</span>" <span class="pl-c1">action</span>="<span class="pl-s">/securities</span>" <span class="pl-c1">data-turbo-action</span>="<span class="pl-s">replace</span>" <span class="pl-c1">data-turbo-permanent</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">name</span>="<span class="pl-s">q</span>" <span class="pl-c1">type</span>="<span class="pl-s">search</span>" <span class="pl-c1">value</span>="<span class="pl-s">&lt;%= params[:q] %&gt;</span>" <span class="pl-c1">class</span>="<span class="pl-s">border-0 ring-0 py-2 pl-8 w-full</span>" <span class="pl-c1">placeholder</span>="<span class="pl-s">Search</span>" <span class="pl-c1">oninput</span>="<span class="pl-s">this.form.requestSubmit()</span>" <span class="pl-c1">autofocus</span> <span class="pl-c1">autocomplete</span>="<span class="pl-s">off</span>" <span class="pl-c1">spellcheck</span>="<span class="pl-s">false</span>" <span class="pl-kos">/&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span></pre></div>
+<p>When search finds a result, it's nice to preview the current price and today's change percent. My backend tracks this information, and I push new price information via Turbo Streams. This can be done without Rails as the backend, but Rail's ActiveRecord, ActiveJob, and ActionCable integrates with Turbo Streams to provide a nice interface.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- rails helper turbo_stream_from generates subscription --&gt;</span>
+<span class="pl-c">&lt;!-- &lt;%= turbo_stream_from "security_1" %&gt; --&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">turbo-cable-stream-source</span> <span class="pl-c1">channel</span>="<span class="pl-s">Turbo::StreamsChannel</span>" <span class="pl-c1">signed-stream-name</span>="<span class="pl-s">somelongsignedstreamname</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">turbo-cable-stream-source</span><span class="pl-kos">&gt;</span></pre></div>
+<p>Turbo Streams documentation says it's implemented with websockets with a fallback to server-sent events (SSE), but I have not tested this. It's out of scope for this article, but here's a taste of what my backend looks like:</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-v">Security</span> &lt; <span class="pl-v">ApplicationRecord</span>
+  <span class="pl-c"># this renders securities/_security.html.erb to the "security_1" channel above</span>
+  <span class="pl-c"># and replaces search results by unique id selectors that describe each security</span>
+  <span class="pl-en">after_update_commit</span> <span class="pl-kos">{</span> <span class="pl-en">broadcast_replace_later_to</span> <span class="pl-smi">self</span> <span class="pl-kos">}</span>
+<span class="pl-k">end</span></pre></div>
+<p>At first I had a stream for <code>securities</code>. While this doesn't leak any user specific information, it causes unrelated updates from other searches to be pushed on the same stream. I was worried creating 10 streams on a page would create 10 separate connections to the backend, but it multiplexes the different stream names on a single websocket connection.</p>
+<div class="markdown-heading"><h2 class="heading-element">What didn't work</h2><a id="user-content-what-didnt-work" class="anchor" aria-label="Permalink: What didn't work" href="#what-didnt-work"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Once I had a working version, I tested on different devices and screen readers to add the tweaks and enhancements I talked about so far. But there were two dead ends, <code>display: contents</code> and styling <code>table</code>'s, where I learned a lot about accessability.</p>
+<p>Safari's web inspector has a menu to disable images, css, and javascript. I toggled these while building to understand what the default user agent experience looked like. Since I'm targeting modern browsers, it's safe to assume CSS and JS are enabled, but it's satisfying to know the page works without them. While I was building the form to watch/unwatch stocks, I thought <code>&lt;fieldset&gt;</code> and <code>&lt;legend&gt;</code> would be a good descriptive pair of tags to use. Since legend must be a direct child of fieldset, I wanted to use flexbox to position the legend, and <code>display: contents</code> to ignore the fieldset and treat it's children as flex items of it's parent.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">form</span> <span class="pl-c1">action</span>="<span class="pl-s">/securities</span>" <span class="pl-c1">method</span>="<span class="pl-s">post</span>" <span class="pl-c1">style</span>="<span class="pl-s">display: flex</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">fieldset</span> <span class="pl-c1">style</span>="<span class="pl-s">display: contents</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span>VTI<span class="pl-kos">&lt;/</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span><span class="pl-c">&lt;!-- valid --&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">search-result</span>"<span class="pl-kos">&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span>VTI<span class="pl-kos">&lt;/</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span><span class="pl-c">&lt;!-- invalid, legend must be direct child of fieldset --&gt;</span>
+      <span class="pl-kos">&lt;</span><span class="pl-ent">button</span> <span class="pl-c1">aria-label</span>="<span class="pl-s">Watch VTI</span>"<span class="pl-kos">&gt;</span>+<span class="pl-kos">&lt;/</span><span class="pl-ent">button</span><span class="pl-kos">&gt;</span>
+      ...
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">fieldset</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span></pre></div>
+<p>MDN warns that browsers incorrectly remove <code>display: content</code> element from the accessability tree. I also realized there's no semantic value to have a fieldset/legend. The only form action is the button, which has an obvious aria-label. The fieldset isn't being used to group a set of related inputs, and the legend is redundant because it's rendered by a shared template again below the button.</p>
+<p>I learned:</p>
+<ol>
+<li>The default user agent styling for fieldset/legend looks good, and allows for interesting transforms and animations.</li>
+<li>Avoid <code>display: content</code> for now</li>
+</ol>
+<p>Next, I considered marking up the search results as tabular data.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">table</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span>Search results<span class="pl-kos">&lt;/</span><span class="pl-ent">legend</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">tr</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>Watch<span class="pl-kos">&lt;/</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>Name<span class="pl-kos">&lt;/</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>Full name<span class="pl-kos">&lt;/</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>Price<span class="pl-kos">&lt;/</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>Percent change<span class="pl-kos">&lt;/</span><span class="pl-ent">th</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">tr</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">tr</span> <span class="pl-c1">style</span>="<span class="pl-s">display: flex</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>...<span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>VTI<span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>Vanguard Total Market Index<span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>$301.30<span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>-0.30%<span class="pl-kos">&lt;/</span><span class="pl-ent">td</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">table</span><span class="pl-kos">&gt;</span></pre></div>
+<p>Unfortunately, this made it difficult to share a template with other pages because "Watch" is a state that's tied to a specific user, while price information is not. With a <code>&lt;div&gt;</code> search result, the template can be shared and the user-specific state can be added, but the same could not be done with a <code>&lt;tr&gt;</code> as the shared template:</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- shared.html: shared template for a security --&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">id</span>="<span class="pl-s">VTI</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>VTI<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>Vanguard Total Market<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>$301.30<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>-0.30%<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
+
+<span class="pl-c">&lt;!-- add user specific state and reuse shared template --&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">search-result</span>" <span class="pl-c1">style</span>="<span class="pl-s">display: flex</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>(Watch / Unwatch)<span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span>%= render "shared" %<span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
+<p>Changing the <code>display</code> on a table removes it's table semantics from screen readers. I didn't change the table's display, only the <code>&lt;tr&gt;</code> to layout individual search results. Nevertheless, I was forcing a table for accessability, then styling it to not be a table.</p>
+<div class="markdown-heading"><h2 class="heading-element">Conclusion and links</h2><a id="user-content-conclusion-and-links" class="anchor" aria-label="Permalink: Conclusion and links" href="#conclusion-and-links"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Play with it at <a href="https://jch.app/demo" rel="nofollow">https://jch.app/demo</a>. I encourage you to try turning off javascript and CSS. Try it in a screen reader.</p>
+<p>Plain built-in HTML has the flexibility to create useful pages that are accessible by default. Though javascript is widely available, it is not a requirement for building a beautiful and useful page.</p>
+<p>A sparing use of javascript can progressively enhance the user experience without increasing complexity and maintenance. The only js I wrote was <code>this.form.requestSubmit()</code>, while the rest were html data attributes to customize Turbo's default behavior.</p>
+<p>While my backend is Rails, which has helpers to integrate with Turbo, the concepts and code can be done with any backend. I've even used Turbo on static HTML pages to smooth the transitions between links.</p>
+<div class="markdown-heading"><h3 class="heading-element">HTML</h3><a id="user-content-html" class="anchor" aria-label="Permalink: HTML" href="#html"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>MDN HTML elements reference: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element</a>
+</li>
+<li>: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search</a></li>
+<li>form#method: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#method" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#method</a>
+</li>
+<li>button#type: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#type</a>
+</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">CSS</h3><a id="user-content-css" class="anchor" aria-label="Permalink: CSS" href="#css"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>display: contents: <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/display-box" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/CSS/display-box</a>
+</li>
+<li>Appendix B: Effects of display: contents on Unusual Elements: <a href="https://drafts.csswg.org/css-display/#unbox" rel="nofollow">https://drafts.csswg.org/css-display/#unbox</a>
+</li>
+<li>More Accessible Markup with Display Contents: <a href="https://hidde.blog/more-accessible-markup-with-display-contents/" rel="nofollow">https://hidde.blog/more-accessible-markup-with-display-contents/</a>
+</li>
+<li>display: contents is not a CSS Reset: <a href="https://adrianroselli.com/2018/05/display-contents-is-not-a-css-reset.html" rel="nofollow">https://adrianroselli.com/2018/05/display-contents-is-not-a-css-reset.html</a>
+</li>
+<li>Table CSS Display Properties and ARIA: <a href="https://adrianroselli.com/2018/02/tables-css-display-properties-and-aria.html" rel="nofollow">https://adrianroselli.com/2018/02/tables-css-display-properties-and-aria.html</a>
+</li>
+<li>table-layout: fixed: default is fit-content. This allows columns to shrink.</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Javascript</h3><a id="user-content-javascript" class="anchor" aria-label="Permalink: Javascript" href="#javascript"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>form.requestSubmit: <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/requestSubmit</a>
+</li>
+<li>Turbo: <a href="https://turbo.hotwired.dev/" rel="nofollow">https://turbo.hotwired.dev/</a>
+</li>
+<li>Turbo morphing: <a href="https://turbo.hotwired.dev/handbook/page_refreshes#morphing" rel="nofollow">https://turbo.hotwired.dev/handbook/page_refreshes#morphing</a>
+</li>
+<li>Turbo streams: <a href="https://turbo.hotwired.dev/handbook/streams" rel="nofollow">https://turbo.hotwired.dev/handbook/streams</a>
+</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Accessibility</h3><a id="user-content-accessibility" class="anchor" aria-label="Permalink: Accessibility" href="#accessibility"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Enable fullpage accessibility tree: <a href="https://developer.mozilla.org/en-US/blog/aria-accessibility-html-landmark-roles/" rel="nofollow">https://developer.mozilla.org/en-US/blog/aria-accessibility-html-landmark-roles/</a>
+</li>
+<li>Mac Voice Over Cmd F5, Control Option U: <a href="https://support.apple.com/en-za/guide/voiceover/vo35709/mac" rel="nofollow">https://support.apple.com/en-za/guide/voiceover/vo35709/mac</a>
+</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Rails specific</h3><a id="user-content-rails-specific" class="anchor" aria-label="Permalink: Rails specific" href="#rails-specific"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>turbo-rails Turbo::Broadcastable: <a href="https://www.rubydoc.info/gems/turbo-rails/0.5.2/Turbo/Broadcastable" rel="nofollow">https://www.rubydoc.info/gems/turbo-rails/0.5.2/Turbo/Broadcastable</a>
+</li>
+<li>
+<a href="https://github.com/hotwired/turbo/issues/1093">https://github.com/hotwired/turbo/issues/1093</a>: turbo-rails does debouncing on the backend</li>
+</ul>
+  </body>
+</html>
