@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Blog RSS Feed</title>
+  <link>./index.html</link>
+  <description>Latest blog posts</description>
+  <item>
+  <title>Environmental Hardware Upgrades: iPhone 16e</title>
+  <link>posts/2025-02-19-environmental-hardware-upgrades-iphone-16e.html</link>
+  <pubDate>2025-02-19T15:38:46-08:00</pubDate>
+</item>
+
+<item>
+  <title>Building an accessible search page with progressive enhancements</title>
+  <link>posts/2025-01-30-building-modern-search.html</link>
+  <pubDate>2025-01-30T13:31:10-08:00</pubDate>
+</item>
+
+<item>
+  <title>Self hosting Rails on a Mac</title>
+  <link>posts/2024-12-06-self-hosting-rails.html</link>
+  <pubDate>2024-12-06T16:49:21-08:00</pubDate>
+</item>
+
+<item>
+  <title>Progressive HTML Currency Input</title>
+  <link>posts/2024-11-01-html-currency-input.html</link>
+  <pubDate>2024-11-05T14:05:37-08:00</pubDate>
+</item>
+
+<item>
+  <title>Things I learned this week</title>
+  <link>posts/2024-10-27-things-i-learned.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Saving $1,000 in interest using money market funds to pay bills</title>
+  <link>posts/2024-08-19-saving-1000-interest-using-money-market-funds-for-bills.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby timezones and testing</title>
+  <link>posts/2024-08-15-ruby-timezones-and-testing.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails 5 Production Database Protection</title>
+  <link>posts/2016-04-01-rails-5-protect-production-database.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>How to sort GitHub notifications in Gmail</title>
+  <link>posts/2016-02-10-how-to-sort-github-notifications-in-gmail.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>How to have an effective one on one</title>
+  <link>posts/2016-01-14-how-to-have-effective-one-on-ones.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Building reusable Ruby scripts</title>
+  <link>posts/2016-01-02-building-reusable-ruby-scripts.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Protecting Resque::Server</title>
+  <link>posts/2013-05-17-protecting-resque-server.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Interview your libraries</title>
+  <link>posts/2013-05-09-interview-your-libraries.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby Incompatible Encoding Errors</title>
+  <link>posts/2013-03-05-ruby-incompatible-encoding.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby on Rack</title>
+  <link>posts/2012-07-23-ruby-on-rack.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Blog Reboot, Lessons Learned</title>
+  <link>posts/2012-07-05-blogging-reboot-lessons-learned.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>And You Thought Render Farms Were Just For Pixar!</title>
+  <link>posts/2012-06-14-and-you-thought-render-farms-were-just-for-pixar.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Building Streaming REST APIs with Ruby</title>
+  <link>posts/2012-05-24-building-streaming-rest-apis-with-ruby.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Define Custom Callbacks for ActiveRecord and More</title>
+  <link>posts/2012-03-22-define-custom-callbacks-for-activerecord-and-more.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Real Web Performance for Users, not Robots</title>
+  <link>posts/2012-03-12-real-web-performance-for-users-not-robots.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Faraday: One HTTP Client to Rule Them All</title>
+  <link>posts/2012-03-12-faraday-one-http-client-to-rule-them-all.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Writing a Custom Rails Cache Store</title>
+  <link>posts/2012-03-06-writing-a-custom-rails-cache-store.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Pry Productivity From Your Code</title>
+  <link>posts/2012-02-29-pry-productivity-from-your-code.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Balancing Pain and Happiness</title>
+  <link>posts/2012-02-28-balancing-pain-and-happiness.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Prototyping with Compass and Serve</title>
+  <link>posts/2012-01-24-prototyping-with-compass-and-serve.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Hunting Down Execution Order Test Failures</title>
+  <link>posts/2012-01-11-hunting-down-execution-order-test-failures.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Backbone.js: Sessions and Authentication</title>
+  <link>posts/2012-01-11-backbonejs-sessions-and-authentication.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Useful Libraries: Rake::Pipeline and Spade</title>
+  <link>posts/2011-12-19-useful-libraries-rake-pipeline-and-spade.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Planning a Big Data Migration</title>
+  <link>posts/2011-12-01-planning-a-big-data-migration.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Behind the Curtain: Grape API Versioning</title>
+  <link>posts/2011-11-30-grape-api-versioning.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Developers, what are you thankful for?</title>
+  <link>posts/2011-11-23-developers-what-are-you-thankful-for.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>The Scrappy Guide to Pre-Launch Bootstrapping</title>
+  <link>posts/2011-11-21-scrappy-guide-to-prelaunch-bootstrapping.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>PROJECT README, Y U NO HAVE?</title>
+  <link>posts/2011-11-21-project-readme-y-u-no-have.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rubies to Prevent Devops Mayhem</title>
+  <link>posts/2011-06-01-rubies-to-prevent-devops-mayhem.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Node.js Jumpstart</title>
+  <link>posts/2011-04-08-nodejs-jumpstart.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>My Web Development Toolbox, 2010 Edition</title>
+  <link>posts/2011-01-11-my-web-development-toolbox-2010-edition.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Modular Cocoa Interfaces</title>
+  <link>posts/2011-01-05-modular-cocoa-interfaces.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Fixing Common Bundler Problems</title>
+  <link>posts/2010-08-12-fixing-common-bundler-problems.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Resque Cheatsheet</title>
+  <link>posts/2010-06-22-resque-cheatsheet.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>New Beginnings: Starting with Intridea</title>
+  <link>posts/2010-06-14-starting-at-intridea.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Getting Around in MongoDB</title>
+  <link>posts/2010-06-11-getting-around-in-mongodb.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Email Delivery for Webapps</title>
+  <link>posts/2010-05-14-email-deliverability.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Beerpad Hackathon: Hosting with Heroku</title>
+  <link>posts/2010-03-03-beerpad-hackathon-hosting-with-heroku.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Reaction to 37Signal's Getting Real</title>
+  <link>posts/2010-03-01-reaction-to-37signals-getting-real.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Hackathon creation: Beerpad</title>
+  <link>posts/2010-02-27-hackathon-beerpad.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Page Caching Gotcha on Heroku</title>
+  <link>posts/2010-02-24-page-caching-gotcha-on-heroku.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails Dependency Management</title>
+  <link>posts/2010-01-21-rails-dependency-management.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Tips of the Day</title>
+  <link>posts/2010-01-19-tips-of-the-day.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Tips of the Day</title>
+  <link>posts/2010-01-14-tips-of-the-day.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Tips of the Day</title>
+  <link>posts/2010-01-13-tips-of-the-day.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Tips of the Day</title>
+  <link>posts/2010-01-12-tips-of-the-day.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby Rails Gmail SMTP</title>
+  <link>posts/2010-01-11-ruby-rails-gmail-smtp.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>A Day in Python Library Hell</title>
+  <link>posts/2010-01-11-a-day-in-python-library-hell.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby Python Cheatsheet</title>
+  <link>posts/2009-12-09-ruby-python-cheatsheet.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Talking the Startup Talk, Walking the Outspokes Walk: Founders</title>
+  <link>posts/2009-10-30-first-month-of-first-startup.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>The Software Maintenance Light</title>
+  <link>posts/2009-06-09-rails-application-maintenance.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Introspecting Rails Models and Controllers Callbacks</title>
+  <link>posts/2009-06-04-introspecting-rails-models-and-controllers.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Ruby Postgresql Gem Cleanup</title>
+  <link>posts/2009-04-14-ruby-postgresql-gem-cleanup.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Fast Tracked iPhone Development</title>
+  <link>posts/2009-04-10-fast-tracked-iphone-development.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Adventures with ActiveRecord find</title>
+  <link>posts/2009-04-08-adventures-with-active-record-find.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails 2.2.2 Chicken and Egg Migrations Headache</title>
+  <link>posts/2009-03-17-rails-2.2.2-chicken-and-egg-migrations-headache.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails and Gems Documentation Everywhere</title>
+  <link>posts/2009-02-28-rails-and-gems-documentation-anywhere.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Another .irbrc Jewel</title>
+  <link>posts/2009-02-18-another-irbrc-jewel.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Multiple Gmail Accounts on OSX Done Right</title>
+  <link>posts/2009-02-11-multiple-gmail-accounts-on-osx-done-right.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Emacs Refactoring</title>
+  <link>posts/2009-02-06-emacs-refactoring.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails-like Javascript Date Helpers</title>
+  <link>posts/2009-01-11-rails-like-javascript-date-helpers.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails Flash with Ajax</title>
+  <link>posts/2008-12-13-rails-flash-with-ajax.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>OS X GUI Tool 'HTTP Client'</title>
+  <link>posts/2008-12-08-osx-gui-tool-httpclient.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>How to Make an API for a Rails App</title>
+  <link>posts/2008-11-25-how-to-make-an-api-for-a-rails-app.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Deploying into the Night</title>
+  <link>posts/2008-11-08-deploying-into-the-night.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Subversion for the Lazy</title>
+  <link>posts/2008-11-07-subversion-for-the-lazy.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Dump Test Data from Production to Development with yaml_db</title>
+  <link>posts/2008-11-07-dump-test-data-from-production-to-development-with-yaml-db.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Building Webapp Menus</title>
+  <link>posts/2008-10-30-javascript-menus.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Hacking Live Systems</title>
+  <link>posts/2008-10-24-hacking-live-systems.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Where to Find Things in Rails</title>
+  <link>posts/2008-10-13-where-to-find-things-in-rails.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Coupa and Rails 2</title>
+  <link>posts/2008-09-16-coupa-and-rails2.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Week of Insomnia</title>
+  <link>posts/2008-08-17-week-of-insomnia.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Mini-apps Galore!</title>
+  <link>posts/2008-08-13-mini-apps-galore.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Picking at Capistrano</title>
+  <link>posts/2008-08-12-picking-at-capistrano.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Tweaking Apache with Phusion Passenger</title>
+  <link>posts/2008-08-11-tweaking-apache-with-phusion-passenger.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Debian/Ubuntu Specific Rails with Postgresql</title>
+  <link>posts/2008-08-10-debian-ubuntu-specific-rails-with-postgresql.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Messy Ruby Requires</title>
+  <link>posts/2008-08-07-messy-ruby-requires.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Flaco Crushers</title>
+  <link>posts/2008-08-06-flaco-crusher.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Flaco Rewrite</title>
+  <link>posts/2008-08-05-flaco-rewrite.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>My Keyboard</title>
+  <link>posts/2008-08-03-my-keyboard.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Emacs Info</title>
+  <link>posts/2008-08-02-emacs-info.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails String Inflections</title>
+  <link>posts/2008-07-30-rails-string-inflections.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>RSpec'ing acts_as_state_machine</title>
+  <link>posts/2008-07-24-rspecing-acts-as-state-machine.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>First Sprint</title>
+  <link>posts/2008-07-18-first-sprint.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Dangerous Scaffolding</title>
+  <link>posts/2008-07-15-dangerous-scaffolding.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Capify my App</title>
+  <link>posts/2008-07-13-capify-my-app.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Fuck Fixtures</title>
+  <link>posts/2008-07-09-fuck-fixtures.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails Webapp Engineering</title>
+  <link>posts/2008-07-04-rails-web-engineering.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Platform of Choice</title>
+  <link>posts/2008-06-28-platform-of-choice.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Fuzz Testing and Being a Dick</title>
+  <link>posts/2008-06-11-fuzz-testing-and-being-a-dick.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>my $perl;</title>
+  <link>posts/2008-05-20-my-perl.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Kernel Designs</title>
+  <link>posts/2008-05-03-kernel-designs.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Emacs Tips</title>
+  <link>posts/2008-04-22-emacs-tips.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Rails Tips</title>
+  <link>posts/2008-03-12-rails-tips.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Premature Software Testing</title>
+  <link>posts/2008-03-10-premature-software-testing.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Customizing Emacs</title>
+  <link>posts/2008-02-14-customizing-emacs.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Common Latex Usage</title>
+  <link>posts/2008-02-14-common-latex-usage.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>My Computing Environment</title>
+  <link>posts/2008-02-12-my-computing-environment.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Setup Rails with Postgresql</title>
+  <link>posts/2008-02-05-setup-rails-with-postgresql.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>CSS Tips and Tricks</title>
+  <link>posts/2008-02-05-css-tips-and-tricks.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Infuriating Job Applications</title>
+  <link>posts/2008-01-31-infuriating-job-applications.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Flaco Blog</title>
+  <link>posts/2008-01-27-flaco-blog.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+<item>
+  <title>Shoot em up Debugging</title>
+  <link>posts/2008-01-26-shoot-em-up-debugging.html</link>
+  <pubDate>2024-11-05T13:52:43-08:00</pubDate>
+</item>
+
+</channel>
+</rss>

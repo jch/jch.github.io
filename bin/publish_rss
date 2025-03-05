@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+require "open3"
+require "time"
+require 'debug'
+
+rss_items = []
+src_files = `find #{ENV["src_dir"]} -type f -name '*.md' | sort -r`
+src_files.each_line do |path|
+  title = `head -n1 < #{path}`.gsub(/^[\s#]+/, "").chomp
+  href = path.gsub(ENV["src_dir"], ENV["output_dir"]).gsub(/md$/, "html").chomp
+  date = File.mtime(path.chomp).iso8601
+  rss_items << <<-ITEM
+<item>
+  <title>#{title}</title>
+  <link>#{href}</link>
+  <pubDate>#{date}</pubDate>
+</item>
+  ITEM
+end
+
+rss_feed = <<-RSS
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+  <title>Blog RSS Feed</title>
+  <link>#{ENV['root_dir']}/index.html</link>
+  <description>Latest blog posts</description>
+  #{rss_items.join("\n")}
+</channel>
+</rss>
+RSS
+
+File.open("#{ENV['root_dir']}/rss.xml", "w") { |fh| fh.puts(rss_feed) }
