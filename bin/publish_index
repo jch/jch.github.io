@@ -12,7 +12,7 @@ end
 
 content = <<-CONTENT
 <h1>Blog</h1>
-<ul class="list-unstyled posts">
+<ul>
   #{post_list_items.join("\n")}
 </ul>
 CONTENT
