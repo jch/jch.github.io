@@ -1,56 +1,17 @@
 body {
-  font-family: 'Lora', serif;
-  padding: 1.5em;
-  max-width: 79ch;
+  max-width: 80ch;
+  padding: 1em;
+  margin: auto;
 }
-
-h1,h2,h3 { margin-block-end: 0em; }
 
 .site-nav {
   display: flex;
-  gap: 2rem;
-  & p {
-    margin: 0;
-  }
-}
-
-ul, ol { padding-inline: 1em; }
-li {
-  line-height: 1.8em;
-  margin-block-start: 0.5em;
-  margin-block-end: 0.5em;
-}
-
-p {
-  line-height: 1.8em;
-}
-
-blockquote {
-  margin: 0;
-  padding: 1em;
-  background-color:beige;
-}
-
-pre, code {
-  font-family: 'Inconsolata', monospace;
-  overflow-x: scroll;
-}
-
-dd {
-  margin-block-end: 1em;
-}
-
-header {
-  margin-bottom: 1.5em;
-}
-
-header .home {
-  font-weight: bold;
+  gap: 1em;
 }
 
 .highlight pre {
-  background-color: #efefef;
-  padding: 1em;
+  border-left: 2px solid palegoldenrod;
+  padding-inline-start: 0.75em;
 }
 
 .pl-c {color: #969896;}
