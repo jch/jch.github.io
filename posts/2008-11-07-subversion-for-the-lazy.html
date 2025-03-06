@@ -4,128 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Subversion for the Lazy</h1><a id="user-content-subversion-for-the-lazy" class="anchor" aria-label="Permalink: Subversion for the Lazy" href="#subversion-for-the-lazy"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I've been asked about subversion enough times to justify writing this
-quick and dirty article to save me future time.  Read this guide if
-you absolutely need to get subversion working ASAP.  Otherwise I
-highly recommend going through the <a href="http://svnbook.red-bean.com/" rel="nofollow">svn
-book</a> for more background information
-and advanced usage.</p>
-<div class="markdown-heading"><h2 class="heading-element">Bare Minimum Background</h2><a id="user-content-bare-minimum-background" class="anchor" aria-label="Permalink: Bare Minimum Background" href="#bare-minimum-background"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>You will NOT be able to do anything right in subversion unless you
-understand WHY it exists.  Subversion might be a pain in the ass, but
-that wasn't why it was created.  Subversion is <a href="http://en.wikipedia.org/wiki/Revision_control" rel="nofollow">version control
-software</a> that is
-supposed to help programmers organize their code.  If you use it
-correctly, it'll fix all of the following problems:</p>
-<ul>
-<li>taking notes about the changes you were working on.</li>
-<li>going backwards in time to an older non-broken copy of a file.</li>
-<li>merging changes from multiple programmers on the same file.</li>
-</ul>
-<p>This all starts with a subversion <span>repository</span>.  Think of the repo as
-the original copy of your files.  Instead of making changes on the
-original copy, you <span>checkout</span> a <span>working copy</span> and make changes to that.  When
-you're satisfied with the changes you made in your working copy, you
-<em>commit</em> the changes back to the repository.  Here is the absolute
-simplest case of using svn:</p>
-&lt;style type='text/css'&gt;
-  .command { color: #63831F }
-  .repository-address { color: #FD6A08 }
-  .arg1 { color: #6F86C0 }
-
-  .subversion-command { margin-left: 20px; }
-&lt;/style&gt;
-<div class="markdown-heading"><h3 class="heading-element">Checkout a Working Copy</h3><a id="user-content-checkout-a-working-copy" class="anchor" aria-label="Permalink: Checkout a Working Copy" href="#checkout-a-working-copy"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<pre><code>svn checkout svn+ssh://address.to.subversion/repository myworkingcopy
-</code></pre>
-<p>The <span>'checkout'</span> command makes a copy of
-the <span>repository</span> and puts it
-into a folder named <span>myworkingcopy</span>.</p>
-<div class="markdown-heading"><h3 class="heading-element">Make Your Changes</h3><a id="user-content-make-your-changes" class="anchor" aria-label="Permalink: Make Your Changes" href="#make-your-changes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Edit any of the files in your working copy.  These changes will only
-be in your working copy until you commit them back to the <span>repository</span>.  This means that if you
-make changes, and <em>another</em> person does a fresh checkout, they will
-<em>not</em> see your changes.  If you decide to create any new files in the
-working copy, you need to let svn know with the 'svn add' command.</p>
-<pre><code>svn add new_file1.txt new_file2.java new_file3.avi
-</code></pre>
-<p>You can add any number of arbitrary new files.</p>
-<div class="markdown-heading"><h3 class="heading-element">Commit Your Changes</h3><a id="user-content-commit-your-changes" class="anchor" aria-label="Permalink: Commit Your Changes" href="#commit-your-changes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Before you commit, you want to double check the changes you made.
-First type:</p>
-<pre><code>svn status
-</code></pre>
-<p>This lets you know what's being committed.  'M' means modified, 'A'
-means added, and '?' means it's a new file that hasn't been added.
-Read the last section for adding.</p>
-<p>When you're happy with the files to be committed, type</p>
-<pre><code>svn commit
-</code></pre>
-<p>This will bring up your editor to type a note about what the changes
-in this commit are.  If it says that no editor is set, google how to
-set EDITOR in bash.  After the commit succeeds, anyone else who does a
-fresh checkout or an 'svn update' will get the changes you just
-committed.</p>
-<div class="markdown-heading"><h3 class="heading-element">Pulling Changes from the Repository</h3><a id="user-content-pulling-changes-from-the-repository" class="anchor" aria-label="Permalink: Pulling Changes from the Repository" href="#pulling-changes-from-the-repository"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>If multiple programmers are using the same <span>repository</span>, then at some point
-you'll have to pull changes from other programmers.  Instead of doing
-a fresh checkout every time, simply run</p>
-<pre><code>svn update
-</code></pre>
-<p>to bring in all the changes from the remote repository.  It's a good
-idea to get in the habit of updating before you make your changes
-because otherwise you'll have to do unnecessary merging.  Read about
-merging in the svn redbook.</p>
-<div class="markdown-heading"><h3 class="heading-element">Cheatsheet</h3><a id="user-content-cheatsheet" class="anchor" aria-label="Permalink: Cheatsheet" href="#cheatsheet"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>To summarize:</p>
-<pre><code>svn checkout http://svn.somehost.com/path/to/repository my_own_copy
-cd my_own_copy
-(edit the files in my_own_copy)
-svn add my_own_copy/new_file1.txt
-svn status
-svn commit
-</code></pre>
-<div class="markdown-heading"><h3 class="heading-element">Common Issues</h3><a id="user-content-common-issues" class="anchor" aria-label="Permalink: Common Issues" href="#common-issues"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>If svn ever says, '.' is not a working directory, then it means you
-are not currently in a <span>working copy</span>.  The
-working copy is what you named the folder when you originally checked
-it out.  See section about 'checking out'.</p>
-<p><em>Never</em> mix and match folders from different working copies.  If you
-want to use mv, or cp, or copies files in and out of the working
-folder, read about 'svn copy' and 'svn move'.</p>
-<p>If you try to add a folder, and it says it's already been added, then
-you probably meant to add the files within the folder.  Simply do a
-'svn add -R folder_name' to do a recursive add of all files in the
-folder.</p>
-<p>All subversion commands start with 'svn'.  To get a list of all
-commands, type 'svn help'.  To get help on a command foo, do 'svn help
-foo'.</p>
-<p>If you're on a Mac and you suck at Terminal, then go get
-<a href="http://www.apple.com/downloads/macosx/development_tools/svnx.html" rel="nofollow">svnX</a>.
-If you're on windows, get <a href="http://tortoisesvn.tigris.org" rel="nofollow">Tortoise
-SVN</a>.</p>
-<div class="markdown-heading"><h3 class="heading-element">Final Hints</h3><a id="user-content-final-hints" class="anchor" aria-label="Permalink: Final Hints" href="#final-hints"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>This guide is for lazy people who won't spend 20 minutes to read and
-understand the subversion guide.  I guarantee you'll save hours and
-hours of headache if you just take the time to learn it properly.
-This is the bare minimum to get started, and if you still have
-questions after this, go and read the <a href="http://svnbook.red-bean.com/" rel="nofollow">svn red
-book</a>.  Learn about merging, learn about
-diff's, and learn how version control works.  You'll not only help
-yourself in the long run, but you'll save the people you work with
-lots of time too.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

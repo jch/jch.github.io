@@ -4,104 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Rails Dependency Management</h1><a id="user-content-rails-dependency-management" class="anchor" aria-label="Permalink: Rails Dependency Management" href="#rails-dependency-management"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Rails has two methods of adding external libraries to a project,
-<a href="http://docs.rubygems.org/" rel="nofollow">rubygems</a> and
-<a href="http://guides.rubyonrails.org/plugins.html" rel="nofollow">plugins</a>.  There are also
-different ways to manage these external libraries.  Here are some
-conventions I've picked up over the years for managing dependencies in
-development and deployment as painless and maintainable as possible.</p>
-<div class="markdown-heading"><h2 class="heading-element">Rubygems</h2><a id="user-content-rubygems" class="anchor" aria-label="Permalink: Rubygems" href="#rubygems"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I prefer using gems over plugins whenever possible because they are
-easily shared between different applications, and are versioned.
-Multiple versions of the same gem can be installed on the same box,
-and it's up to the application to specify which version it wants to
-use.  This is great if you have older apps that aren't ready to go up
-to a newer version living in the same environment as apps who are
-already using a newer version of the same library.</p>
-<ul>
-<li><a href="http://ryandaigle.com/articles/2008/4/1/what-s-new-in-edge-rails-gem-dependencies" rel="nofollow">Ryan's Scraps introduction</a></li>
-<li><a href="http://railscasts.com/episodes/110-gem-dependencies" rel="nofollow">Railscast</a></li>
-<li><a href="http://api.rubyonrails.org/classes/Rails/Configuration.html#M002537" rel="nofollow">Rails API documentation</a></li>
-<li><a href="http://docs.rubygems.org/" rel="nofollow">Rubygems documentation</a></li>
-</ul>
-<div class="markdown-heading"><h3 class="heading-element">Gem Bundler</h3><a id="user-content-gem-bundler" class="anchor" aria-label="Permalink: Gem Bundler" href="#gem-bundler"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>In addition to installing gem dependencies on production boxen by
-hand, there's an interesting new kid on the block called
-<a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/" rel="nofollow">Bundler</a>.
-The idea is you declare what gems and versions belong with a Rails
-application in a Gemfile which is used by the 'gem bundle' command to
-freeze those gems into vendor/gems.  To 'freeze' a library in
-Rails-speak is to copy that library into the vendor directory; It
-offers the same tradeoffs as
-<a href="http://en.wikipedia.org/wiki/Static_library" rel="nofollow">static-linking</a> and
-<a href="http://en.wikipedia.org/wiki/Dynamic_link_library" rel="nofollow">dynamic-linking</a>.</p>
-<ul>
-<li><a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/" rel="nofollow">Yehuda Katz introduction</a></li>
-<li><a href="http://docs.heroku.com/gems" rel="nofollow">Heroku docs</a></li>
-</ul>
-<p>I use a combination of Bundler and Rail's builtin 'config.gem' on
-Heroku.  For every gem that is already available on the hosts, I use
-'config.gem' and use the existing shared gem to avoid wasting space
-with freezing gems.  For gems that are not available on the box, I
-have a Gemfile that Bundler uses to freeze gems on every deploy.  I
-get the benefit of static-linking for gems aren't available on the
-local host, but also get the benefit saving space with
-dynamic-linking.</p>
-<div class="markdown-heading"><h2 class="heading-element">Plugins</h2><a id="user-content-plugins" class="anchor" aria-label="Permalink: Plugins" href="#plugins"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Originally I thought of gems as general purpose ruby libraries, and
-'plugins' as ruby libraries that are only useful within a Rails
-application.  That distinction isn't very useful practically.  Even if
-a shared library is only useful within a Rails app, I still prefer to
-use a gem because gems are versioned and have tools to maintain and
-manipulate them.  Luckily many Rails plugins usually offer themselves
-as both a tradition plugin that gets frozen in vendor/plugins, or as a
-gem dependency.</p>
-<p>One plugin nasty plugin habit I had to get rid of was the urge to
-'script/generate plugin' whenever I wasn't sure where to put a certain
-chunk of modular code.  Before you do this, remember that plugins are
-supposed to be resuable in <em>any</em> Rails app.  If your plugin can't be
-decoupled from your Rails project and dropped into a fresh one, then
-it probably belongs in 'lib' and not 'vendor/plugins'.</p>
-<ul>
-<li>
-<a href="http://ryandaigle.com/articles/2007/2/23/what-s-new-in-edge-rails-stop-littering-your-evnrionment-rb-with-custom-initializations" rel="nofollow">Ryan's Scraps rails
-initializers</a>
-are useful for requiring extra libraries you have in 'lib' instead
-of 'vendor/plugins'</li>
-<li>
-<a href="http://errtheblog.com/posts/3-organize-your-models" rel="nofollow">Err the Blog load_paths
-example</a>. It's
-good to understand how
-<a href="http://api.rubyonrails.org/classes/Rails/Configuration.html" rel="nofollow">config.load_paths</a>
-work so you can organize where you put your shared code.</li>
-</ul>
-<div class="markdown-heading"><h2 class="heading-element">Avoid Dependencies</h2><a id="user-content-avoid-dependencies" class="anchor" aria-label="Permalink: Avoid Dependencies" href="#avoid-dependencies"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Probably the most important lesson I've learned is to not get too
-trigger happy with adding new external libraries.  There are a lot of
-good libraries out there, but plenty of bad ones too.  Before you
-marry yourself to a particular library, research it thoroughly; Is it
-actively maintained?  Are there lots of complaints about it in the
-blogosphere?  Are there tests?  Does the code look well written?  Is
-there documentation?</p>
-<p>and most importantly of all...</p>
-<p><strong>Do I actually need this functionality?</strong></p>
-<p>I've been burned plenty of times for installing something new and
-shiny and then ditching it later because it was much more than I
-needed.  Just like it's more elegant to write less code, more
-concisely; The same principle applies when introducing new
-dependencies to your application.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

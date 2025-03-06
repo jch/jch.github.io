@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
@@ -32,11 +30,11 @@ things might break.</p>
 </blockquote>
 <p>Here are the differences between ruby's builtin Time and Date methods, compared
 with using ActiveSupport's TimeWithZone and Date extensions.</p>
-<div class="highlight highlight-source-ruby"><pre><span class="pl-en">irb</span>&gt; <span class="pl-c1">ENV</span><span class="pl-kos">[</span><span class="pl-s">'TZ'</span><span class="pl-kos">]</span>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-en">irb</span>&gt; <span class="pl-c1">ENV</span><span class="pl-kos">[</span><span class="pl-s">'TZ'</span><span class="pl-kos">]</span><span class="pl-en"></span>
 <span class="pl-c1">=&gt;</span> <span class="pl-c1">nil</span>
 <span class="pl-en">irb</span>&gt; <span class="pl-v">Time</span><span class="pl-kos">.</span><span class="pl-en">now</span>
 <span class="pl-c1">=&gt;</span> <span class="pl-c1">2024</span>-<span class="pl-c1">08</span>-<span class="pl-c1">15</span> <span class="pl-c1">13</span><span class="pl-pds">:48</span><span class="pl-pds">:14</span><span class="pl-kos">.</span><span class="pl-c1">639956</span> -<span class="pl-c1">0700</span>  <span class="pl-c"># no timezone set picks up system time</span>
-<span class="pl-en">irb</span>&gt; <span class="pl-c1">ENV</span><span class="pl-kos">[</span><span class="pl-s">'TZ'</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-s">'US/Eastern'</span>
+<span class="pl-en">irb</span>&gt; <span class="pl-c1">ENV</span><span class="pl-kos">[</span><span class="pl-s">'TZ'</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-s">'US/Eastern'</span><span class="pl-en"></span>
 <span class="pl-c1">=&gt;</span> <span class="pl-s">"US/Eastern"</span>
 <span class="pl-en">irb</span>&gt; <span class="pl-v">Time</span><span class="pl-kos">.</span><span class="pl-en">now</span>
 <span class="pl-c1">=&gt;</span> <span class="pl-c1">2024</span>-<span class="pl-c1">08</span>-<span class="pl-c1">15</span> <span class="pl-c1">16</span><span class="pl-pds">:48</span><span class="pl-pds">:46</span><span class="pl-kos">.</span><span class="pl-c1">905847</span> -<span class="pl-c1">0400</span>  <span class="pl-c"># ENV['TZ'] set overrides system time</span>
@@ -50,7 +48,7 @@ with using ActiveSupport's TimeWithZone and Date extensions.</p>
 
 <span class="pl-en">irb</span>&gt; <span class="pl-en">require</span> <span class="pl-s">'active_support'</span>
 <span class="pl-en">irb</span>&gt; <span class="pl-en">require</span> <span class="pl-s">'active_support/core_ext/date/calculations'</span>
-<span class="pl-en">irb</span>&gt; <span class="pl-v">Time</span><span class="pl-kos">.</span><span class="pl-en">zone</span> <span class="pl-c1">=</span> <span class="pl-s">'Asia/Tokyo'</span>
+<span class="pl-en">irb</span>&gt; <span class="pl-v">Time</span><span class="pl-kos">.</span><span class="pl-en">zone</span> <span class="pl-c1">=</span> <span class="pl-s">'Asia/Tokyo'</span><span class="pl-en"></span>
 <span class="pl-c1">=&gt;</span> <span class="pl-s">"Asia/Tokyo"</span>
 <span class="pl-en">irb</span>&gt; <span class="pl-v">Time</span><span class="pl-kos">.</span><span class="pl-en">now</span>
 <span class="pl-c1">=&gt;</span> <span class="pl-c1">2024</span>-<span class="pl-c1">08</span>-<span class="pl-c1">15</span> <span class="pl-c1">13</span><span class="pl-pds">:56</span><span class="pl-pds">:27</span><span class="pl-kos">.</span><span class="pl-c1">470616</span> -<span class="pl-c1">0700</span>  <span class="pl-c"># system time!</span>

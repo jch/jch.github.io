@@ -4,114 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">How to Make an API for a Rails App</h1><a id="user-content-how-to-make-an-api-for-a-rails-app" class="anchor" aria-label="Permalink: How to Make an API for a Rails App" href="#how-to-make-an-api-for-a-rails-app"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I've come across the same problem in my personal projects and also at
-work.  You have an existing Rails app that has some authentication and
-authorization scheme to protect who has access to your controllers,
-but now you need to write an API that can access those controllers.
-How do you keep the same authentication routine for your API users?</p>
-<p>The are two approaches I've seen used.  One is based on using HTTP
-AuthBasic, and the other is to generate a unique API key for API
-users.</p>
-<div class="markdown-heading"><h2 class="heading-element">Option 1: HTTP Basic Auth</h2><a id="user-content-option-1-http-basic-auth" class="anchor" aria-label="Permalink: Option 1: HTTP Basic Auth" href="#option-1-http-basic-auth"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I learned this snippet from working with <a href="http://overhrd.com/" rel="nofollow">Mike</a>.
-Rails 2.x support <a href="http://railscasts.com/episodes/82" rel="nofollow">HTTP Basic Auth</a>
-out of the box.  For our app, we check the request format and only do
-basic auth if the format is xml.</p>
-<pre><code>class ApplicationController &lt; ActionController::Base
-  protected
-  def http_basic_authentication
-    if request.format == Mime::XML
-      authenticate_or_request_with_http_basic do |username, password|
-        username == 'foo' &amp;&amp; password == 'bar'
-      end
-    end
-  end
-end
-</code></pre>
-<p>Then for controllers that allow API access, we simply add a before
-filter.</p>
-<pre><code>class OrangesController &lt; ActionController::Base
-  before_filter :http_basic_authentication, :only =&gt; :create
-
-  def create
-    # do stuff
-  end
-end
-</code></pre>
-<p>Then to create an Orange via the API, we could do:</p>
-<pre><code># we expect an XML response, so we suffix url with 'xml'
-# optionally, we can also add 'foo:bar@' before the domain name.
-url = URI.parse("http://example.com/oranges.xml")
-
-req = Net::HTTP::Post.new(url.path)
-req.basic_auth 'foo', 'bar'
-
-req.set_form_data({'size' =&gt; 'large', 'juicy' =&gt; '1'})
-http = Net::HTTP.new(url.host, url.port)
-response = http.start {|http| http.request(req) }
-</code></pre>
-<p>(Note: Beware of ssl, remember to set <code>http.use_ssl =
-true</code>)</p>
-<div class="markdown-heading"><h2 class="heading-element">Options 2: Using API key</h2><a id="user-content-options-2-using-api-key" class="anchor" aria-label="Permalink: Options 2: Using API key" href="#options-2-using-api-key"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I didn't know about HTTP Basic Auth when I was writing my <a href="http://money.whatcodecraves.com/" rel="nofollow">Money
-app</a>, so I took a little time to
-fully understand how Rail's
-<a href="http://api.rubyonrails.org/classes/ActionController/Filters/ClassMethods.html" rel="nofollow">ActionController::Filters</a>
-work.  The documentation is clear and the source is straightforward to
-understand.</p>
-<p>For API authentication, I decided to write my own custom filter
-object and put it in lib/api_authorized_filter.rb</p>
-<pre><code># Use this filter as an around_filter around actions that can be
-# accessed via the API.
-#
-# Example:
-#   class ItemsController &lt; ApplicationController
-#     prepend_around_filter ApiAuthorizedFilter.new, :only =&gt; [:create]
-#   end
-#
-class ApiAuthorizedFilter
-  def before(controller)
-    return true unless controller.params[:api_key]
-    controller.current_user = User.find_by_api_key(controller.params[:api_key]))
-  end
-
-  def after(controller)
-    controller.current_user = nil
-  end
-end
-</code></pre>
-<p>ApiAuthorizedFilter is put at the very beginning of the filter chain
-with <code>prepend_around_filter</code>, before any normal
-authentication <code>before_filters</code>.  When it's called, the
-<code>before</code> method is invoked with the current controller, and
-the filter 'logins' an API User if the api_key is valid.  When my
-normal authentication filters run, they won't halt because it'll seem
-like there is a logged in user.  Finally, when the action is finished
-running, the <code>after</code> method will log out the API User to
-prevent a User from staying logged in.  This last step is optional,
-but I think it's better to only let API Users authenticate every time
-they need something.</p>
-<p>In order to use this Filter, you'll have to add an 'api_key' column to
-your User model, and also tweak the <code>before</code> and
-<code>after</code> code to login and logout the user.</p>
-<div class="markdown-heading"><h2 class="heading-element">Which one should I use?</h2><a id="user-content-which-one-should-i-use" class="anchor" aria-label="Permalink: Which one should I use?" href="#which-one-should-i-use"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I personally like the latter because the api key gives me another way
-to reference a logged in user.  Since the api key is independent of a
-user's login and password, it's also easier to replace the key without
-resetting the user's web credentials.  Of course, you can make both
-methods work the same way, so it's really a matter of personal taste.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

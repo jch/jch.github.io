@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
@@ -86,7 +84,7 @@ stops processing a thread as soon as we label one of it's messages.</p>
 <p>The latest version does even less processing to reduce time outs.</p>
 <div class="highlight highlight-source-js"><pre><span class="pl-c">// Modified from http://lyzidiamond.com/posts/github-notifications-google-script/</span>
 
-<span class="pl-c">// Assumes incoming threads from notifications@github.com are labeled with `unprocessed`.</span>
+<span class="pl-c">// Assumes incoming threads from notifications<span class="pl-k">@github</span>.com are labeled with `unprocessed`.</span>
 
 <span class="pl-k">function</span> <span class="pl-en">perf</span><span class="pl-kos">(</span><span class="pl-s1">start</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
   <span class="pl-v">Logger</span><span class="pl-kos">.</span><span class="pl-en">log</span><span class="pl-kos">(</span><span class="pl-s">"Execution time: "</span> <span class="pl-c1">+</span> <span class="pl-kos">(</span><span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">now</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-c1">-</span> <span class="pl-s1">start</span><span class="pl-kos">)</span> <span class="pl-c1">+</span> <span class="pl-s">" ms"</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
@@ -94,8 +92,8 @@ stops processing a thread as soon as we label one of it's messages.</p>
 
 <span class="pl-k">function</span> <span class="pl-en">processInbox</span><span class="pl-kos">(</span><span class="pl-kos">)</span> <span class="pl-kos">{</span>
   <span class="pl-k">var</span> <span class="pl-s1">startTime</span> <span class="pl-c1">=</span> <span class="pl-v">Date</span><span class="pl-kos">.</span><span class="pl-en">now</span><span class="pl-kos">(</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
-  <span class="pl-k">var</span> <span class="pl-s1">directMentionRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span>@jch\b<span class="pl-c1">/</span></span><span class="pl-kos">;</span>
-  <span class="pl-k">var</span> <span class="pl-s1">teamRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span>@github\/(github|tests|other-teams)\b<span class="pl-c1">/</span></span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">directMentionRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span><span class="pl-s">@</span><span class="pl-s">j</span><span class="pl-s">c</span><span class="pl-s">h</span><span class="pl-cce">\b</span><span class="pl-c1">/</span></span><span class="pl-kos">;</span>
+  <span class="pl-k">var</span> <span class="pl-s1">teamRegexp</span> <span class="pl-c1">=</span> <span class="pl-pds"><span class="pl-c1">/</span><span class="pl-s">@</span><span class="pl-s">g</span><span class="pl-s">i</span><span class="pl-s">t</span><span class="pl-s">h</span><span class="pl-s">u</span><span class="pl-s">b</span><span class="pl-cce">\/</span><span class="pl-kos">(</span><span class="pl-s">g</span><span class="pl-s">i</span><span class="pl-s">t</span><span class="pl-s">h</span><span class="pl-s">u</span><span class="pl-s">b</span><span class="pl-c1">|</span><span class="pl-s">t</span><span class="pl-s">e</span><span class="pl-s">s</span><span class="pl-s">t</span><span class="pl-s">s</span><span class="pl-c1">|</span><span class="pl-s">o</span><span class="pl-s">t</span><span class="pl-s">h</span><span class="pl-s">e</span><span class="pl-s">r</span><span class="pl-s">-</span><span class="pl-s">t</span><span class="pl-s">e</span><span class="pl-s">a</span><span class="pl-s">m</span><span class="pl-s">s</span><span class="pl-kos">)</span><span class="pl-cce">\b</span><span class="pl-c1">/</span></span><span class="pl-kos">;</span>
 
   <span class="pl-k">var</span> <span class="pl-s1">unprocessedLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">'unprocessed'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>
   <span class="pl-k">var</span> <span class="pl-s1">directMentionLabel</span> <span class="pl-c1">=</span> <span class="pl-v">GmailApp</span><span class="pl-kos">.</span><span class="pl-en">getUserLabelByName</span><span class="pl-kos">(</span><span class="pl-s">'Direct Mention'</span><span class="pl-kos">)</span><span class="pl-kos">;</span>

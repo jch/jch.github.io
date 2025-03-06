@@ -4,52 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Debian/Ubuntu Specific Rails with Postgresql</h1><a id="user-content-debianubuntu-specific-rails-with-postgresql" class="anchor" aria-label="Permalink: Debian/Ubuntu Specific Rails with Postgresql" href="#debianubuntu-specific-rails-with-postgresql"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I spent the weekend migrating from my shared hosting at Dreamhost over
-to VPS hosting at <a href="http://www.silverrack.com/" rel="nofollow">SilverRack</a>.  In the
-move, I setup my housing app to run on postgresql instead of mysql.  I
-was in for a few surprises though.</p>
-<p>When I ran db:migrate, I got a strange error:</p>
-<pre><code> rake aborted!
- No such file or directory - /tmp/.s.PGSQL.5432
-</code></pre>
-<p>At first I thought it was because postgres wasn't started, but that
-didn't make sense because I had another terminal with psql running
-just fine.  If you follow the --trace message, you'll find that the
-most poorly named option in database.yml will fix this problem:</p>
-<pre><code> production:
-   adapter: postgresql
-   # ... other stuff
-   host: /var/run/postgresql
-</code></pre>
-<p>The 'host' parameter is the directory Rails looks in to get the tmp
-file to determine how to connect to postgres.  I guess in other *nix
-systems this is conventionally in tmp, but that's not true for Debian
-based distros.</p>
-<p>After fixing that, I ran into another little problem:</p>
-<pre><code>psql: FATAL:  Ident authentication failed for user "xxx"
-</code></pre>
-<p>This one comes as a result of good defaults by the Debian postgresql
-configs.  A <a href="http://semweb.weblog.ub.rug.nl/node/61" rel="nofollow">quick google</a>
-solved this one:</p>
-<pre><code># add to pg_hba.conf, found in /etc/postgresql/...
-local    all   all   trust
-host     all   127.0.0.1  255.255.255.255    trust
-</code></pre>
-<p>For a cheatsheet of setting up a Rails project with Postgresql, check
-out <a href="/articles/2008/02/05/setup_rails_with_postgresql/">this guide I wrote a while
-back</a>.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

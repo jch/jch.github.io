@@ -4,81 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Rails 2.2.2 Chicken and Egg Migrations Headache</h1><a id="user-content-rails-222-chicken-and-egg-migrations-headache" class="anchor" aria-label="Permalink: Rails 2.2.2 Chicken and Egg Migrations Headache" href="#rails-222-chicken-and-egg-migrations-headache"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>For this upcoming March release, we plan to upgrade from Rails 2.1 to
-Rails 2.2.2. When testing bootstrapping fresh instances of our app, we
-ran across an annoying migrations problem.  Read on to see how we
-resolved it.</p>
-<p>The bootstrap process for our app is pretty straightforward.  We
-prepare the new empty database by loading db/schema.rb from our last
-stable release.  db/schema.rb is kept in sync as we move from one
-release to the next.  Once the structure of the database is created
-with db:schema:load, we setup initial defaults in the app by loading
-yaml fixtures via a custom db:seed:load rake task.</p>
-<pre><code>desc "Initialize database"
-task :seed, :roles =&gt; :app do
-  run &lt;&lt;-CMD
-    cd #{current_path} &amp;&amp;
-    rake db:schema:load &amp;&amp;
-    rake db:seed:load SRC=db/blank SEEDS=all
-  CMD
-end
-</code></pre>
-<p>Easy peasey right? I was very annoyed when db:schema:load stopped dead
-in it's page long backtrace.  The offending error was:</p>
-<pre><code>Mysql::Error: Table 'coupa_blah.setup doesn't exist: SHOW FIELDS FROM `setup`
-</code></pre>
-<p>Looking a little deeper, it became apparent that models and
-controllers assumes the existence of the 'setup' table, and reference
-it when they are loaded for configuration settings.  However, the
-'setup' table is created and populated by db:schema:load and
-db:seed:load.  Chicken and egg, you have foiled me again!</p>
-<p>I knew it was a problem with class caching because when I tried
-running db:schema:load in development mode, it worked without a
-hiccup.
-<a href="http://api.rubyonrails.org/classes/Rails/Configuration.html" rel="nofollow">Rails::Configuration</a>
-told me that there is a variable <code>eager_load_paths</code> that
-determines where to eager load.  In our environment.rb, I added this
-to the <code>Rails::Initializer</code> block:</p>
-<pre><code># Hint: this doesn't fix our problem!!
-config.eager_load_paths = []
-</code></pre>
-<p>At first glance, this not only fixed the db:schema:load problem, but
-had the added side benefit of speeding up start up times of Passenger
-app servers, and script/console.  Of course, it was too good to be
-true.  I soon realized that weird things in our app were broken.  We
-were getting method undefined errors on classes that obviously had
-them.  It was frustrating, but at least I know <a href="http://rails.lighthouseapp.com/projects/8994/tickets/802-eager-load-application-classes-can-block-migration" rel="nofollow">I'm not
-alone</a>.
-It turns out that we need our model classes to be eager loaded.  I
-ended up turning eager loading back on and adding this hack to
-environments/production.rb:</p>
-<pre><code># kids, this is what an ugly hack looks like. Don't worry, Rails
-# 2.3 will fix this.
-config.cache_classes = (File.basename($0) == "rake" &amp;&amp; !ARGV.grep(/db:/).empty?) ? false : true
-</code></pre>
-<p>If <code>cache_classes</code> is false, then the paths in
-<code>eager_load_paths</code> is ignored, and no eager loading is
-done.  The conditional basically turns off eager loading for any rake
-task within the 'db' namespace.  The hack was already there, but the
-previous version specifically looked for 'db:migrate', whereas this
-one will exempt db:schema:load and db:seed:load as well.</p>
-<p>Fortunately, according to the <a href="http://rails.lighthouseapp.com/projects/8994/tickets/802-eager-load-application-classes-can-block-migration" rel="nofollow">lighthouse
-ticket</a>
-on this issue, it looks like Rails 2.3 will default to turning off
-eager loading of classes for rake tasks.  Until then, this hack will
-have to do.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

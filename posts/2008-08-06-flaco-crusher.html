@@ -4,94 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Flaco Crushers</h1><a id="user-content-flaco-crushers" class="anchor" aria-label="Permalink: Flaco Crushers" href="#flaco-crushers"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Originally, this post was titled 'Ruby Markdown Implementations' and
-I was going to talk about
-<a href="http://tomayko.com/writings/ruby-markdown-libraries-real-cheap-for-you-two-for-price-of-one" rel="nofollow">alternatives</a>
-to <a href="http://www.deveiate.org/projects/BlueCloth" rel="nofollow">BlueCloth</a>.  But while
-I was reading up about <a href="http://maruku.rubyforge.org/" rel="nofollow">Maruku</a>, I
-followed a link to <a href="http://webgen.rubyforge.org/" rel="nofollow">webgen</a>.  As if that
-wasn't enough, reading up on webgen led me to yet another static site
-generator called <a href="http://webby.rubyforge.org/" rel="nofollow">webby</a>.</p>
-<div class="markdown-heading"><h2 class="heading-element">Webgen</h2><a id="user-content-webgen" class="anchor" aria-label="Permalink: Webgen" href="#webgen"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p><a href="http://webgen.rubyforge.org/" rel="nofollow">Webgen</a> is the first guy I found.  My
-heart sunk a little for Flaco, but I was immediately impressed by it.</p>
-<div class="markdown-heading"><h3 class="heading-element">Maturity</h3><a id="user-content-maturity" class="anchor" aria-label="Permalink: Maturity" href="#maturity"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Webgen has been around for a while, and is written by <a href="http://rubyforge.org/users/gettalong/" rel="nofollow">Thomas
-Leitner</a>, who has been in the
-Ruby community since at least 2004.  It looks like the project itself
-has been actively developed since 2004, with the last release being
-just a week ago.  At it's height, it had <a href="http://rubyforge.org/project/stats/?group_id=296" rel="nofollow">over 900
-downloads</a>.</p>
-<div class="markdown-heading"><h3 class="heading-element">Code Quality</h3><a id="user-content-code-quality" class="anchor" aria-label="Permalink: Code Quality" href="#code-quality"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Skimming through the code, it looks very clean and ruby-like.  There
-are test cases and a custom test harness. The Rakefile has many tasks
-for streamlining administrative tasks.  The RDoc link on the site is
-broken, but there is very comprehensive RDoc that can be generated
-with the source.  It's worth noting that for a project that started
-over 4 years ago, the code doesn't look crufty or outdated at all.
-Kudos to you Mr. Leitner.</p>
-<div class="markdown-heading"><h3 class="heading-element">Licensing</h3><a id="user-content-licensing" class="anchor" aria-label="Permalink: Licensing" href="#licensing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>GPL V2.  Licensing doesn't really bother me, but it's worth
-mentioning.</p>
-<div class="markdown-heading"><h3 class="heading-element">Noteable Features</h3><a id="user-content-noteable-features" class="anchor" aria-label="Permalink: Noteable Features" href="#noteable-features"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<ul>
-<li>build custom webgen tags for an extensible templating language.</li>
-<li>meta information fields.</li>
-<li>clever configuration.</li>
-<li>clean way to specify the render chain. e.g. erb, then markdown</li>
-<li>plugin-like ways to add breadcrumbs and menus.</li>
-<li>caching (don't know the details, but it creates a cache file)</li>
-</ul>
-<div class="markdown-heading"><h2 class="heading-element">Webby</h2><a id="user-content-webby" class="anchor" aria-label="Permalink: Webby" href="#webby"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>After poking around the edges of webgen, I googled for 'static site
-generation' and found <a href="http://webby.rubyforge.org/" rel="nofollow">Webby</a>.  The webby
-homepage wow-ed me more, but 'ASCII Alchemy' alone isn't enough
-sometimes.</p>
-<div class="markdown-heading"><h3 class="heading-element">Maturity</h3><a id="user-content-maturity-1" class="anchor" aria-label="Permalink: Maturity" href="#maturity-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>There's both a rubyforge and a github project for webby.  The fact
-that it uses github and rspec makes me think that <a href="http://www.pea53.com/" rel="nofollow">Tim
-Pease</a> is on top of his ruby fashion.  The last
-commit on github was a mere <em>2 hours</em> ago.  The whole project was
-started about a year ago.</p>
-<div class="markdown-heading"><h3 class="heading-element">Code Quality</h3><a id="user-content-code-quality-1" class="anchor" aria-label="Permalink: Code Quality" href="#code-quality-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Webby also looks pretty clean and ruby-like.  I can't quite put my
-finger on it, but I think I liked how webgen was laid out better.  I
-didn't spend as much time in the webby code, but it seems like it
-isn't split up as well as webgen and might be harder to add new
-features.  The RDoc didn't seem as good as webgen's.  I reserve final
-judgement for later.</p>
-<div class="markdown-heading"><h3 class="heading-element">Licensing</h3><a id="user-content-licensing-1" class="anchor" aria-label="Permalink: Licensing" href="#licensing-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>MIT License.  How chic.</p>
-<div class="markdown-heading"><h3 class="heading-element">Noteable Features</h3><a id="user-content-noteable-features-1" class="anchor" aria-label="Permalink: Noteable Features" href="#noteable-features-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<ul>
-<li>better guides and community for support</li>
-<li>use of rake for all actions</li>
-<li>autobuild feature</li>
-<li>build pages from templates</li>
-</ul>
-<p>Both Webgen and Webby share a lot of features.  The ones that don't
-overlap seem like they could be written because of the clean
-architectures they both seem to follow.  The features webby lists and
-shows in it's tutorial seem to match more with what I want for my
-blog.</p>
-<p>I'm happy to have found these two projects because they both do what I
-want them to.  It saves me a ton of work in doing not-so-much tasks
-like command line parsing and setting up library paths.  On top of
-that, I can imagine adding the features that I wanted in Flaco that
-aren't available in these systems.  They might even turn out to be
-features that could be useful to other people :)</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

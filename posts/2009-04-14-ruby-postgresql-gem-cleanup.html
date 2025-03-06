@@ -4,42 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Ruby Postgresql Gem Cleanup</h1><a id="user-content-ruby-postgresql-gem-cleanup" class="anchor" aria-label="Permalink: Ruby Postgresql Gem Cleanup" href="#ruby-postgresql-gem-cleanup"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I ran into some trouble with getting a good native postgresql driver
-installed.  Here are some links and resources I found to be useful.  I
-also wrote a <a href="http://www.whatcodecraves.com/posts/2008/02/05/setup_rails_with_postgresql/" rel="nofollow">checklist for bootstrapping a new Rails app with
-postgres</a>
-as the adapter.</p>
-<p>There are several choices for postgresql adapters.  The most active
-and up-to-date one appears to be
-<a href="http://rubyforge.org/projects/ruby-pg/" rel="nofollow">ruby-pg</a>, previously known as
-ruby-postgres.  ruby-pr was the one I was using originally, but this
-one is non-native and unmaintained.</p>
-<p>A good starting point was <a href="http://www.robbyonrails.com/articles/2007/06/19/installing-ruby-on-rails-and-postgresql-on-os-x-second-edition" rel="nofollow">Robby's 'Installing Ruby on Rails and
-Postgresql on OS X 2nd
-edition</a>.
-<a href="http://shifteleven.com/articles/2008/03/21/installing-postgresql-on-leopard-using-macports" rel="nofollow">ShiftEleven</a>
-also had detailed instructions for installing postgresql with
-macports.</p>
-<p>The exact steps I took that worked for me were:</p>
-<pre><code># start postgres on computer start.
-sudo launchctl load -w /Library/LaunchDaemons/org.macports.postgresql83-server.plist
-
-# the ARCHFLAGS is because of Leopard weirdness.
-sudo env ARCHFLAGS="-arch i386" gem install pg
-</code></pre>
-
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

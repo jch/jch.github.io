@@ -4,142 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Platform of Choice</h1><a id="user-content-platform-of-choice" class="anchor" aria-label="Permalink: Platform of Choice" href="#platform-of-choice"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I kept some rants and notes to myself a while back about what I
-thought about some of the operating systems I've used and currently
-use.  These notes are more about day-to-day usage from the perspective
-of a software developer / power user rather than an objective review
-of each platform.  I also update these pages with links to my favorite
-apps and tricks I've come across.</p>
-<div class="markdown-heading"><h2 class="heading-element">OSX</h2><a id="user-content-osx" class="anchor" aria-label="Permalink: OSX" href="#osx"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>It just works.</p>
-<p>I think Apple's done a great job of make a day-to-day OS for dummies.  That way,
-when I want to feel like a dummy and not obsessively configure every freaking detail,
-I can just make some common sense assumptions and start working.</p>
-<p>On the other hand, I like how OS X doesn't make you hit a brick wall once you've
-done the common simple cases.  If you wanted or
-needed to, it's perfectly accepted to open up and Terminal and <a href="http://www.macosxhints.com/index.php?topic=unix" rel="nofollow">have at
-it</a>.  Whether it's a simple
-shell script to do some text munging, or a regularly recurring task with cron,
-Apple has made it easy for *nix geeks to be productive outside the pretty Aqua
-UI.</p>
-<p>I dislike fanboys.  Everyone new to OS X should check out <a href="http://www.kernelthread.com/mac/osx/" title="What is Mac OS X" rel="nofollow">"What is Mac OS
-X"</a> for a serious myth
-debunking and very interesting history and details about OS X.</p>
-<p>I'm learning to program with Objective-C and Cocoa, so there'll be on
-more these later.</p>
-<div class="markdown-heading"><h3 class="heading-element">Software</h3><a id="user-content-software" class="anchor" aria-label="Permalink: Software" href="#software"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Since it's so easy to compile applications from *nix systems on OS X, linux
-apps are readily available on OSX.  Both <a href="http://finkproject.org/" rel="nofollow">Fink</a>
-and <a href="http://www.macports.org/" rel="nofollow">MacPorts</a> are good package management systems.</p>
-<ul>
-<li>
-<p><a href="http://amarsagoo.info/namely/" rel="nofollow">Namely</a> Great light freeware launcher of
-applications.  Quicksilver is too slow on my ibook.</p>
-</li>
-<li>
-<p><a href="http://www.caminobrowser.org/" rel="nofollow">Camino</a> I used this browser for quite a
-while because of some nit-picky details I had with Safari.  It integrates
-better with OSX better than FF, but doesn't let you have extensions like FF.</p>
-</li>
-<li>
-<p><a href="http://handbrake.m0k.org/" rel="nofollow">HandBrake</a> Rip dvds to mp4, avi, or ogm.</p>
-</li>
-<li>
-<p>Terminal comes with OS X by default, but make sure you change the terminal
-type to xterm (instead of xterm-color) or else your screen sessions
-won't have a backspace.</p>
-</li>
-<li>
-<p><a href="http://www.sshkeychain.org/" rel="nofollow">SSHKeychain</a> a very well done wrapper
-around ssh-agent.  It uses apple's Keychain to store your key's
-passwords, and will auto lock your private keys on customizable events.
-Learn more about ssh in general
-<a href="http://www.sshkeychain.org/mirrors/SSH-with-Keys-HOWTO/" title="SSH with Keys HOWTO" rel="nofollow">here</a></p>
-</li>
-<li>
-<p><a href="http://www.parallels.com/products/desktop/" rel="nofollow">Parallels</a> For $80, you could have
-a very sophisticated and usable VM to test against all different types of OS's.
-I have not tried VMWare on OS X yet.</p>
-</li>
-</ul>
-<div class="markdown-heading"><h2 class="heading-element">Linux</h2><a id="user-content-linux" class="anchor" aria-label="Permalink: Linux" href="#linux"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>A fan boy's fantasy or salvation for corporate environments?</p>
-<p>Sometime before high school, my dad brought home 2 O'Reilly Linux
-books.  He never looked at them again after he wrapped them, but told
-me that *nix was important.  This confused me since he was a Windows
-admin guy.  The book was on RedHat 5.1 and I installed it on my newly
-upgraded Pentium MMX 233/266Mhz machine.  I got really excited about
-the philosophy and freeness the books touted.  Watching Gnome start
-up, and something non-Windows on my computer was also a treat.
-Fortunately for me, those early windowing apps were absolute garbage.
-This forced me to the command line and made me learn how to get around
-without a GUI.  I remembered my DOS days very fondly, so the
-transition wasn't a big deal.  I remember having a heck of a time
-getting a floppy to mount in Linux.  I had to ask Sean's dad (a
-Berkeley professor!) because it was so frustrating.  Man pages aren't
-designed for impaitient noobs.  RedHat was a gateway drug for me.  I
-moved on to try several different distributions.  At the time, I tried
-them haphazardly and didn't really know what I was looking for.  I
-judged each distribution by how hard it was to install and how easy it
-was to get software loaded on it.  The RH book totally lied about
-RPMs.  I tried Slackware and enjoyed the packaging system much more than
-RPMs.  When I volunteered for the ACCRC refurbishing computers for
-nonprofits, I installed Suse 7 on those machines.  After I tried
-Debian Potato, I was pretty hooked.  Woody was even more amazing
-(fresher packages).  Even today, after Ubuntu has redefined ease of
-use, I continue to use Debian because I see no reason to switch.</p>
-<div class="markdown-heading"><h3 class="heading-element">Applications</h3><a id="user-content-applications" class="anchor" aria-label="Permalink: Applications" href="#applications"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<ul>
-<li>
-<a href="http://dev.ojnk.net/" rel="nofollow">pork</a> - the best aim/irc client, ever.</li>
-<li>
-<a href="http://www.gnu.org/software/screen/" rel="nofollow">gnu screen</a> - an absolute must if you use ssh.
-It's not impressive until you customize your .screenrc
-Usually it's nice to have screen running to keep your ssh sessions alive as well.
-If you're unlucky and have your screen killed, then you get a message:
-<em>Suddenly the Dungeon collapses!! - You die...</em>
-</li>
-</ul>
-<div class="markdown-heading"><h2 class="heading-element">DOS</h2><a id="user-content-dos" class="anchor" aria-label="Permalink: DOS" href="#dos"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Instant bootup, instant shutdown, excellent throughput, zero hassle, what's not to like?</p>
-<blockquote>
-<p><em>640K ought to be enough for anybody - incorrected attributed to Bill Gates</em></p>
-</blockquote>
-<p>DOS was an easy to love operating system.  Any negative brought up against DOS
-can be "scoped out".  I didn't miss multitasking; It had <a href="http://en.wikipedia.org/wiki/The_Lost_Vikings" title="The Lost Vikings" rel="nofollow">graphics and
-sound</a>;</p>
-<p>I plan to explore more with <a href="http://www.freedos.org/" rel="nofollow">FreeDos</a> when I set up my VMs</p>
-<div class="markdown-heading"><h3 class="heading-element">Pros</h3><a id="user-content-pros" class="anchor" aria-label="Permalink: Pros" href="#pros"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<ul>
-<li>instant bootup/shutdown.  Unrivaled by anything available today.  It's even
-faster than my stupid cell phone.</li>
-<li>minimal set of commands.  It was very easy to remember them and use.</li>
-</ul>
-<div class="markdown-heading"><h3 class="heading-element">Cons</h3><a id="user-content-cons" class="anchor" aria-label="Permalink: Cons" href="#cons"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<ul>
-<li>setting up extended memory was hard :(</li>
-<li>I wish the commands and options were more *nix like.</li>
-<li>instant shutdown is a double edged sword</li>
-</ul>
-<div class="markdown-heading"><h2 class="heading-element">Windows</h2><a id="user-content-windows" class="anchor" aria-label="Permalink: Windows" href="#windows"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Good to you if you don't know any better.</p>
-<p>After I put debian on my desktop computer and bought an ibook for a
-laptop. I stopped using windows completely.  The NT family of OS's
-were solid, and I never really had any problems with XP.  On the other
-hand, I didn't have any problems because I was very careful with what
-I did on that computer.  I haven't kept up with Vista at all.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

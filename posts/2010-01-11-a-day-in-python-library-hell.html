@@ -4,64 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">A Day in Python Library Hell</h1><a id="user-content-a-day-in-python-library-hell" class="anchor" aria-label="Permalink: A Day in Python Library Hell" href="#a-day-in-python-library-hell"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I haven't used python as my main day-to-day language, but I've already
-run into problems with the tools and libraries that has had me pulling
-my hair out.</p>
-<div class="markdown-heading"><h2 class="heading-element">Library Management</h2><a id="user-content-library-management" class="anchor" aria-label="Permalink: Library Management" href="#library-management"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>There doesn't appear to be a consensus in the community for how you
-distribute or install libraries.  As a result, every library is a
-little different, and you have to figure it out per package.
-Sometimes it's through python eggs, sometimes through your OS's
-package manager, sometimes it's from source, and sometimes it's just
-drop in a file.  As if this wasn't bad enough, the method you choose
-to install a library might determine whether it works or not.  When I
-tried to install the oauth module via an egg, the module didn't work.
-From this <a href="http://agileweb.wordpress.com/2009/04/28/step-by-step-guide-to-use-sign-in-with-twitter-with-django/" rel="nofollow">blog post
-comment</a>,
-it turns out I wasn't alone:</p>
-<pre><code>I had this problem too. I get it when I used setuptools to install
-an egg of ouath. Instead, just copy oauth.py into your Python path
-and it will work fine.
-</code></pre>
-<p>"just copy oauth.py into your Python path"?  Is this seriously the
-solution?  If so, then why even bother to have distribute a broken
-egg?</p>
-<div class="markdown-heading"><h3 class="heading-element">easy_install is Stupid</h3><a id="user-content-easy_install-is-stupid" class="anchor" aria-label="Permalink: easy_install is Stupid" href="#easy_install-is-stupid"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>First of all, what a stupid name for a program.  It doesn't tell me
-anything about what it does, and isn't remotely related to 'eggs' nor
-python.  The --help message has no short description, and there's no
-man page for it.  When you google for 'python egg', the first result
-is <a href="http://pypi.python.org/pypi/setuptools" rel="nofollow">'setuptools'</a>, which is
-'easy_install', which happens to install eggs.</p>
-<p>Oh, and guess what?  There's no easy_uninstall.  For that, you'll have
-to remove it yourself from your local site-packages, or <a href="http://ubuntuforums.org/showthread.php?t=666698" rel="nofollow">roll your own
-uninstall</a>.</p>
-<div class="markdown-heading"><h2 class="heading-element">
-<strong>init</strong>.py is Useless</h2><a id="user-content-initpy-is-useless" class="anchor" aria-label="Permalink: init.py is Useless" href="#initpy-is-useless"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Every init file I've seen so far has been empty.  I understand the
-purpose for this file, but requiring it in a directory for something
-to be considered a module is annoying.  Java also uses directories for
-packages, but doesn't require you to touch a file in every folder.</p>
-<div class="markdown-heading"><h2 class="heading-element">Rotten Eggs</h2><a id="user-content-rotten-eggs" class="anchor" aria-label="Permalink: Rotten Eggs" href="#rotten-eggs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I'm disappointed something that developers use day in and day out can
-be so clunky and vague.  I've singled out the oauth library as an
-example, but the problem isn't just a single bad library.  The problem
-is how freaking difficult it is to try a new library; Even if you like
-the API of the library, there's an additional hurdle of installing and
-maintaining it.  I wish the Python community would come to a consensus
-and choose a standard way of distributing libraries.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

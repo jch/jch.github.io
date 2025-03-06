@@ -4,97 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
-    <div class="markdown-heading"><h1 class="heading-element">Kernel Designs</h1><a id="user-content-kernel-designs" class="anchor" aria-label="Permalink: Kernel Designs" href="#kernel-designs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I really enjoyed my introductory operating systems class at Berkeley.
-The class focused on classic high level OS concepts like process
-models, virtual memory, concurrency, and more.  To go along with the
-material, teams of 4 formed to implement components in a toy OS called
-<a href="http://www.cs.washington.edu/homes/tom/nachos/" rel="nofollow">Nachos</a>.  The purpose
-of this was to keep students focused on the concepts rather than wade
-through the quagmire that is x86 assembly.</p>
-<p>I was very proud of the finished project.  We wrote basic processes
-and threads with priorities, memory manangement, system calls, and a C
-chat program.  All of this could be booted up and ran on the virtual
-'Machine' object that emulated a MIPs architecture machine.</p>
-<p>Unfortunately, I did not follow up with more advanced topics after the
-class, and while those high level concepts are solid fundamentals, I
-sorely wish to see what designs have been tried in practice, along
-with their benefits and drawbacks.  Rather than dive blindly into the
-source of popular open source kernels from Linux and BSD, I plan to
-start by reading some research papers on kernel design.  Hopefully
-this will refresh my memory about some key terms while letting me
-survey what's available.</p>
-<div class="markdown-heading"><h2 class="heading-element">Mach Microkernel</h2><a id="user-content-mach-microkernel" class="anchor" aria-label="Permalink: Mach Microkernel" href="#mach-microkernel"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>The Mach kernel is a microkernel developed by CMU in the eighties to
-address issues with multiprocessors and networked environments, and
-the growing complexity of BSD systems.</p>
-<p>BSD began with a very clean and simple abstraction of files to model
-major components such as devices and memory.  Using files allowed for
-very natural manipulation of these resources with pipes and simple
-utilities.  Unfortunately, this abstraction did not fit later desired
-features.  This lead to adding orthogonal abstractions for different
-tasks.  Mach tries to bring back a clean uniform interface with a
-objected-oriented abstraction.  The 4 basic abstractions are:</p>
-<ul>
-<li>
-<p>task - execution environment.  Think of this as a basic container
-for everything needed to run a program.  Things like virtual memory
-address space, file descriptors, threads, capabilities and other
-resources.  Example messages: fork, allocate (memory)</p>
-</li>
-<li>
-<p>thread - basic unit of computation.  Similar to threads in processes
-for Unix.  Example messages: destroy, suspend, resume.</p>
-</li>
-<li>
-<p>port - communication channel.  A way to reference other tasks and
-threads.  An object sends a 'message' to another object through a
-port on the receiving object.  Messages are queued up in ports.
-Think classic Smalltalk and Objective-C style message passing.</p>
-</li>
-<li>
-<p>message - actions and data between tasks and threads.</p>
-</li>
-</ul>
-<p>The emphasis on separating tasks and threads seems like a big idea of
-the paper.  I originally thought that Unix had multiple threads per
-process, but from the paper, it sounds like at that time Unix used
-very expensive forks and hacks in order to achieve concurrency.  A
-great example they used for supporting the task/thread abstraction is
-machines with <em>N</em> processors.  Instead of creating <em>N</em> heavy weight
-processes with 1 thread each, Mach would create 1 heavy weight task to
-describe what's needed to run, and <em>N</em> relatively lightweight threads
-to take advantage of the concurrency.</p>
-<div class="markdown-heading"><h2 class="heading-element">Virtual Memory</h2><a id="user-content-virtual-memory" class="anchor" aria-label="Permalink: Virtual Memory" href="#virtual-memory"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>The abstraction for virtual memory allows Mach to be machine
-independent.  Each task holds it's own 'address map' of what memory it
-owns.  This is the same as the basic concept I learned in class.  The
-maps map from address to either virtual memory (VM) objects, or to
-'shared maps'.  The 'shared maps' are a way for tasks to share memory.
-VM objects are either pages that have already been fetched, or
-instructions of where to fetch the page if it hasn't been fetched.
-Pages themselves have attributes that specify their current status and
-properties.</p>
-<div class="markdown-heading"><h2 class="heading-element">Interprocess Communication</h2><a id="user-content-interprocess-communication" class="anchor" aria-label="Permalink: Interprocess Communication" href="#interprocess-communication"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>BSD sockets are simply streams of bytes left up to the application to
-interpret.  Mach's port/message abstraction provides uniform
-interprocess communication.  There is no difference between two
-processes on the same host talking, verus two processes on different
-network hosts talking.  On top of that, the port/message mechanism
-lets you add meaning and stricter checking on the data that is passed
-around.  Capabilites of who can send and receive what can also be
-enforced.</p>
+    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
   </body>
 </html>

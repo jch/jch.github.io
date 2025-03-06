@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
@@ -24,10 +22,10 @@
 <p>All cache store implementations inherit from an abstract store named <a href="http://api.rubyonrails.org/classes/ActiveSupport/Cache/Store.html" rel="nofollow">ActiveSupport::Cache::Store</a>. This class defines the public interface that's used by Rails to do caching. The three basic operations are read, write, and delete. Here's a simple example you can run in irb:</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-en">require</span> <span class="pl-s">'activesupport'</span>
 <span class="pl-s1">cache</span> <span class="pl-c1">=</span> <span class="pl-v">ActiveSupport</span>::<span class="pl-v">Cache</span><span class="pl-kos">.</span><span class="pl-en">lookup_store</span><span class="pl-kos">(</span><span class="pl-pds">:memory_store</span><span class="pl-kos">)</span>
-<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span><span class="pl-en"></span>
 <span class="pl-c1">=&gt;</span> <span class="pl-c1">nil</span>
 <span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">write</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">,</span> <span class="pl-s">'bar'</span><span class="pl-kos">)</span>
-<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
+<span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span><span class="pl-en"></span>
 <span class="pl-c1">=&gt;</span> <span class="pl-s">'bar'</span>
 <span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">delete</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>
 <span class="pl-s1">cache</span><span class="pl-kos">.</span><span class="pl-en">read</span><span class="pl-kos">(</span><span class="pl-s">'foo'</span><span class="pl-kos">)</span>

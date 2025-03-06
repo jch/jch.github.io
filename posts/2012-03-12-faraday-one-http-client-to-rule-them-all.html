@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
   </head>
   <body>
     <header>
-      <nav class="site-nav">
-        <a href="/">blog</a>
-        <a href="/projects">projects</a>
-        <a href="/about">about</a>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
       </nav>
     </header>
 
@@ -76,7 +74,7 @@ Faraday is a Ruby HTTP client which allow developers to customize its behavior w
 <p>Like a Rack app, a <code>Faraday::Connection</code> object has a list of middlewares. Faraday middlewares are passed an <code>env</code> hash that has request and response information. Middlewares can manipulate this information before and after a request is executed.</p>
 <p>To make this more concrete, let's take a look at a new <code>Faraday::Connection</code>:</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-s1">conn</span> <span class="pl-c1">=</span> <span class="pl-v">Faraday</span><span class="pl-kos">.</span><span class="pl-en">new</span>
-<span class="pl-s1">conn</span><span class="pl-kos">.</span><span class="pl-en">builder</span><span class="pl-en"></span>
+<span class="pl-s1">conn</span><span class="pl-kos">.</span><span class="pl-en">builder</span>
 
 &gt; <span class="pl-c">#&lt;Faraday::Builder:0x00000131239308</span>
     <span class="pl-c1">@handlers</span><span class="pl-c1">=</span><span class="pl-kos">[</span><span class="pl-v">Faraday</span>::<span class="pl-v">Request</span>::<span class="pl-v">UrlEncoded</span><span class="pl-kos">,</span> <span class="pl-v">Faraday</span>::<span class="pl-v">Adapter</span>::<span class="pl-v">NetHttp</span><span class="pl-kos">]</span>&gt;<span class="pl-en"></span></pre></div>
