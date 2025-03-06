@@ -4,11 +4,6 @@ body {
   margin: auto;
 }
 
-.site-nav {
-  display: flex;
-  gap: 1em;
-}
-
 .highlight pre {
   border-left: 2px solid palegoldenrod;
   padding-inline-start: 0.75em;
