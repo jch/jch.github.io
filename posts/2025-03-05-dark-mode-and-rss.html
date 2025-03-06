@@ -14,6 +14,65 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">Dark mode and RSS</h1><a id="user-content-dark-mode-and-rss" class="anchor" aria-label="Permalink: Dark mode and RSS" href="#dark-mode-and-rss"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Bit of clean up for the blog. I've cleaned up the CSS to use browser defaults
+for the most part. Instead of using hex colors, I used <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color" rel="nofollow">named colors</a>
+and chose colors that work well on a light and dark background. For dark mode,
+I used <code>black</code> for OLED screens instead of a dark gray.</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-ent">body</span> {
+  <span class="pl-c1">max-width</span><span class="pl-kos">:</span> <span class="pl-c1">80<span class="pl-smi">ch</span></span>;
+  <span class="pl-c1">padding</span><span class="pl-kos">:</span> <span class="pl-c1">1<span class="pl-smi">em</span></span>;
+  <span class="pl-c1">margin</span><span class="pl-kos">:</span> auto;
+}
+
+.<span class="pl-c1">highlight</span> <span class="pl-ent">pre</span> {
+  <span class="pl-c1">border-left</span><span class="pl-kos">:</span> <span class="pl-c1">2<span class="pl-smi">px</span></span> solid palegoldenrod;
+  <span class="pl-c1">padding-inline-start</span><span class="pl-kos">:</span> <span class="pl-c1">0.75<span class="pl-smi">em</span></span>;
+}
+
+.<span class="pl-c1">pl-c</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> darkgray;}
+.<span class="pl-c1">pl-c1</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-s</span> .<span class="pl-c1">pl-v</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> deepskyblue;}
+.<span class="pl-c1">pl-e</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-en</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> mediumslateblue;}
+.<span class="pl-c1">pl-s</span> .<span class="pl-c1">pl-s1</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-smi</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> gray;}
+.<span class="pl-c1">pl-ent</span>  {<span class="pl-c1">color</span><span class="pl-kos">:</span> mediumseagreen;}
+.<span class="pl-c1">pl-k</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> coral;}
+.<span class="pl-c1">pl-pds</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-s</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-s</span> .<span class="pl-c1">pl-pse</span> .<span class="pl-c1">pl-s1</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-sr</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-sr</span> .<span class="pl-c1">pl-cce</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-sr</span> .<span class="pl-c1">pl-sra</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-sr</span> .<span class="pl-c1">pl-sre</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> deepskyblue;}
+.<span class="pl-c1">pl-v</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> salmon;}
+.<span class="pl-c1">pl-id</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> coral;}
+.<span class="pl-c1">pl-ii</span> {<span class="pl-c1">background-color</span><span class="pl-kos">:</span> coral; <span class="pl-c1">color</span><span class="pl-kos">:</span> black;}
+.<span class="pl-c1">pl-sr</span> .<span class="pl-c1">pl-cce</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> mediumseagreen; <span class="pl-c1">font-weight</span><span class="pl-kos">:</span> bold;}
+.<span class="pl-c1">pl-ml</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> goldenrod;}
+.<span class="pl-c1">pl-mh</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-mh</span> .<span class="pl-c1">pl-en</span><span class="pl-kos">,</span> .<span class="pl-c1">pl-ms</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> deepskyblue; <span class="pl-c1">font-weight</span><span class="pl-kos">:</span> bold;}
+.<span class="pl-c1">pl-mq</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> deepskyblue;}
+.<span class="pl-c1">pl-mi</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> gray; <span class="pl-c1">font-style</span><span class="pl-kos">:</span> italic;}
+.<span class="pl-c1">pl-mb</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> gray; <span class="pl-c1">font-weight</span><span class="pl-kos">:</span> bold;}
+.<span class="pl-c1">pl-md</span> {<span class="pl-c1">background-color</span><span class="pl-kos">:</span> mistyrose; <span class="pl-c1">color</span><span class="pl-kos">:</span> coral;}
+.<span class="pl-c1">pl-mi1</span> {<span class="pl-c1">background-color</span><span class="pl-kos">:</span> honeydew; <span class="pl-c1">color</span><span class="pl-kos">:</span> mediumseagreen;}
+.<span class="pl-c1">pl-mdr</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> mediumslateblue; <span class="pl-c1">font-weight</span><span class="pl-kos">:</span> bold;}
+.<span class="pl-c1">pl-mo</span> {<span class="pl-c1">color</span><span class="pl-kos">:</span> deepskyblue;}
+
+<span class="pl-k">@media</span> (<span class="pl-c1">prefers-color-scheme</span><span class="pl-kos">:</span> dark) {
+  <span class="pl-ent">body</span> {
+    <span class="pl-c1">background-color</span><span class="pl-kos">:</span> black;
+    <span class="pl-c1">color</span><span class="pl-kos">:</span> snow;
+  }
+
+  <span class="pl-ent">a</span> {
+    <span class="pl-c1">color</span><span class="pl-kos">:</span> aqua;
+  }
+
+  <span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">visited</span> {
+    <span class="pl-c1">color</span><span class="pl-kos">:</span> orchid;
+  }
+
+  <span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">hover</span><span class="pl-kos">,</span> <span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">focus</span> {
+    <span class="pl-c1">color</span><span class="pl-kos">:</span> lightsalmon;
+  }
+
+  <span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">active</span> {
+    <span class="pl-c1">color</span><span class="pl-kos">:</span> lightcoral;
+  }
+}</pre></div>
+<p>I added a new <code>bin/publish_rss</code> for feed readers and validated with W3C.</p>
   </body>
 </html>
