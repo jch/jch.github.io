@@ -6,6 +6,13 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>Dark mode and RSS</title>
+  <link>https://jch.github.io/posts/2025-03-05-dark-mode-and-rss.html</link>
+  <guid isPermaLink="false">posts/2025-03-05-dark-mode-and-rss.html</guid>
+  <pubDate>Wed, 05 Mar 2025 16:16:55 -0800</pubDate>
+</item>
+
+<item>
   <title>Environmental Hardware Upgrades: iPhone 16e</title>
   <link>https://jch.github.io/posts/2025-02-19-environmental-hardware-upgrades-iphone-16e.html</link>
   <guid isPermaLink="false">posts/2025-02-19-environmental-hardware-upgrades-iphone-16e.html</guid>
