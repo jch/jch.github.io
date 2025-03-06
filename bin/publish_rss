@@ -8,7 +8,13 @@ src_files = `find #{ENV["src_dir"]} -type f -name '*.md' | sort -r`
 src_files.each_line do |path|
   title = `head -n1 < #{path}`.gsub(/^[\s#]+/, "").chomp
   href = path.gsub(ENV["src_dir"], ENV["output_dir"]).gsub(/md$/, "html").chomp
-  date = File.mtime(path.chomp).rfc822
+
+  # Extract date from file name
+  if path =~ /(\d{4}-\d{2}-\d{2})/
+    date = Time.parse($1).rfc822
+  else
+    date = File.mtime(path.chomp).rfc822
+  end
   rss_items << <<-ITEM
 <item>
   <title>#{title}</title>
