@@ -14,6 +14,83 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">Ruby Rails Gmail SMTP</h1><a id="user-content-ruby-rails-gmail-smtp" class="anchor" aria-label="Permalink: Ruby Rails Gmail SMTP" href="#ruby-rails-gmail-smtp"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>When you want to send a quick email in a ruby script, it's easy to
+send it through Gmail.  You don't have to worry about email
+deliverability, and you get a record of it in your 'Sent Box'.  There
+were a few outdated blog posted on how to do this, but I had to make a
+few tweaks before it worked for me.</p>
+<p><strong>Update:</strong> For Ruby &gt; 1.8.7 and Rails &gt;= 2.2.2, you can simply
+specify 'enable_starttls_auto =&gt; true'.  I put the following in
+'config/initializers/actionmailer_gmail.rb'</p>
+<p>ActionMailer::Base.smtp_settings = {
+:address =&gt; "smtp.gmail.com",
+:port =&gt; 587,
+:authentication =&gt; :plain,
+:enable_starttls_auto =&gt; true,
+:user_name =&gt; "<a href="mailto:kwiqi@kwiqi.com">kwiqi@kwiqi.com</a>",
+:password =&gt; "superB1rd!"
+}</p>
+<div class="markdown-heading"><h2 class="heading-element">Setup</h2><a id="user-content-setup" class="anchor" aria-label="Permalink: Setup" href="#setup"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<pre><code>sudo gem install tlsmail
+sudo gem install mail   # optional
+</code></pre>
+<p><a href="http://www.rubyinside.com/how-to-use-gmails-smtp-server-with-rails-394.html" rel="nofollow">Ruby
+Inside</a>
+recommended 'smtp_tls', but that gem is not compatible with Ruby
+versions greater than 1.8.6.  'tlsmail' works for 1.8.6 and above.</p>
+<p>Once you have 'tlsmail' installed you can use
+<a href="http://ar.rubyonrails.org/" rel="nofollow">ActionMailer</a>, or <a href="http://github.com/mikel/mail">mikel's
+mail</a> gem to build and send the message.
+If you don't want the extra dependency and speak mail headers, you can
+write the raw mail message yourself.</p>
+<div class="markdown-heading"><h2 class="heading-element">Rails</h2><a id="user-content-rails" class="anchor" aria-label="Permalink: Rails" href="#rails"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<pre><code># in environment.rb
+require 'tlsmail'
+Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+ActionMailer::Base.raise_delivery_errors = true
+ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.delivery_method = :smtp
+ActionMailer::Base.smtp_settings = {
+  :address =&gt; 'smtp.gmail.com',
+  :port =&gt; 587,
+  :tls =&gt; true,
+  :domain =&gt; 'mail.google.com',  # mail.customdomain.com if you use google apps
+  :authentication =&gt; :plain,
+  :user_name =&gt; 'johndoe@gmail.com',  # make sure you include the full email address
+  :password =&gt; '_secret_password_'
+}
+</code></pre>
+<div class="markdown-heading"><h2 class="heading-element">Ruby</h2><a id="user-content-ruby" class="anchor" aria-label="Permalink: Ruby" href="#ruby"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<pre><code>#!/usr/bin/ruby
+
+begin
+  require 'rubygems'
+  require 'tlsmail'
+  require 'mail'     # http://github.com/mikel/mail
+rescue LoadError =&gt; e
+  puts "Missing dependency #{e.message}"
+  exit 1
+end
+
+mail = Mail.new do
+      from 'johndoe@gmail.com'
+        to 'johndoe@gmail.com'
+   subject "email subject line"
+      body 'blog backup'  # add an attachment via add_file
+end
+Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', 'johndoe@gmail.com', '_secret_', :login) do |smtp|
+  smtp.send_message(mail.to_s, 'johndoe@gmail.com', 'johndoe@gmail.com')
+end
+</code></pre>
+<div class="markdown-heading"><h2 class="heading-element">Bonus: Email Testing with Mailtrap</h2><a id="user-content-bonus-email-testing-with-mailtrap" class="anchor" aria-label="Permalink: Bonus: Email Testing with Mailtrap" href="#bonus-email-testing-with-mailtrap"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="http://rubymatt.rubyforge.org/mailtrap/" rel="nofollow">Mailtrap</a> was mentioned in a
+related article on
+<a href="http://www.rubyinside.com/mailtrap-dummy-ruby-smtp-server-ideal-for-testing-actionmailer-629.html" rel="nofollow">RubyInside</a>.
+The way I had been testing emails on OS X was starting a local smtp
+server (sudo postfix start) and send test emails to Gmail.  Mailtrap
+lets you do quick tests locally by logging the sent mail to a text
+file.</p>
   </body>
 </html>

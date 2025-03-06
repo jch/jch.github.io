@@ -14,6 +14,35 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">Tips of the Day</h1><a id="user-content-tips-of-the-day" class="anchor" aria-label="Permalink: Tips of the Day" href="#tips-of-the-day"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>dumping and restoring databases from RDS</li>
+<li>connecting to Twitter via oauth using python</li>
+<li>python debugger in Django</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Backup and Restore to RDS</h2><a id="user-content-backup-and-restore-to-rds" class="anchor" aria-label="Permalink: Backup and Restore to RDS" href="#backup-and-restore-to-rds"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Backup:</p>
+<pre><code>mysqldump -h dev-rds.customdomain.com -u root -psecret database_name table_name  | gzip &gt; backup.sql.gz
+</code></pre>
+<p>table_name is optional, and you can pass a -9 to gzip to maximize compression</p>
+<p>Restore:</p>
+<pre><code>gunzip &lt; backup.sql.gz | mysql -h dev-rds.customdomain.com -u root -psecret database_name
+</code></pre>
+<div class="markdown-heading"><h2 class="heading-element">Python Twitter OAuth</h2><a id="user-content-python-twitter-oauth" class="anchor" aria-label="Permalink: Python Twitter OAuth" href="#python-twitter-oauth"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="/files/python_twitter_oauth_sample.zip">Download sample code</a></p>
+<p><a href="http://oauth.googlecode.com/svn/code/python/oauth/oauth.py" rel="nofollow">Grab oauth
+library</a>,
+and drop it on your python path.  Don't use the egg because there are
+problems with it.</p>
+<p>If you're using cookie based sessions and developing locally, make
+sure your callback url is consistent with your local dev url.  I had
+the callback url set to <a href="http://127.0.0.1/twitter_callback" rel="nofollow">http://127.0.0.1/twitter_callback</a>, but I was
+accessing the application via <a href="http://localhost:8000/" rel="nofollow">http://localhost:8000/</a>, so the cookies
+weren't being set properly.  The fix was to access the app from
+<a href="http://127.0.0.1:8000/" rel="nofollow">http://127.0.0.1:8000/</a> instead.</p>
+<div class="markdown-heading"><h2 class="heading-element">Python Debugger in Django</h2><a id="user-content-python-debugger-in-django" class="anchor" aria-label="Permalink: Python Debugger in Django" href="#python-debugger-in-django"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<pre><code>import pdb; pdb.set_trace()
+</code></pre>
+<p>Equivalent of 'import ruby-debug; debugger' in ruby.</p>
   </body>
 </html>

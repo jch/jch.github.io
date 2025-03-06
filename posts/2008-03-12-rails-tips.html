@@ -14,6 +14,204 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">Rails Tips</h1><a id="user-content-rails-tips" class="anchor" aria-label="Permalink: Rails Tips" href="#rails-tips"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I have started, abandoned, and restarted many pet rails projects.  All
+hype aside, I've collected a fair amount of rails idioms.  Whenever I
+come across a problem I know I've dealt with in the past, I usually
+run a few greps through my past projects to look for an answer.  The
+following pages are disorganized tips of things I have done that are
+useful.</p>
+<ul>
+<li>
+<p>if an ActiveRecord::Base object 'foo' doesn't agree with what's in
+the database, simply do foo.reload.  To make changes in the instance
+go to the database, do foo.save.  For many of the Base methods, you
+can append a ! to the end of the method name and it'll raise an
+exception instead of returning false on failure.  For example, save
+vs save!</p>
+</li>
+<li>
+<p>If you can't find a method or variable in a class, check the parent
+class (Class ChildClass &lt; ParentClass), or look for 'include
+ModuleName', where ModuleName can exist in the lib/ or
+vendor/plugins directory.</p>
+</li>
+<li>
+<p><a href="http://glu.ttono.us/articles/2006/05/22/configuring-rails-environments-the-cheat-sheet" rel="nofollow">Rails config
+variables</a></p>
+<ul>
+<li>also good for setting vars for actionpack components</li>
+</ul>
+</li>
+<li>
+<p>config.observer... - registers a callback for when something happens
+to a model.  Can be done with before_save, but can also be done
+externally and shared between models.</p>
+</li>
+<li>
+<p>ActiveRecord::Base.logger = Logger.new(STDOUT) - to just have SQL
+statements print to stdout.</p>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Testing</h2><a id="user-content-testing" class="anchor" aria-label="Permalink: Testing" href="#testing"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<p><a href="http://nubyonrails.com/articles/2006/04/19/autotest-rails" rel="nofollow">autotest</a></p>
+<ul>
+<li>This gem watches for filesystem changes and only runs tests that
+have been updated.  It's fast and it colorizes results.  I use it in
+conjunction with RSpec, and rspec-rails.</li>
+</ul>
+</li>
+<li>
+<p>rails_rcov - wrapper that gives you rake tasks to
+<a href="http://eigenclass.org/hiki.rb?rcov" rel="nofollow">rcov</a>. To show test code
+coverage.</p>
+</li>
+<li>
+<p><a href="http://cruisecontrolrb.thoughtworks.com/" rel="nofollow">CruiseControl</a> -
+continuous integration tool that reports build and test errors.  The
+link is specific to ruby projects.</p>
+</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">RSpec</h3><a id="user-content-rspec" class="anchor" aria-label="Permalink: RSpec" href="#rspec"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>RSpec is an implementation of Behavior Driven Design (BDD).  It's a
+declarative form of design and test.  When I first learned testing, I
+learned it as imperatively setting up state, doing some actions, and
+then verifing the end state.  The big problems I had with testing was
+always getting tangled up in complex dependencies between different
+components.  This made it really hard to focus on the system being
+tested.  I'm looking more into using mocks and stubs to replace
+fixtures and real models when it makes sense to.  BDD helps with this
+because it focuses on beahavior and specification rather than
+implementation.</p>
+<ul>
+<li>
+<p><a href="http://rspec.info/" rel="nofollow">RSpec</a> - the library itself</p>
+<ul>
+<li>gem install rspec, rspec-rails, diff-lcs, ZenTest</li>
+<li>script/generate spec</li>
+<li>rake -T | grep spec</li>
+<li>should, should_not are
+<a href="http://rspec.info/rdoc/classes/Spec/Expectations.html" rel="nofollow">Spec::Expectations</a>
+</li>
+</ul>
+</li>
+<li>
+<p><a href="http://kpumuk.info/rspec/useful-helpers-for-rspec-mocks/" rel="nofollow">mock_model</a></p>
+<ul>
+<li>good for mocking up ActiveRecord objects</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Plugins and Gems</h2><a id="user-content-plugins-and-gems" class="anchor" aria-label="Permalink: Plugins and Gems" href="#plugins-and-gems"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>
+<p><a href="http://www.pathf.com/blogs/2008/07/visualizing-your-database-schema-entirely-in-rails/" rel="nofollow">schema-browser</a></p>
+</li>
+<li>
+<p><a href="http://agilewebdevelopment.com/plugins/restful_authentication" rel="nofollow">restful_authentication</a></p>
+<ul>
+<li>straightforward plugin that requires just a little bit of tweaking
+and config.  Works great if your user model acts_as_state_machine.</li>
+</ul>
+</li>
+<li>
+<p><a href="http://code.google.com/p/rolerequirement/" rel="nofollow">role_requirement</a> -
+plays well with restful_authentication.  I haven't tried this one
+before.  I did use <a href="http://active-rbac.rubyforge.org/" rel="nofollow">Active RBAC</a>
+with positive results before.</p>
+</li>
+<li>
+<p>acts_as_state_machine - amazing mixin that can make your
+models act like a state machine.  It allows you to register
+callbacks for when a model's state changes.</p>
+</li>
+<li>
+<p>SyslogLogger - logger that goes to syslog.  Not a fan of this one,
+but I've seen it in use.</p>
+</li>
+<li>
+<p><a href="http://labs.reevoo.com/plugins/simple-config" rel="nofollow">SimpleConfig</a></p>
+<ul>
+<li>haven't used it, but will work.</li>
+</ul>
+</li>
+</ul>
+<div class="markdown-heading"><h3 class="heading-element">Gem Dependencies</h3><a id="user-content-gem-dependencies" class="anchor" aria-label="Permalink: Gem Dependencies" href="#gem-dependencies"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I like to have my projects be self-contained.  This means that when
+you check out one of my projects, you should be able to setup your
+database, do a rake or two, and be on your way.</p>
+<p>There are several fixes to this problem.  The cleanest one that I've
+choosen is to update to Edge Rails with:</p>
+<pre><code>rake rails:freeze:edge
+</code></pre>
+<p>then follow <a href="http://ryandaigle.com/articles/2008/4/1/what-s-new-in-edge-rails-gem-dependencies" rel="nofollow">Ryan's Scraps Gem
+Dependencies</a>
+article.</p>
+<p>Unfortunately, upgrading to Edge Rails might not be feasible.  In
+this case, one solution is to mimic what Edge Rails does:</p>
+<pre><code>mkdir RAILS_ROOT/vendor/gems
+gem install FOO --install-dir RAILS_ROOT/vendor/gems
+</code></pre>
+<p>To make your rails app recognize the installed gems, update your
+environment.rb to look in the newly created subdirectory with
+config.load_paths.</p>
+<p>Another interesting plugin that I haven't looked into is
+<a href="http://www.rubyinside.com/advent2006/12-piston.html" rel="nofollow">piston</a> which
+gives you all the advantages of svn:externals, but also allows you
+to commit local changes to your own repo.</p>
+<div class="markdown-heading"><h2 class="heading-element">Escaping HTML</h2><a id="user-content-escaping-html" class="anchor" aria-label="Permalink: Escaping HTML" href="#escaping-html"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>See
+<a href="http://www.ruby-doc.org/stdlib/libdoc/erb/rdoc/classes/ERB/Util.html" rel="nofollow">ERB::Util</a>
+for the following:</p>
+<ul>
+<li>html_escape</li>
+<li>url_encode</li>
+<li>url_decode</li>
+</ul>
+<p>Remember that if you wanted to use these in your controller, you have
+to require and include it.  I recommend against using the shorthand
+versions because it sucks for readability.</p>
+<div class="markdown-heading"><h2 class="heading-element">Metaprogramming</h2><a id="user-content-metaprogramming" class="anchor" aria-label="Permalink: Metaprogramming" href="#metaprogramming"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>When I was trying to create a RESTful TagsController with the
+<a href="http://agilewebdevelopment.com/plugins/acts_as_taggable_on_steroids" rel="nofollow">acts_as_taggable</a>
+plugin, I created a form that looked like:</p>
+<pre><code>&lt;input id="tag" type="text" size="17" name="tag"/&gt;
+&lt;input id="taggable[id]" type="hidden" value="14" name="taggable[id]"/&gt;
+&lt;input id="taggable[type]" type="hidden" value="Place" name="taggable[type]"/&gt;
+</code></pre>
+<p>When this form was posted, I would get a string for the class of the
+object that I wanted to tag in taggable[type].  In normal Ruby, you
+can call
+<a href="http://www.ruby-doc.org/core/classes/Kernel.html" rel="nofollow">Kernel.const_get(classname)</a>
+to get the Class object for classname.  In Rails, this has been
+simplified further to be just <a href="http://infovore.org/archives/2006/08/02/getting-a-class-object-in-ruby-from-a-string-containing-that-classes-name/" rel="nofollow">classname.constantize</a></p>
+<div class="markdown-heading"><h2 class="heading-element">Inheritance</h2><a id="user-content-inheritance" class="anchor" aria-label="Permalink: Inheritance" href="#inheritance"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="http://m.onkey.org/" rel="nofollow">Namespaced Models</a>:</p>
+<pre><code>class Pet &lt; ActiveRecord::Base
+  self.abstract_class = true
+
+  belongs_to :person
+  validates_presence_of :name
+end
+
+class Dog &lt; Pet
+  def bark
+    "baaw"
+  end
+end
+</code></pre>
+<div class="markdown-heading"><h2 class="heading-element">Cool Syntax</h2><a id="user-content-cool-syntax" class="anchor" aria-label="Permalink: Cool Syntax" href="#cool-syntax"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<pre><code>assert_equal 1, Developer.connection.select_value(&lt;&lt;-end_sql).to_i
+  SELECT count(*) FROM developers_projects
+  WHERE project_id = #{project.id}
+  AND developer_id = #{developer.id}
+end_sql
+</code></pre>
+<div class="markdown-heading"><h2 class="heading-element">Miscellanous</h2><a id="user-content-miscellanous" class="anchor" aria-label="Permalink: Miscellanous" href="#miscellanous"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Hash.symbolize_keys! - turns all keys to symbols</li>
+</ul>
   </body>
 </html>

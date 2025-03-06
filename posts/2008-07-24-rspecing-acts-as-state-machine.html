@@ -14,6 +14,70 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">RSpec'ing acts_as_state_machine</h1><a id="user-content-rspecing-acts_as_state_machine" class="anchor" aria-label="Permalink: RSpec'ing acts_as_state_machine" href="#rspecing-acts_as_state_machine"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>One of my favorite plugins I've seen so far is
+<a href="http://agilewebdevelopment.com/plugins/acts_as_state_machine" rel="nofollow">acts_as_state_machine</a>.
+It's a dead simple way to model the different states your models can be
+in.  It also lets you register callbacks to when a model enters,
+entered, or leaves a particular state.  It's absolutely fantasic until
+I have to test it.  Then it becomes an absolute nightmare.</p>
+<p>The first intuitive, but horrifically wrong idea is to stub out the
+current state:</p>
+<pre><code>@model.stub!(:state).and_return('old_state')
+@model.some_event!
+@model.state.should == 'new_state'
+</code></pre>
+<p>The problem with this is the mock will always return old_state, even
+if some_event! caused @model to go into new_state.</p>
+<p>A less intuitive, but workable solution is to check that the
+transition event was fired:</p>
+<pre><code>@model.should_receive(:update_attribute).with(@model.class.state_column, "matched")
+</code></pre>
+<p>This is a little nicer, but kind of obscures the intention of the
+test.  So ideally, I'd like to be able to say something like:</p>
+<pre><code>@model.should transition_to('matched').from('draft')
+</code></pre>
+<p>Thankfully, the crappy RSpec documentation does cover this case.  It
+was easy to write a <a href="http://rspec.rubyforge.org/rdoc/classes/Spec/Matchers.html" rel="nofollow">custom expection
+matcher</a>:</p>
+<pre><code>module ActsAsStateMachineMatchers
+  class Transition
+    def initialize(expected)
+      @expected = expected
+    end
+
+    def matches?(target)
+      @target = target
+      @target.should_receive(:update_attribute).
+        with(@target.class.state_column, @expected)
+    end
+
+    def failure_message
+      &lt;&lt;-MSG
+      expected #{@target.inspect} to transition to state
+      #{@expected}, but in state {@target.state}
+      MSG
+    end
+
+    def negative_failure_message
+      &lt;&lt;-MSG
+      expected #{@target.inspect} to transition to state
+      #{@expected}, but in state {@target.state}
+      MSG
+    end
+  end
+
+  def transition_to_state(expected)
+    Transition.new(expected)
+  end
+end
+</code></pre>
+<p>This is one step away from my ideal case because I was too lazy to a
+Spec::Mocks::Methods with a corresponding
+Spec::Mocks::MessageExpectation, which is what 'should_receive' and
+'with' are.  If I ever get unlazy enough to poke into the code more, I
+could write the analogous 'should_transition_to', and 'from'.  This
+might be a good excuse to open a github account and play with that too
+:)</p>
   </body>
 </html>

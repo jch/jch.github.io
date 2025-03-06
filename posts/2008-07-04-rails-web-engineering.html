@@ -14,6 +14,55 @@
       </nav>
     </header>
 
-    {"message":"API rate limit exceeded for 171.66.130.119. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)","documentation_url":"https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting"}
+    <div class="markdown-heading"><h1 class="heading-element">Rails Webapp Engineering</h1><a id="user-content-rails-webapp-engineering" class="anchor" aria-label="Permalink: Rails Webapp Engineering" href="#rails-webapp-engineering"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>The day after I came back from Australia, I started my new job at
+<a href="http://www.coupa.com" rel="nofollow">Coupa Software</a>.  I'm absolutely loving it at
+the moment because of the awesome people and the amount of software
+I'm learning.  Here's just a few that I've picked up in my first week
+that I'd like to jot down.</p>
+<div class="markdown-heading"><h2 class="heading-element">Skinny Controllers, Fat Models</h2><a id="user-content-skinny-controllers-fat-models" class="anchor" aria-label="Permalink: Skinny Controllers, Fat Models" href="#skinny-controllers-fat-models"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Here's <a href="http://weblog.jamisbuck.org/2006/10/18/skinny-controller-fat-model" rel="nofollow">one
+article</a>
+about it.  It really <em>really</em> helps out with testing.</p>
+<div class="markdown-heading"><h2 class="heading-element">Association</h2><a id="user-content-association" class="anchor" aria-label="Permalink: Association" href="#association"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="http://api.rubyonrails.org/classes/ActiveRecord/Aggregations/ClassMethods.html#M001262" rel="nofollow">composed_of</a></p>
+<ul>
+<li>
+<p>cmd-k clears terminal window</p>
+</li>
+<li>
+<p>rake stats</p>
+</li>
+<li>
+<p>script/spec for an individual test</p>
+</li>
+<li>
+<p><a href="http://api.rubyonrails.org/classes/ActionController/Streaming.html" rel="nofollow">send_data, send_file</a></p>
+</li>
+<li>
+<p>render_to_string - returns string, use with send_data</p>
+</li>
+<li>
+<p><a href="http://www.ruby-doc.org/core/classes/Enumerable.html#M001147" rel="nofollow">Enumerable:inject</a></p>
+<ul>
+<li>same as Scheme accumulator I used in 61A</li>
+</ul>
+</li>
+<li>
+<p><a href="http://ruby-pdf.rubyforge.org/pdf-writer/doc/classes/PDF/SimpleTable.html" rel="nofollow">PDF::SimpleTable</a></p>
+<ul>
+<li>really really easy to use reporter generator.</li>
+</ul>
+</li>
+<li>
+<p>request.xhr? - if request is ajax-y</p>
+</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Getting All Tables</h2><a id="user-content-getting-all-tables" class="anchor" aria-label="Permalink: Getting All Tables" href="#getting-all-tables"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span><span class="pl-kos">.</span><span class="pl-en">establish_connection</span><span class="pl-kos">(</span><span class="pl-c1">RAILS_ENV</span><span class="pl-kos">.</span><span class="pl-en">to_sym</span><span class="pl-kos">)</span>
+<span class="pl-s1">connection</span> <span class="pl-c1">=</span> <span class="pl-v">ActiveRecord</span>::<span class="pl-v">Base</span><span class="pl-kos">.</span><span class="pl-s1">connection</span>
+
+<span class="pl-en">options</span><span class="pl-kos">[</span><span class="pl-pds">:tables</span><span class="pl-kos">]</span> ||= <span class="pl-s1">connection</span><span class="pl-kos">.</span><span class="pl-en">tables</span><span class="pl-kos">.</span><span class="pl-en">reject</span> <span class="pl-kos">{</span> |<span class="pl-s1">t</span>| <span class="pl-kos">%w(</span><span class="pl-s">schema_info</span>
+<span class="pl-s">sessions</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">include?</span><span class="pl-kos">(</span><span class="pl-s1">t</span><span class="pl-kos">)</span> <span class="pl-kos">}</span></pre></div>
   </body>
 </html>
