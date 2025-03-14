@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">iOS Progressive Web App Dialog bug</h1><a id="user-content-ios-progressive-web-app-dialog-bug" class="anchor" aria-label="Permalink: iOS Progressive Web App Dialog bug" href="#ios-progressive-web-app-dialog-bug"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>This was a fun one. I'm adding a modal dialog to quickly
+add a number of stock shares.</p>
+<p>On iOS mobile safari 18.3.1, the form in the modal freezes up
+after the date picker makes a selection. It's as if the modal
+itself becomes <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inert" rel="nofollow">inert</a>.</p>
+<p>My hack workaround is to scroll the page by a pixel when the
+input loses focus <code>onblur</code>. This seems to unfreeze the page. Note this hack is only needed if a page is saved to the home screen as a PWA. It works fine from Safari mobile.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">dialog</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+      Purchase date
+      <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">date</span>" <span class="pl-c1">onblur</span>="<span class="pl-s">window.scrollBy(0, 1);</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+      Shares
+      <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">number</span>"<span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;/</span><span class="pl-ent">label</span><span class="pl-kos">&gt;</span>
+    <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">submit</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;/</span><span class="pl-ent">form</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">dialog</span><span class="pl-kos">&gt;</span></pre></div>
+  </body>
+</html>
