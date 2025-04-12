@@ -5,7 +5,7 @@ log "last published at $(stat -f '%Sm' $output_dir)"
 
 # publish files newer than the last time $output_dir was modified. Publish more
 # recent entries first in case API fails
-for input_file in $(find $src_dir -type f -mnewer $output_dir | sort -r); do
+for input_file in $(find $src_dir -type f -newer $output_dir | sort -r); do
   output_file=$(basename "$input_file")
   output_file="$output_dir/${output_file%.*}.html"
   log "+$output_file <- $input_file", "+$output_file"
