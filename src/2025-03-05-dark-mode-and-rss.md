@@ -63,3 +63,22 @@ body {
 ```
 
 I added a new `bin/publish_rss` for feed readers and validated with W3C.
+
+## Update 2025-04-12
+
+From https://inclusive-components.design/a-theme-switcher/
+
+```css
+:root {
+   background-color: #fefefe;
+   filter: invert(100%);
+}
+
+* {
+   background-color: inherit;
+}
+
+img:not([src*=".svg"]), video {
+   filter: invert(100%);
+}
+```

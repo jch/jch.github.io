@@ -74,5 +74,19 @@ I used <code>black</code> for OLED screens instead of a dark gray.</p>
   }
 }</pre></div>
 <p>I added a new <code>bin/publish_rss</code> for feed readers and validated with W3C.</p>
+<div class="markdown-heading"><h2 class="heading-element">Update 2025-04-12</h2><a id="user-content-update-2025-04-12" class="anchor" aria-label="Permalink: Update 2025-04-12" href="#update-2025-04-12"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>From <a href="https://inclusive-components.design/a-theme-switcher/" rel="nofollow">https://inclusive-components.design/a-theme-switcher/</a></p>
+<div class="highlight highlight-source-css"><pre><span class="pl-kos">:</span><span class="pl-c1">root</span> {
+   <span class="pl-c1">background-color</span><span class="pl-kos">:</span> <span class="pl-pds"><span class="pl-kos">#</span>fefefe</span>;
+   <span class="pl-c1">filter</span><span class="pl-kos">:</span> <span class="pl-en">invert</span>(<span class="pl-c1">100<span class="pl-smi">%</span></span>);
+}
+
+<span class="pl-ent"><span class="pl-c1">*</span></span> {
+   <span class="pl-c1">background-color</span><span class="pl-kos">:</span> inherit;
+}
+
+<span class="pl-ent">img</span><span class="pl-kos">:</span><span class="pl-c1">not</span>([<span class="pl-c1">src</span><span class="pl-c1">*=</span><span class="pl-s">".svg"</span>])<span class="pl-kos">,</span> <span class="pl-ent">video</span> {
+   <span class="pl-c1">filter</span><span class="pl-kos">:</span> <span class="pl-en">invert</span>(<span class="pl-c1">100<span class="pl-smi">%</span></span>);
+}</pre></div>
   </body>
 </html>
