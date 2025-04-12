@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-log "last published at $(stat -f '%Sm' $output_dir)"
+if stat --version | grep GNU >/dev/null; then
+  echo "last published at $(stat --dereference --format='%y' $output_dir)"
+else
+  echo "last published at $(stat -f '%Sm' $output_dir)"
+fi
 
 # publish files newer than the last time $output_dir was modified. Publish more
 # recent entries first in case API fails
@@ -21,3 +25,5 @@ for output_file in $(find $output_dir -type f); do
     rm -f "$output_file"
   fi
 done
+
+touch $output_dir
