@@ -3,7 +3,7 @@ set -e
 
 root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd )"
 
-if ! command -v jsg >/dev/null 2>&1; then
+if [ ! -x "$root_path/jsg" ]; then
   echo "jsg not found, installing..."
   git clone https://github.com/jch/jsg.git "$root_path/jsg"
   echo "Create a GitHub personal access token with no permissions to increase markdown API rate limit"
