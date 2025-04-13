@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Popovers and Anchor Positioning</h1><a id="user-content-popovers-and-anchor-positioning" class="anchor" aria-label="Permalink: Popovers and Anchor Positioning" href="#popovers-and-anchor-positioning"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Popover made it into baseline this year. I wanted to use it to replace the dialog
+modal sheet I was using because it comes with soft dismiss built-in. Initial testing
+was good, but iOS Safari hangs if there is an input within the popover. The fix is slated
+for 18.4 in April 2025, so I will stay with dialog until some time after that.</p>
+<ul>
+<li>popover: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/popover" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/popover</a>
+</li>
+<li>dialog: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog</a>
+</li>
+<li><a href="https://stackoverflow.com/questions/79501074/focusing-input-blocks-page-on-safari-when-part-of-element-with-popover-api" rel="nofollow">https://stackoverflow.com/questions/79501074/focusing-input-blocks-page-on-safari-when-part-of-element-with-popover-api</a></li>
+</ul>
+<p>Anchor positioning is in technical preview for Safari and available for 71% of browsers.
+I had planned to make the modal sheet stick to the bottom on small viewports (easy without anchors),
+and near the trigger in larger viewports (anchors necessary because it's in the top layer).
+But after testing on the simulator and devices, I found that iOS Safari has a
+not-quite-keyboard sized element on the bottom of the HTML element
+that I cannot prevent scrolling when an input is focused.</p>
+<p>I've seen this on several other sites, and it's a nitpick but annoying enough to me
+I would make the modal <em>feel</em> like the web rather than try and emulate a native
+modal sheet.</p>
+<p>I'd like to revisit anchor positioning for some of the filter menus.</p>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Glossary/Top_layer" rel="nofollow">https://developer.mozilla.org/en-US/docs/Glossary/Top_layer</a></li>
+<li><a href="https://caniuse.com/css-anchor-positioning" rel="nofollow">https://caniuse.com/css-anchor-positioning</a></li>
+</ul>
+  </body>
+</html>
