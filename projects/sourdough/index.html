@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sourdough</title>
+    <meta name="description" content="Sourdough journal" />
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Permanent+Marker&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "IBM Plex Mono", monospace;
+        margin: 0;
+        padding: 1em;
+        line-height: 1.6em;
+      }
+
+      h1,
+      h2,
+      h3, {
+        font-family: "Permanent Marker", cursive;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      a {
+        color: peru;
+      }
+
+      ul li {
+        list-style: circle;
+      }
+
+      li {
+        padding: 0.25em 0;
+      }
+
+      input,
+      textarea {
+        box-sizing: border-box;
+        width: 100%;
+      }
+
+      .grid {
+        display: grid;
+        gap: 1em;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+
+      #bake-list {
+        display: contents;
+      }
+
+      #nav-site {
+        position: fixed;
+        inset-inline-end: 1.5em;
+        inset-block-start: 1.5em;
+        display: flex;
+        gap: 1em;
+        z-index: 999;
+
+        > a,
+        button {
+          border: 0;
+          padding: 0;
+          margin: 0;
+          background: none;
+          font-size: 1.3em;
+          text-decoration: none;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+          display: block;
+          cursor: pointer;
+
+          background-color: ivory;
+          border-radius: 50%;
+          width: 2em;
+          height: 2em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          border: 0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          flex: 0 0 auto;
+        }
+      }
+
+      #recipe {
+        max-width: 65ch;
+        margin: 0 auto;
+        grid-row: span 8;
+
+        /* phones: last row, full width */
+        @media (max-width: 767px) {
+          order: 999;
+          grid-column: 1 / -1;
+        }
+
+        /* tablets+: natural order, 2 columns */
+        @media (min-width: 768px) {
+          grid-column: span 2;
+        }
+      }
+
+      .prose {
+        text-wrap: pretty;
+        max-width: 65ch;
+        margin: 0 auto;
+      }
+
+      #bake-editor {
+        width: 90%;
+        max-width: 350px;
+      }
+
+      .bake {
+        cursor: pointer;
+        position: relative;
+        border-radius: 15px;
+        border: 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        flex: 0 0 auto;
+        height: 200px;
+
+        & .bake-pic {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          position: absolute;
+          inset: 0 0;
+        }
+
+        & .bake-content {
+          position: relative;
+        }
+      }
+
+      .bake-photos img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        margin: 5px;
+      }
+
+      #notification-popover {
+        width: 80%;
+        max-width: 300px;
+        padding: 1em;
+        border: 1px solid slategray;
+        border-radius: 0.7em;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+        position: fixed;
+        inset: unset;
+        inset-block-start: 1em;
+        inset-inline-end: 1em;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="nav-site">
+      <a href="#recipe" title="recipe">🍞</a>
+      <button onclick="document.querySelector('#bake-editor').showModal()" title="add">+</button>
+      <button onclick="exportBakes()" title="export">💾</button>
+      <button onclick="clearAllBakes()" title="clear all">🗑️</button>
+    </nav>
+
+    <div class="grid">
+      <section id="recipe" class="prose">
+        <h2>Recipe</h2>
+        <ul>
+          <li>200g levain</li>
+          <li>700g water</li>
+          <li>25g salt</li>
+          <li>800g bread | all-purpose</li>
+          <li>200g wheat flour</li>
+        </ul>
+        <ol>
+          <li>
+            Feed night before starter/flour/water 1:1:1 (most sour) to 1:5:5
+            (least sour)
+          </li>
+          Ferment by volume using a small clear glass (e.g. shot glass)
+          <li>Stir: 200g levain, 700g water, 25g salt</li>
+          <li>Stir: 800g bread flour, 200g wheat flour</li>
+          <li>Hand knead 10 minutes</li>
+          <li>
+            Shape and rise until doubled. Optional stretch and fold, coil folds.
+          </li>
+          <li>Preheat oven for 60 minutes at 500F with pizza stone</li>
+        </ol>
+        <h3>Notes</h3>
+        <p>
+          1:1 ratio water/flour for levain makes it easier to stir. Control
+          sourness with how much existing starter to use.
+        </p>
+        <p>
+          Easy math: (100g levain water + 700g water) / (100g levain flour +
+          1000g flour) = 72.7% hydration. 25g salt / 1100 = 2.3% salt.
+        </p>
+        <p>
+          Stirring levain, water, and salt together first makes it homogeneous
+          before adding flour.
+        </p>
+        <p>
+          I hand kneading over autolyse for initial gluten development because
+          it guarantees a well mixed dough. It lets me do all the steps before
+          bulk rise at once and fits well with a work schedule.
+        </p>
+        <p>
+          To measure bulk rise, I tear off a small piece of dough, put it into
+          the bottom of a shot glass, and wrap a rubber band on the outside to
+          mark the initial height. I bulk rise at room temperature between
+          5-8hrs.
+        </p>
+        <p>
+          I use Bulka round bannetons and a Lodge cast iron loaf pan if I cold
+          proof overnight.
+        </p>
+        <h3>Schedules</h3>
+        <ul>
+          <li>
+            Default: levain overnight, mix everything in the morning, bulk rise
+            during work, bake after work.
+          </li>
+          <li>
+            Fast morning: levain overnight, autolyse overnight, mix levain with
+            dough, bulk rise during work, bake after work.
+          </li>
+          <li>Busy afternoon: cold proof overnight, bake in the morning.</li>
+          <li>
+            Split rise: if dough isn't risen by bedtime, cold-proof overnight,
+            take it out in the morning for additional rise.
+          </li>
+        </ul>
+      </section>
+      <div id="bake-list"></div>
+    </div>
+
+    <dialog id="bake-editor">
+      <p style="text-align: right; margin-top: 0">
+        <a href="#" onclick="document.querySelector('#bake-editor').close()"
+          >close</a
+        >
+      </p>
+      <form>
+        <p><input type="text" name="name" placeholder="name" /></p>
+        <p><input type="date" name="date" /></p>
+        <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
+        <p>
+          <input type="file" name="photos" accept="image/*" multiple capture />
+        </p>
+        <p style="display: flex; justify-content: space-between">
+          <button type="submit">Save</button>
+          <button
+            type="button"
+            id="delete-bake-button"
+            style="display: none; color: crimson"
+          >
+            Delete
+          </button>
+        </p>
+      </form>
+    </dialog>
+
+    <template id="bake-template">
+      <article class="bake">
+        <img class="bake-pic" src="sourdough.jpeg" />
+        <div
+          style="
+            position: absolute;
+            bottom: 0;
+            left: 15px;
+            color: whitesmoke;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            background: linear-gradient(
+              to top,
+              rgba(0, 0, 0, 0.7),
+              rgba(0, 0, 0, 0) 100%
+            );
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            left: 0;
+          "
+        >
+          <h2 class="bake-name" style="margin-bottom: 0"></h2>
+          <time class="bake-date" datetime=""></time>
+        </div>
+      </article>
+    </template>
+
+    <div id="notification-popover" popover="auto">
+      <button
+        type="button"
+        style="float: right"
+        onclick="document.getElementById('notification-popover').hidePopover();"
+      >
+        close
+      </button>
+      <p id="notification-popover-message"></p>
+    </div>
+    <script>
+      // Notifications
+      function showNotification(message, type = "info", duration = 3000) {
+        const notificationPopover = document.getElementById(
+          "notification-popover",
+        );
+
+        // Set the message and type
+        notificationPopover.querySelector(
+          "#notification-popover-message",
+        ).textContent = message;
+
+        // Remove any existing type classes
+        notificationPopover.classList.remove("success", "error", "info");
+        // Add the new type class
+        notificationPopover.classList.add(type);
+
+        // Show the popover
+        notificationPopover.showPopover();
+
+        // Hide after duration
+        if (duration > 0)
+          setTimeout(() => {
+            notificationPopover.hidePopover();
+          }, duration);
+      }
+
+      // Initialize IndexedDB
+      let db;
+      const dbName = "SourdoughDB";
+      const dbVersion = 1;
+
+      function initDB() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(dbName, dbVersion);
+
+          request.onerror = (event) => {
+            console.error("IndexedDB error:", event.target.error);
+            reject("Error opening database");
+          };
+
+          request.onsuccess = (event) => {
+            db = event.target.result;
+            console.log("Database opened successfully");
+            resolve(db);
+          };
+
+          request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+
+            // Create object store for bakes if it doesn't exist
+            if (!db.objectStoreNames.contains("bakes")) {
+              const bakeStore = db.createObjectStore("bakes", {
+                keyPath: "id",
+                autoIncrement: true,
+              });
+              bakeStore.createIndex("date", "date", { unique: false });
+              bakeStore.createIndex("name", "name", { unique: false });
+              console.log("Object store created");
+            }
+          };
+        });
+      }
+
+      // Function to add a new bake to the database
+      async function addBake(bake) {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readwrite");
+          const store = transaction.objectStore("bakes");
+          const request = store.add(bake);
+
+          request.onsuccess = (event) => {
+            console.log(
+              "Bake added successfully with ID:",
+              event.target.result,
+            );
+            resolve(event.target.result);
+          };
+
+          request.onerror = (event) => {
+            console.error("Error adding bake:", event.target.error);
+            reject(event.target.error);
+          };
+        });
+      }
+
+      async function deleteBake(id) {
+        if (
+          !confirm(
+            `Are you sure you want to delete bake #${id}? This cannot be undone.`,
+          )
+        ) {
+          return;
+        }
+
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readwrite");
+          const store = transaction.objectStore("bakes");
+          const request = store.delete(id);
+
+          request.onsuccess = () => {
+            console.log(`Bake #${id} deleted from database`);
+            showNotification(
+              `Bake #${id} has been deleted successfully.`,
+              "success",
+            );
+            resolve();
+            const bakeElement = document.getElementById(`bake-${id}`);
+            if (bakeElement) {
+              bakeElement.remove();
+            }
+          };
+
+          request.onerror = (event) => {
+            console.error(`Error deleting bake #${id}:`, event.target.error);
+            showNotification(`Error deleting bake #${id}.`, "error");
+            reject(event.target.error);
+          };
+        });
+      }
+
+      // Function to get all bakes from the database
+      async function getAllBakes() {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readonly");
+          const store = transaction.objectStore("bakes");
+          const request = store.getAll();
+
+          request.onsuccess = (event) => {
+            resolve(event.target.result);
+          };
+
+          request.onerror = (event) => {
+            console.error("Error getting bakes:", event.target.error);
+            reject(event.target.error);
+          };
+        });
+      }
+
+      async function getBakeById(id) {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readonly");
+          const store = transaction.objectStore("bakes");
+          const request = store.get(id);
+
+          request.onsuccess = (event) => {
+            resolve(event.target.result);
+          };
+
+          request.onerror = (event) => {
+            console.error(`Error getting bake #${id}:`, event.target.error);
+            reject(event.target.error);
+          };
+        });
+      }
+
+      // Function to update an existing bake
+      async function updateBake(bake) {
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readwrite");
+          const store = transaction.objectStore("bakes");
+          const request = store.put(bake);
+
+          request.onsuccess = (event) => {
+            console.log("Bake updated successfully:", event.target.result);
+            resolve(event.target.result);
+          };
+
+          request.onerror = (event) => {
+            console.error("Error updating bake:", event.target.error);
+            reject(event.target.error);
+          };
+        });
+      }
+
+      // Function to fill the form with bake data
+      function fillFormWithBakeData(bake) {
+        const form = document.querySelector("#bake-editor form");
+        form.name.value = bake.name || "";
+        form.date.value = bake.date || "";
+        form.notes.value = bake.notes || "";
+
+        // Store the bake ID in a data attribute for later reference
+        form.dataset.bakeId = bake.id;
+      }
+
+      // Consolidated function to handle both existing photos and new photo previews
+      function setupPhotoHandling() {
+        // Create photo container in the template if it doesn't exist
+        const form = document.querySelector("#bake-editor form");
+        if (!document.getElementById("photo-container")) {
+          const photoContainer = document.createElement("div");
+          photoContainer.id = "photo-container";
+          photoContainer.className = "bake-photos";
+          photoContainer.style.marginTop = "10px";
+
+          // Insert the container before the submit button
+          const submitButtonParent = form.querySelector(
+            'button[type="submit"]',
+          ).parentNode;
+          form.insertBefore(photoContainer, submitButtonParent);
+        }
+
+        // Add event listener to the file input
+        const photoInput = form.querySelector('input[type="file"]');
+        photoInput.addEventListener("change", async (event) => {
+          await displaySelectedPhotos(Array.from(event.target.files));
+        });
+      }
+
+      // Function to display newly selected photos
+      async function displaySelectedPhotos(files) {
+        if (files.length === 0) return;
+
+        const photoContainer = document.getElementById("photo-container");
+
+        // Create a section for new photos if it doesn't exist
+        let newPhotosSection = photoContainer.querySelector(
+          ".new-photos-section",
+        );
+        if (!newPhotosSection) {
+          newPhotosSection = document.createElement("div");
+          newPhotosSection.className = "new-photos-section";
+
+          const heading = document.createElement("h4");
+          heading.textContent = "New Photos";
+          heading.style.margin = "10px 0 5px 0";
+
+          newPhotosSection.appendChild(heading);
+          photoContainer.appendChild(newPhotosSection);
+        } else {
+          // Clear previous new photos
+          const heading = newPhotosSection.querySelector("h4");
+          newPhotosSection.innerHTML = "";
+          newPhotosSection.appendChild(heading);
+        }
+
+        // Create a photo grid
+        const photoGrid = document.createElement("div");
+        photoGrid.className = "photo-grid";
+        photoGrid.style.display = "flex";
+        photoGrid.style.flexWrap = "wrap";
+        photoGrid.style.gap = "8px";
+        newPhotosSection.appendChild(photoGrid);
+
+        // Add loading message
+        const loadingMsg = document.createElement("p");
+        loadingMsg.textContent = `Loading ${files.length} image(s)...`;
+        loadingMsg.style.margin = "5px 0";
+        newPhotosSection.insertBefore(loadingMsg, photoGrid);
+
+        // Process each file
+        for (const file of files) {
+          try {
+            // Only process image files
+            if (!file.type.startsWith("image/")) continue;
+
+            let imageUrl;
+
+            // Handle HEIC files
+            if (
+              file.type === "image/heic" ||
+              file.name.toLowerCase().endsWith(".heic")
+            ) {
+              const jpegBlob = await heic2any({
+                blob: file,
+                toType: "image/jpeg",
+                quality: 0.8,
+              });
+              imageUrl = URL.createObjectURL(jpegBlob);
+            } else {
+              imageUrl = URL.createObjectURL(file);
+            }
+
+            // Create image element
+            const img = document.createElement("img");
+            img.src = imageUrl;
+            img.alt = file.name;
+            img.title = file.name;
+
+            // Add to photo grid
+            photoGrid.appendChild(img);
+          } catch (err) {
+            console.error("Error previewing image:", err);
+          }
+        }
+
+        // Remove loading message
+        if (loadingMsg && loadingMsg.parentNode) {
+          loadingMsg.remove();
+        }
+      }
+
+      // Display existing photos with checkboxes in a flexbox layout
+      function displayExistingPhotos(bake) {
+        const photoContainer = document.getElementById("photo-container");
+
+        // Clear container first
+        photoContainer.innerHTML = "";
+
+        if (!bake.photos || bake.photos.length === 0) {
+          return;
+        }
+
+        // Create a section for existing photos
+        const existingPhotosSection = document.createElement("div");
+        existingPhotosSection.className = "existing-photos-section";
+
+        const heading = document.createElement("h4");
+        heading.textContent = "Existing Photos";
+        heading.style.margin = "10px 0 5px 0";
+
+        existingPhotosSection.appendChild(heading);
+        photoContainer.appendChild(existingPhotosSection);
+
+        // Create a flexbox container for photos
+        const photoGrid = document.createElement("div");
+        photoGrid.className = "photo-grid";
+        photoGrid.style.display = "flex";
+        photoGrid.style.flexWrap = "wrap";
+        photoGrid.style.gap = "8px";
+        existingPhotosSection.appendChild(photoGrid);
+
+        // Add each photo to the grid
+        bake.photos.forEach((photo, index) => {
+          // Create a container for each photo and its checkbox
+          const photoContainer = document.createElement("div");
+          photoContainer.className = "photo-item";
+          photoContainer.style.position = "relative";
+
+          // Create the image element
+          const img = document.createElement("img");
+          img.src = photo.data;
+          img.alt = photo.name || `Photo ${index + 1}`;
+          img.title = photo.name || `Photo ${index + 1}`; // Add tooltip with filename
+
+          // Create the checkbox in the upper left corner
+          const checkboxLabel = document.createElement("label");
+          checkboxLabel.className = "photo-checkbox-label";
+          checkboxLabel.style.position = "absolute";
+          checkboxLabel.style.top = "5px";
+          checkboxLabel.style.left = "5px";
+          checkboxLabel.style.zIndex = "10";
+          checkboxLabel.style.background = "rgba(255, 255, 255, 0.7)";
+          checkboxLabel.style.borderRadius = "3px";
+          checkboxLabel.style.padding = "2px";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = true; // Default to keeping photos
+          checkbox.className = "keep-photo-checkbox";
+          checkbox.setAttribute("data-photo-index", index);
+          checkbox.id = `keep-photo-${index}`;
+          checkbox.style.margin = "0";
+
+          checkboxLabel.appendChild(checkbox);
+
+          // Add elements to the photo container
+          photoContainer.appendChild(img);
+          photoContainer.appendChild(checkboxLabel);
+
+          // Add the photo container to the grid
+          photoGrid.appendChild(photoContainer);
+        });
+      }
+
+      // Update the openEditDialog function remains the same
+      async function openEditDialog(bakeId) {
+        try {
+          const bake = await getBakeById(bakeId);
+          if (bake) {
+            fillFormWithBakeData(bake);
+
+            const deleteButton = document.getElementById("delete-bake-button");
+            deleteButton.style.display = "inline-block";
+            deleteButton.onclick = () => {
+              deleteBake(bakeId).then(() => {
+                document.querySelector("#bake-editor").close();
+              });
+            };
+
+            // Display existing photos using our consolidated container
+            displayExistingPhotos(bake);
+
+            // Change submit button to say "Update" instead of "Save"
+            const submitBtn = document.querySelector(
+              '#bake-editor form button[type="submit"]',
+            );
+            submitBtn.textContent = "Update";
+
+            // Open the dialog
+            document.querySelector("#bake-editor").showModal();
+          } else {
+            showNotification(`Could not find bake #${bakeId}`, "error");
+          }
+        } catch (error) {
+          console.error(
+            `Error opening edit dialog for bake #${bakeId}:`,
+            error,
+          );
+          showNotification("An error occurred while trying to edit", "error");
+        }
+      }
+
+      async function exportBakes() {
+        try {
+          // Get all bakes from IndexedDB
+          const bakes = await getAllBakes();
+
+          if (bakes.length === 0) {
+            showNotification("No bakes to export.", "info");
+            return;
+          }
+
+          // Create a downloadable JSON file
+          const dataStr = JSON.stringify(bakes, null, 2);
+          const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+          // Create a download link and trigger it
+          const downloadLink = document.createElement("a");
+          downloadLink.href = URL.createObjectURL(dataBlob);
+
+          // Generate a filename with current date
+          const date = new Date().toISOString().split("T")[0];
+          downloadLink.download = `sourdough-bakes-${date}.json`;
+
+          // Append to body, click, and remove
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          // Cleanup the object URL
+          setTimeout(() => URL.revokeObjectURL(downloadLink.href), 100);
+
+          showNotification(
+            `Exported ${bakes.length} bakes successfully!`,
+            "success",
+          );
+        } catch (error) {
+          console.error("Error exporting bakes:", error);
+          showNotification(
+            "Failed to export bakes. See console for details.",
+            "error",
+          );
+        }
+      }
+
+      // Function to convert File/Blob to base64
+      function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // Process form submission
+      async function handleFormSubmit(event) {
+        event.preventDefault();
+
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        submitButton.textContent =
+          originalButtonText === "Update" ? "Updating..." : "Saving...";
+        submitButton.disabled = true;
+
+        const name = form.name.value.trim();
+        const date = form.date.value;
+        const notes = form.notes.value.trim();
+        const photoFiles = Array.from(form.photos.files);
+        const bakeId = parseInt(form.dataset.bakeId) || null;
+
+        try {
+          let id;
+
+          // Process photos inline - before saving/updating the bake
+          if (photoFiles.length > 0) {
+            showNotification(
+              `Processing ${photoFiles.length} photo(s)...`,
+              "info",
+              3000,
+            );
+          }
+
+          // Process photos - simplified version without HEIC handling or image type checking
+          const newPhotos = [];
+          for (const file of photoFiles) {
+            try {
+              // Convert file to base64 directly
+              const base64Data = await fileToBase64(file);
+              newPhotos.push({
+                name: file.name,
+                type: file.type,
+                data: base64Data,
+                lastModified: file.lastModified,
+              });
+            } catch (err) {
+              console.error("Error processing file:", err);
+            }
+          }
+
+          if (bakeId) {
+            // This is an update to an existing bake
+            const existingBake = await getBakeById(bakeId);
+
+            // Update properties
+            existingBake.name = name;
+            existingBake.date = date;
+            existingBake.notes = notes;
+            existingBake.updatedAt = new Date().toISOString();
+
+            // Handle photo deletions - remove unchecked photos
+            const keepPhotoCheckboxes = form.querySelectorAll(
+              ".keep-photo-checkbox",
+            );
+            if (keepPhotoCheckboxes.length > 0 && existingBake.photos) {
+              // Create a new array of photos to keep
+              const photosToKeep = [];
+
+              // Loop through existing photos
+              existingBake.photos.forEach((photo, index) => {
+                // Find the corresponding checkbox
+                const checkbox = Array.from(keepPhotoCheckboxes).find(
+                  (cb) =>
+                    parseInt(cb.getAttribute("data-photo-index")) === index,
+                );
+
+                // If checkbox exists and is checked, keep this photo
+                if (checkbox && checkbox.checked) {
+                  photosToKeep.push(photo);
+                }
+              });
+
+              // Update the photos array
+              existingBake.photos = photosToKeep;
+            }
+
+            // Add new photos to the existing ones
+            if (newPhotos.length > 0) {
+              if (!existingBake.photos) {
+                existingBake.photos = [];
+              }
+              existingBake.photos = [...existingBake.photos, ...newPhotos];
+            }
+
+            // Update the bake in the database
+            await updateBake(existingBake);
+            id = bakeId;
+
+            showNotification(`Bake #${id} updated successfully!`, "success");
+          } else {
+            // This is a new bake
+            const bake = {
+              name,
+              date,
+              notes,
+              photos: newPhotos, // Add processed photos directly
+              createdAt: new Date().toISOString(),
+            };
+
+            // Store the bake in IndexedDB
+            id = await addBake(bake);
+
+            showNotification(`Bake #${id} saved successfully!`, "success");
+          }
+
+          // Clear the form and close dialog
+          resetEditor();
+          document.querySelector("#bake-editor").close();
+
+          // Refresh the bakes display
+          await displayBakes();
+
+          // Convert any HEIC photos to JPEG format
+          if (id && newPhotos.length > 0) {
+            // For existing bakes, convert any HEIC photos that may have been directly saved
+            const existingBake = await getBakeById(id);
+            if (existingBake.photos && existingBake.photos.length > 0) {
+              for (let i = 0; i < existingBake.photos.length; i++) {
+                const photo = existingBake.photos[i];
+                // Check if this is a HEIC photo by name or type
+                if (
+                  (photo.name && photo.name.toLowerCase().endsWith(".heic")) ||
+                  (photo.type && photo.type === "image/heic")
+                ) {
+                  try {
+                    // Convert the base64 string back to a blob
+                    const base64Data = photo.data.split(",")[1];
+                    const byteCharacters = atob(base64Data);
+                    const byteArrays = [];
+
+                    for (
+                      let offset = 0;
+                      offset < byteCharacters.length;
+                      offset += 512
+                    ) {
+                      const slice = byteCharacters.slice(offset, offset + 512);
+                      const byteNumbers = new Array(slice.length);
+                      for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                      }
+                      byteArrays.push(new Uint8Array(byteNumbers));
+                    }
+
+                    const heicBlob = new Blob(byteArrays, {
+                      type: "image/heic",
+                    });
+
+                    // Convert to JPEG
+                    const jpegBlob = await heic2any({
+                      blob: heicBlob,
+                      toType: "image/jpeg",
+                      quality: 0.8,
+                    });
+
+                    // Convert back to base64
+                    const jpegBase64 = await fileToBase64(jpegBlob);
+
+                    // Update the photo in the array
+                    existingBake.photos[i] = {
+                      name: photo.name
+                        ? photo.name.replace(".heic", ".jpg")
+                        : "converted.jpg",
+                      type: "image/jpeg",
+                      data: jpegBase64,
+                      lastModified: photo.lastModified || new Date().getTime(),
+                    };
+
+                    console.log(`Converted HEIC photo to JPEG: ${photo.name}`);
+                  } catch (err) {
+                    console.error("Error converting HEIC photo:", err);
+                  }
+                }
+              }
+
+              // Update the bake with converted photos
+              await updateBake(existingBake);
+            }
+          }
+        } catch (error) {
+          console.error("Error saving/updating bake:", error);
+          showNotification(
+            "Failed to save your bake. Please try again.",
+            "error",
+          );
+        } finally {
+          submitButton.textContent = originalButtonText;
+          submitButton.disabled = false;
+        }
+      }
+
+      // Display all bakes from the database
+      async function displayBakes() {
+        try {
+          const bakes = await getAllBakes();
+          const bakeListContainer = document.querySelector("#bake-list");
+
+          // Clear the bake list container
+          bakeListContainer.innerHTML = "";
+
+          // Sort bakes by date (newest first), tiebreak on id
+          bakes.sort((a, b) => {
+            const dateComparison = new Date(b.date) - new Date(a.date);
+            // If dates are equal, tiebreak using id (higher id = newer)
+            return dateComparison !== 0 ? dateComparison : b.id - a.id;
+          });
+
+          // Display each bake
+          for (const bake of bakes) {
+            // Clone the template
+            const template = document.getElementById("bake-template");
+            const bakeElement = template.content
+              .cloneNode(true)
+              .querySelector("article");
+
+            // Set the ID
+            bakeElement.id = `bake-${bake.id}`;
+
+            // Add click event to the entire bake element
+            bakeElement.addEventListener("click", () => {
+              openEditDialog(bake.id);
+            });
+
+            // Set the bake name
+            const nameElement = bakeElement.querySelector(".bake-name");
+            nameElement.textContent = bake.name || `#${bake.id}`;
+
+            // Format the date (properly handling the timezone issue)
+            const dateStr = bake.date; // This is in "YYYY-MM-DD" format from the date input
+
+            // Parse the date correctly by explicitly setting it to local timezone
+            const [year, month, day] = dateStr
+              .split("-")
+              .map((num) => parseInt(num, 10));
+            const dateObj = new Date(year, month - 1, day); // month is 0-indexed in JS Date
+
+            const formattedDate = dateObj.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+
+            const timeElement = bakeElement.querySelector("time");
+            timeElement.setAttribute("datetime", bake.date);
+            timeElement.textContent = formattedDate;
+
+            // Load photos for this bake
+            const imgElement = bakeElement.querySelector(".bake-pic");
+            if (bake.photos && bake.photos.length > 0) {
+              imgElement.src = bake.photos[0].data;
+            }
+
+            // Add to bake list container
+            bakeListContainer.appendChild(bakeElement);
+          }
+        } catch (error) {
+          console.error("Error displaying bakes:", error);
+        }
+      }
+
+      // Function to clear all data from IndexedDB
+      async function clearAllBakes() {
+        if (
+          !confirm(
+            "Are you sure you want to delete all bakes and images? This cannot be undone.",
+          )
+        ) {
+          return;
+        }
+
+        return new Promise((resolve, reject) => {
+          const transaction = db.transaction(["bakes"], "readwrite");
+          const store = transaction.objectStore("bakes");
+          const request = store.clear();
+
+          request.onsuccess = () => {
+            console.log("All bakes cleared from database");
+            resolve();
+            showNotification(
+              "All bakes have been cleared successfully.",
+              "success",
+            );
+            displayBakes(); // Refresh the display
+          };
+
+          request.onerror = (event) => {
+            console.error("Error clearing bakes:", event.target.error);
+            reject(event.target.error);
+            showNotification(
+              "Error clearing bakes: " + event.target.error,
+              "error",
+            );
+          };
+        });
+      }
+
+      function resetEditor() {
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
+
+        const form = document.querySelector("#bake-editor form");
+
+        // Reset all form fields
+        form.reset();
+        form.date.value = formattedDate;
+
+        // Clear the bakeId data attribute
+        form.dataset.bakeId = "";
+
+        // Reset the submit button
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Save";
+
+        const deleteButton = document.getElementById("delete-bake-button");
+        deleteButton.style.display = "none";
+
+        // Clear photo container
+        const photoContainer = document.getElementById("photo-container");
+        if (photoContainer) {
+          photoContainer.innerHTML = "";
+        }
+      }
+
+      // Initialize when the page loads
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          await initDB();
+          // Check if there are any existing bakes, if not, try to fetch and load sample data
+          const existingBakes = await getAllBakes();
+          if (existingBakes.length === 0) {
+            try {
+              console.log("No existing bakes found, trying to fetch sample data...");
+              const response = await fetch("bakes.json");
+              if (response.ok) {
+                const sampleBakes = await response.json();
+                console.log(`Loaded ${sampleBakes.length} sample bakes from file`);
+
+                for (const bake of sampleBakes) {
+                  // Remove any id field to let the database auto-generate new ids
+                  delete bake.id;
+                  await addBake(bake);
+                }
+              }
+            } catch (error) {
+              console.log("No sample bakes.json file available:", error);
+            }
+          }
+
+          await displayBakes();
+
+          // Add form submission event listener
+          const form = document.querySelector("#bake-editor form");
+          form.addEventListener("submit", handleFormSubmit);
+
+          // Set up photo handling and previews
+          setupPhotoHandling();
+
+          resetEditor();
+        } catch (error) {
+          console.error("Initialization error:", error);
+        }
+      });
+    </script>
+  </body>
+</html>
