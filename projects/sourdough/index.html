@@ -774,8 +774,7 @@
         const form = event.target;
         const submitButton = form.querySelector('button[type="submit"]');
         const originalButtonText = submitButton.textContent;
-        submitButton.textContent =
-          originalButtonText === "Update" ? "Updating..." : "Saving...";
+        submitButton.textContent = "Saving...";
         submitButton.disabled = true;
 
         const name = form.name.value.trim();
@@ -787,25 +786,15 @@
         try {
           let id;
 
-          // Process photos inline - before saving/updating the bake
-          if (photoFiles.length > 0) {
-            showNotification(
-              `Processing ${photoFiles.length} photo(s)...`,
-              "info",
-              3000,
-            );
-          }
-
-          // Process photos - simplified version without HEIC handling or image type checking
           const newPhotos = [];
           for (const file of photoFiles) {
             try {
               // Convert file to base64 directly
-              const base64Data = await fileToBase64(file);
+              // Store the blob directly without base64 conversion
               newPhotos.push({
                 name: file.name,
                 type: file.type,
-                data: base64Data,
+                data: file, // Store the blob directly
                 lastModified: file.lastModified,
               });
             } catch (err) {
@@ -884,73 +873,6 @@
 
           // Refresh the bakes display
           await displayBakes();
-
-          // Convert any HEIC photos to JPEG format
-          if (id && newPhotos.length > 0) {
-            // For existing bakes, convert any HEIC photos that may have been directly saved
-            const existingBake = await getBakeById(id);
-            if (existingBake.photos && existingBake.photos.length > 0) {
-              for (let i = 0; i < existingBake.photos.length; i++) {
-                const photo = existingBake.photos[i];
-                // Check if this is a HEIC photo by name or type
-                if (
-                  (photo.name && photo.name.toLowerCase().endsWith(".heic")) ||
-                  (photo.type && photo.type === "image/heic")
-                ) {
-                  try {
-                    // Convert the base64 string back to a blob
-                    const base64Data = photo.data.split(",")[1];
-                    const byteCharacters = atob(base64Data);
-                    const byteArrays = [];
-
-                    for (
-                      let offset = 0;
-                      offset < byteCharacters.length;
-                      offset += 512
-                    ) {
-                      const slice = byteCharacters.slice(offset, offset + 512);
-                      const byteNumbers = new Array(slice.length);
-                      for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                      }
-                      byteArrays.push(new Uint8Array(byteNumbers));
-                    }
-
-                    const heicBlob = new Blob(byteArrays, {
-                      type: "image/heic",
-                    });
-
-                    // Convert to JPEG
-                    const jpegBlob = await heic2any({
-                      blob: heicBlob,
-                      toType: "image/jpeg",
-                      quality: 0.8,
-                    });
-
-                    // Convert back to base64
-                    const jpegBase64 = await fileToBase64(jpegBlob);
-
-                    // Update the photo in the array
-                    existingBake.photos[i] = {
-                      name: photo.name
-                        ? photo.name.replace(".heic", ".jpg")
-                        : "converted.jpg",
-                      type: "image/jpeg",
-                      data: jpegBase64,
-                      lastModified: photo.lastModified || new Date().getTime(),
-                    };
-
-                    console.log(`Converted HEIC photo to JPEG: ${photo.name}`);
-                  } catch (err) {
-                    console.error("Error converting HEIC photo:", err);
-                  }
-                }
-              }
-
-              // Update the bake with converted photos
-              await updateBake(existingBake);
-            }
-          }
         } catch (error) {
           console.error("Error saving/updating bake:", error);
           showNotification(
@@ -1021,7 +943,35 @@
             // Load photos for this bake
             const imgElement = bakeElement.querySelector(".bake-pic");
             if (bake.photos && bake.photos.length > 0) {
-              imgElement.src = bake.photos[0].data;
+              let objectUrl;
+
+              // Create object URL from the blob for display
+              const firstPhoto = bake.photos[0];
+              if (firstPhoto) {
+                const blobData = firstPhoto.data;
+                console.log("Is Blob?", blobData instanceof Blob);
+                console.log("Type:", typeof blobData, blobData, firstPhoto.type);
+                if (blobData.type.includes("heic")) {
+                  console.log("Converting HEIC to JPEG...");
+                  heic2any({ blob: blobData, toType: "image/jpeg", quality: 0.5 })
+                    .then((conversionResult) => {
+                      console.log("Conversion result:", conversionResult);
+                      objectUrl = URL.createObjectURL(conversionResult);
+                      console.log("objectUrl ", objectUrl);
+                      imgElement.src = objectUrl;
+                      // Clean up the object URL when image loads to prevent memory leaks
+                      imgElement.onload = () => URL.revokeObjectURL(objectUrl);
+                    })
+                    .catch((error) => {
+                      console.error("Error converting HEIC to PNG:", error);
+                    });
+                } else {
+                  objectUrl = URL.createObjectURL(blobData);
+                  imgElement.src = objectUrl;
+                  // Clean up the object URL when image loads to prevent memory leaks
+                  imgElement.onload = () => URL.revokeObjectURL(objectUrl);
+                }
+              }
             }
 
             // Add to bake list container
