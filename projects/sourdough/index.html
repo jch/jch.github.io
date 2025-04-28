@@ -774,28 +774,11 @@
         const name = form.name.value.trim();
         const date = form.date.value;
         const notes = form.notes.value.trim();
-        const photoFiles = Array.from(form.photos.files);
+        const photos = Array.from(form.photos.files);
         const bakeId = parseInt(form.dataset.bakeId) || null;
 
         try {
           let id;
-
-          const newPhotos = [];
-          for (const file of photoFiles) {
-            try {
-              // Convert file to base64 directly
-              // Store the blob directly without base64 conversion
-              newPhotos.push({
-                name: file.name,
-                type: file.type,
-                data: file, // Store the blob directly
-                lastModified: file.lastModified,
-              });
-            } catch (err) {
-              console.error("Error processing file:", err);
-            }
-          }
-
           if (bakeId) {
             // This is an update to an existing bake
             const existingBake = await getBakeById(bakeId);
@@ -833,11 +816,11 @@
             }
 
             // Add new photos to the existing ones
-            if (newPhotos.length > 0) {
+            if (photos.length > 0) {
               if (!existingBake.photos) {
                 existingBake.photos = [];
               }
-              existingBake.photos = [...existingBake.photos, ...newPhotos];
+              existingBake.photos = [...existingBake.photos, ...photos];
             }
 
             // Update the bake in the database
@@ -851,7 +834,7 @@
               name,
               date,
               notes,
-              photos: newPhotos, // Add processed photos directly
+              photos,
               createdAt: new Date().toISOString(),
             };
 
@@ -940,14 +923,13 @@
               let objectUrl;
 
               // Create object URL from the blob for display
-              const firstPhoto = bake.photos[0];
-              if (firstPhoto) {
-                const blobData = firstPhoto.data;
-                console.log("Is Blob?", blobData instanceof Blob);
-                console.log("Type:", typeof blobData, blobData, firstPhoto.type);
-                if (blobData.type.includes("heic")) {
+              const firstPhotoBlob = bake.photos[0];
+              if (firstPhotoBlob) {
+                console.log("Is Blob?", firstPhotoBlob instanceof Blob);
+                console.log("Type:", typeof firstPhotoBlob, firstPhotoBlob);
+                if (firstPhotoBlob.type.includes("heic")) {
                   console.log("Converting HEIC to JPEG...");
-                  heic2any({ blob: blobData, toType: "image/jpeg", quality: 0.5 })
+                  heic2any({ blob: firstPhotoBlob, toType: "image/jpeg", quality: 0.5 })
                     .then((conversionResult) => {
                       console.log("Conversion result:", conversionResult);
                       objectUrl = URL.createObjectURL(conversionResult);
@@ -960,7 +942,7 @@
                       console.error("Error converting HEIC to PNG:", error);
                     });
                 } else {
-                  objectUrl = URL.createObjectURL(blobData);
+                  objectUrl = URL.createObjectURL(firstPhotoBlob);
                   imgElement.src = objectUrl;
                   // Clean up the object URL when image loads to prevent memory leaks
                   imgElement.onload = () => URL.revokeObjectURL(objectUrl);
