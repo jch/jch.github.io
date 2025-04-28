@@ -21,21 +21,20 @@
         background-color: beige;
       }
 
-      h1,
-      h2,
-      h3 {
+      h1,h2,h3 {
         font-family: "Permanent Marker", cursive;
         font-weight: 400;
         font-style: normal;
       }
 
-      a {
-        color: peru;
+      a { color: peru; }
+
+      input, textarea {
+        box-sizing: border-box;
+        width: 100%;
       }
 
-      li {
-        padding-block: 0.25em;
-      }
+      li { padding-block: 0.25em; }
 
       .marker-bread::marker {
         content: "🍞 ";
@@ -45,21 +44,13 @@
         content: "🕒 ";
       }
 
-      input,
-      textarea {
-        box-sizing: border-box;
-        width: 100%;
-      }
-
       .grid {
         display: grid;
         gap: 1em;
         grid-template: repeat(auto-fit, 200px) / repeat(auto-fit, minmax(200px, 1fr));
       }
 
-      #bake-list {
-        display: contents;
-      }
+      #bake-list { display: contents; }
 
       #nav-site {
         position: fixed;
@@ -99,6 +90,7 @@
       #recipe {
         max-width: 60ch;
         margin: auto;
+        text-wrap: pretty;
 
         /* phones */
         @media (max-width: 767px) {
@@ -111,10 +103,6 @@
           grid-column: span 2; /* 3+ columns at this size */
           grid-row: span 7; /* avoids tall row track with sparse photos */
         }
-      }
-
-      .prose {
-        text-wrap: pretty;
       }
 
       #bake-editor {
@@ -189,7 +177,7 @@
     </nav>
 
     <div class="grid">
-      <section id="recipe" class="prose">
+      <section id="recipe">
         <h2>Recipe</h2>
         <ul>
           <li class="marker-bread">200g levain</li>
