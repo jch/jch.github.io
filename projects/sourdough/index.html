@@ -23,7 +23,7 @@
 
       h1,
       h2,
-      h3, {
+      h3 {
         font-family: "Permanent Marker", cursive;
         font-weight: 400;
         font-style: normal;
@@ -33,12 +33,16 @@
         color: peru;
       }
 
-      ul li {
-        list-style: circle;
+      li {
+        padding-block: 0.25em;
       }
 
-      li {
-        padding: 0.25em 0;
+      .marker-bread::marker {
+        content: "🍞 ";
+      }
+
+      .marker-clock::marker {
+        content: "🕒 ";
       }
 
       input,
@@ -188,11 +192,11 @@
       <section id="recipe" class="prose">
         <h2>Recipe</h2>
         <ul>
-          <li>200g levain</li>
-          <li>700g water</li>
-          <li>25g salt</li>
-          <li>800g bread | all-purpose</li>
-          <li>200g wheat flour</li>
+          <li class="marker-bread">200g levain</li>
+          <li class="marker-bread">700g water</li>
+          <li class="marker-bread">25g salt</li>
+          <li class="marker-bread">800g bread | all-purpose</li>
+          <li class="marker-bread">200g wheat flour</li>
         </ul>
         <ol>
           <li>
@@ -238,19 +242,10 @@
         </p>
         <h3>Schedules</h3>
         <ul>
-          <li>
-            Default: levain overnight, mix everything in the morning, bulk rise
-            during work, bake after work.
-          </li>
-          <li>
-            Fast morning: levain overnight, autolyse overnight, mix levain with
-            dough, bulk rise during work, bake after work.
-          </li>
-          <li>Busy afternoon: cold proof overnight, bake in the morning.</li>
-          <li>
-            Split rise: if dough isn't risen by bedtime, cold-proof overnight,
-            take it out in the morning for additional rise.
-          </li>
+          <li class="marker-clock">Default: levain overnight, mix everything in the morning, bulk rise during work, bake after work.</li>
+          <li class="marker-clock">Fast morning: levain overnight, autolyse overnight, mix levain with dough, bulk rise during work, bake after work.</li>
+          <li class="marker-clock">Busy afternoon: cold proof overnight, bake in the morning.</li>
+          <li class="marker-clock">Split rise: if dough isn't risen by bedtime, cold-proof overnight, take it out in the morning for additional rise.</li>
         </ul>
       </section>
       <div id="bake-list"></div>
