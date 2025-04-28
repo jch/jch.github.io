@@ -111,8 +111,6 @@
 
       .prose {
         text-wrap: pretty;
-        max-width: 65ch;
-        margin: 0 auto;
       }
 
       #bake-editor {
@@ -129,11 +127,27 @@
         height: 200px;
 
         & .bake-pic {
+          position: absolute;
+          inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+
+        & .bake-overlay {
           position: absolute;
-          inset: 0 0;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: end;
+          padding: 1em;
+          color: whitesmoke;
+          text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+          background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.0) 50%,
+            rgba(0, 0, 0, 0.7)
+          );
         }
       }
 
@@ -171,7 +185,7 @@
     </nav>
 
     <div class="grid">
-      <section id="recipe">
+      <section id="recipe" class="prose">
         <h2>Recipe</h2>
         <ul>
           <li>200g levain</li>
@@ -243,12 +257,11 @@
     </div>
 
     <dialog id="bake-editor">
-      <p style="text-align: right; margin-top: 0">
-        <a href="#" onclick="document.querySelector('#bake-editor').close()"
-          >close</a
-        >
-      </p>
-      <form>
+      <form method="dialog" style="display: flex; justify-content: end;">
+        <button type="submit">close</button>
+      </form>
+
+      <form id="bake-form">
         <p><input type="text" name="name" placeholder="name" /></p>
         <p><input type="date" name="date" /></p>
         <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
@@ -271,24 +284,7 @@
     <template id="bake-template">
       <article class="bake">
         <img class="bake-pic" src="sourdough.jpeg" />
-        <div
-          style="
-            position: absolute;
-            bottom: 0;
-            left: 15px;
-            color: whitesmoke;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            background: linear-gradient(
-              to top,
-              rgba(0, 0, 0, 0.7),
-              rgba(0, 0, 0, 0) 100%
-            );
-            padding: 15px;
-            width: 100%;
-            box-sizing: border-box;
-            left: 0;
-          "
-        >
+        <div class="bake-overlay">
           <h2 class="bake-name" style="margin-bottom: 0"></h2>
           <time class="bake-date" datetime=""></time>
         </div>
@@ -482,7 +478,7 @@
 
       // Function to fill the form with bake data
       function fillFormWithBakeData(bake) {
-        const form = document.querySelector("#bake-editor form");
+        const form = document.querySelector("#bake-editor form#bake-form");
         form.name.value = bake.name || "";
         form.date.value = bake.date || "";
         form.notes.value = bake.notes || "";
@@ -494,7 +490,7 @@
       // Consolidated function to handle both existing photos and new photo previews
       function setupPhotoHandling() {
         // Create photo container in the template if it doesn't exist
-        const form = document.querySelector("#bake-editor form");
+        const form = document.querySelector("#bake-editor form#bake-form");
         if (!document.getElementById("photo-container")) {
           const photoContainer = document.createElement("div");
           photoContainer.id = "photo-container";
@@ -691,7 +687,7 @@
 
             // Change submit button to say "Update" instead of "Save"
             const submitBtn = document.querySelector(
-              '#bake-editor form button[type="submit"]',
+              '#bake-editor form#bake-form button[type="submit"]',
             );
             submitBtn.textContent = "Update";
 
@@ -750,16 +746,6 @@
             "error",
           );
         }
-      }
-
-      // Function to convert File/Blob to base64
-      function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
       }
 
       // Process form submission
@@ -1003,7 +989,7 @@
         const day = String(today.getDate()).padStart(2, "0");
         const formattedDate = `${year}-${month}-${day}`;
 
-        const form = document.querySelector("#bake-editor form");
+        const form = document.querySelector("#bake-editor form#bake-form");
 
         // Reset all form fields
         form.reset();
@@ -1055,7 +1041,7 @@
           await displayBakes();
 
           // Add form submission event listener
-          const form = document.querySelector("#bake-editor form");
+          const form = document.querySelector("#bake-editor form#bake-form");
           form.addEventListener("submit", handleFormSubmit);
 
           // Set up photo handling and previews
