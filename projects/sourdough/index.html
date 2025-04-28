@@ -49,7 +49,7 @@
       .grid {
         display: grid;
         gap: 1em;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template: repeat(auto-fit, 200px) / repeat(auto-fit, minmax(200px, 1fr));
       }
 
       #bake-list {
@@ -92,19 +92,19 @@
       }
 
       #recipe {
-        max-width: 65ch;
-        margin: 0 auto;
-        grid-row: span 8;
+        max-width: 60ch;
+        margin: auto;
 
-        /* phones: last row, full width */
+        /* phones */
         @media (max-width: 767px) {
-          order: 999;
-          grid-column: 1 / -1;
+          order: 999; /* last row */
+          grid-column: 1 / -1; /* full width */
         }
 
-        /* tablets+: natural order, 2 columns */
+        /* tablets+ */
         @media (min-width: 768px) {
-          grid-column: span 2;
+          grid-column: span 2; /* 3+ columns at this size */
+          grid-row: span 7; /* avoids tall row track with sparse photos */
         }
       }
 
@@ -123,10 +123,8 @@
         cursor: pointer;
         position: relative;
         border-radius: 15px;
-        border: 0;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         overflow: hidden;
-        flex: 0 0 auto;
         height: 200px;
 
         & .bake-pic {
@@ -135,10 +133,6 @@
           object-fit: cover;
           position: absolute;
           inset: 0 0;
-        }
-
-        & .bake-content {
-          position: relative;
         }
       }
 
@@ -176,7 +170,7 @@
     </nav>
 
     <div class="grid">
-      <section id="recipe" class="prose">
+      <section id="recipe">
         <h2>Recipe</h2>
         <ul>
           <li>200g levain</li>
