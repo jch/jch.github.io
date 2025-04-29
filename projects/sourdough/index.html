@@ -267,7 +267,7 @@
 
     <template id="bake-template">
       <article class="bake">
-        <img class="bake-pic" src="sourdough.jpeg" />
+        <img class="bake-pic" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='45'%3E🍞%3C/text%3E%3C/svg%3E" />
         <div class="bake-overlay">
           <h2 class="bake-name" style="margin-bottom: 0"></h2>
           <time class="bake-date" datetime=""></time>
@@ -729,9 +729,45 @@
 
         async index() {
           try {
-            const bakes = await this.model.getAll();
+            let bakes = await this.model.getAll();
+        
+            // If no bakes exist in the database, fetch bakes.json and load it
+            if (bakes.length === 0) {
+              console.log("No bakes found in IndexedDB. Fetching bakes.json...");
+              try {
+                const response = await fetch("bakes.json");
+                if (!response.ok) {
+                  throw new Error(`Failed to fetch bakes.json: ${response.statusText}`);
+                }
+        
+                const importedBakes = await response.json();
+                if (Array.isArray(importedBakes)) {
+                  for (const bake of importedBakes) {
+                    // Ensure required fields exist
+                    if (!bake.date) {
+                      bake.date = new Date().toISOString().split('T')[0];
+                    }
+        
+                    // Add creation timestamp if missing
+                    if (!bake.createdAt) {
+                      bake.createdAt = new Date().toISOString();
+                    }
+        
+                    await this.model.create(bake);
+                  }
+        
+                  console.log(`Loaded ${importedBakes.length} bakes from bakes.json into IndexedDB.`);
+                  bakes = await this.model.getAll(); // Refresh the list after loading
+                } else {
+                  console.error("Invalid data format in bakes.json. Expected an array of bakes.");
+                }
+              } catch (fetchError) {
+                console.error("Error fetching or loading bakes.json:", fetchError);
+              }
+            }
+        
             this.view.renderBakeList(bakes);
-
+        
             // Add click event to each bake element
             document.querySelectorAll('.bake').forEach(bake => {
               bake.addEventListener('click', (e) => {
@@ -787,7 +823,26 @@
           const name = form.name.value.trim();
           const date = form.date.value;
           const notes = form.notes.value.trim();
-          const photos = Array.from(form.photos.files);
+          const photos = await Promise.all(
+            Array.from(form.photos.files).map(async (file) => {
+              if (file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic")) {
+                try {
+                  const jpegBlob = await heic2any({
+                    blob: file,
+                    toType: "image/jpeg",
+                    quality: 0.8,
+                  });
+                  return new File([jpegBlob], file.name.replace(/\.heic$/i, ".jpeg"), {
+                    type: "image/jpeg",
+                  });
+                } catch (err) {
+                  console.error("Error converting HEIC to JPEG:", err);
+                  return null;
+                }
+              }
+              return file;
+            })
+          ).then((files) => files.filter((file) => file !== null));
           const bakeId = parseInt(form.dataset.bakeId) || null;
 
           try {
