@@ -93,6 +93,7 @@
         max-width: 60ch;
         margin: auto;
         text-wrap: pretty;
+        padding: 1.5em;
 
         /* phones */
         @media (max-width: 767px) {
@@ -730,7 +731,7 @@
         async index() {
           try {
             let bakes = await this.model.getAll();
-        
+
             // If no bakes exist in the database, fetch bakes.json and load it
             if (bakes.length === 0) {
               console.log("No bakes found in IndexedDB. Fetching bakes.json...");
@@ -739,7 +740,7 @@
                 if (!response.ok) {
                   throw new Error(`Failed to fetch bakes.json: ${response.statusText}`);
                 }
-        
+
                 const importedBakes = await response.json();
                 if (Array.isArray(importedBakes)) {
                   for (const bake of importedBakes) {
@@ -747,15 +748,15 @@
                     if (!bake.date) {
                       bake.date = new Date().toISOString().split('T')[0];
                     }
-        
+
                     // Add creation timestamp if missing
                     if (!bake.createdAt) {
                       bake.createdAt = new Date().toISOString();
                     }
-        
+
                     await this.model.create(bake);
                   }
-        
+
                   console.log(`Loaded ${importedBakes.length} bakes from bakes.json into IndexedDB.`);
                   bakes = await this.model.getAll(); // Refresh the list after loading
                 } else {
@@ -765,9 +766,9 @@
                 console.error("Error fetching or loading bakes.json:", fetchError);
               }
             }
-        
+
             this.view.renderBakeList(bakes);
-        
+
             // Add click event to each bake element
             document.querySelectorAll('.bake').forEach(bake => {
               bake.addEventListener('click', (e) => {
