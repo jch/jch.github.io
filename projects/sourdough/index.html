@@ -6,6 +6,7 @@
     <title>Sourdough</title>
     <meta name="description" content="Sourdough journal" />
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍞</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -45,6 +46,7 @@
       }
 
       .grid {
+        padding-block-start: 4em; /* nav buttons */
         display: grid;
         gap: 1em;
         grid-template: repeat(auto-fit, 200px) / repeat(auto-fit, minmax(200px, 1fr));
@@ -105,7 +107,7 @@
         }
       }
 
-      #bake-editor {
+      dialog {
         width: 90%;
         max-width: 350px;
       }
@@ -116,6 +118,9 @@
         border-radius: 15px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         overflow: hidden;
+        max-width: 400px;
+        width: 100%;
+        justify-self: end;
         height: 200px;
 
         & .bake-pic {
@@ -170,11 +175,12 @@
   </head>
   <body>
     <nav id="nav-site">
-      <a href="#recipe" title="recipe">🍞</a>
-      <button onclick="document.querySelector('#bake-editor').showModal()" title="add">+</button>
-      <button onclick="exportBakes()" title="export">💾</button>
-      <button onclick="clearAllBakes()" title="clear all">🗑️</button>
-    </nav>
+    <a href="#recipe" title="recipe">🍞</a>
+    <button id="bake-new" title="add">+</button>
+    <button id="bake-export" title="export">💾</button>
+    <button id="bake-import" title="import">📂</button>
+    <button id="bake-clear-all" title="clear all">🗑️</button>
+  </nav>
 
     <div class="grid">
       <section id="recipe">
@@ -187,17 +193,12 @@
           <li class="marker-bread">200g wheat flour</li>
         </ul>
         <ol>
-          <li>
-            Feed night before starter/flour/water 1:1:1 (most sour) to 1:5:5
-            (least sour)
-          </li>
-          Ferment by volume using a small clear glass (e.g. shot glass)
+          <li>Feed night before starter/flour/water 1:1:1 (most sour) to 1:5:5 (least sour)</li>
+          <li>Ferment by volume using a small clear glass (e.g. shot glass)</li>
           <li>Stir: 200g levain, 700g water, 25g salt</li>
           <li>Stir: 800g bread flour, 200g wheat flour</li>
           <li>Hand knead 10 minutes</li>
-          <li>
-            Shape and rise until doubled. Optional stretch and fold, coil folds.
-          </li>
+          <li>Shape and rise until doubled. Optional stretch and fold, coil folds.</li>
           <li>Preheat oven for 60 minutes at 500F with pizza stone</li>
         </ol>
         <h3>Notes</h3>
@@ -274,609 +275,168 @@
       </article>
     </template>
 
-    <div id="notification-popover" popover="auto">
-      <button
-        type="button"
-        style="float: right"
-        onclick="document.getElementById('notification-popover').hidePopover();"
-      >
-        close
-      </button>
-      <p id="notification-popover-message"></p>
-    </div>
+    <template id="bake-form-template">
+      <form id="bake-form">
+        <p><input type="text" name="name" placeholder="name" /></p>
+        <p><input type="date" name="date" /></p>
+        <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
+        <p>
+          <input type="file" name="photos" accept="image/*" multiple capture />
+        </p>
+        <p style="display: flex; justify-content: space-between">
+          <button type="submit">Save</button>
+          <button type="button" id="delete-bake-button" style="display: none; color: crimson">
+            Delete
+          </button>
+        </p>
+      </form>
+    </template>
+
+
+    <dialog id="import-dialog">
+      <form method="dialog" style="display: flex; justify-content: end;">
+        <button type="submit">close</button>
+      </form>
+
+      <h3>Import Bakes</h3>
+      <p>Choose a JSON file with bakes to import. This will replace all existing bakes.</p>
+      <form id="import-form">
+        <p><input type="file" id="import-file" accept=".json" required /></p>
+        <button type="submit" id="import-submit">Import</button>
+      </form>
+    </dialog>
     <script>
-      // Notifications
-      function showNotification(message, type = "info", duration = 3000) {
-        const notificationPopover = document.getElementById(
-          "notification-popover",
-        );
-
-        // Set the message and type
-        notificationPopover.querySelector(
-          "#notification-popover-message",
-        ).textContent = message;
-
-        // Remove any existing type classes
-        notificationPopover.classList.remove("success", "error", "info");
-        // Add the new type class
-        notificationPopover.classList.add(type);
-
-        // Show the popover
-        notificationPopover.showPopover();
-
-        // Hide after duration
-        if (duration > 0)
-          setTimeout(() => {
-            notificationPopover.hidePopover();
-          }, duration);
-      }
-
-      // Initialize IndexedDB
-      let db;
-      const dbName = "SourdoughDB";
-      const dbVersion = 1;
-
-      function initDB() {
-        return new Promise((resolve, reject) => {
-          const request = indexedDB.open(dbName, dbVersion);
-
-          request.onerror = (event) => {
-            console.error("IndexedDB error:", event.target.error);
-            reject("Error opening database");
-          };
-
-          request.onsuccess = (event) => {
-            db = event.target.result;
-            console.log("Database opened successfully");
-            resolve(db);
-          };
-
-          request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-
-            // Create object store for bakes if it doesn't exist
-            if (!db.objectStoreNames.contains("bakes")) {
-              const bakeStore = db.createObjectStore("bakes", {
-                keyPath: "id",
-                autoIncrement: true,
-              });
-              bakeStore.createIndex("date", "date", { unique: false });
-              bakeStore.createIndex("name", "name", { unique: false });
-              console.log("Object store created");
-            }
-          };
-        });
-      }
-
-      // Function to add a new bake to the database
-      async function addBake(bake) {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readwrite");
-          const store = transaction.objectStore("bakes");
-          const request = store.add(bake);
-
-          request.onsuccess = (event) => {
-            console.log(
-              "Bake added successfully with ID:",
-              event.target.result,
-            );
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            console.error("Error adding bake:", event.target.error);
-            reject(event.target.error);
-          };
-        });
-      }
-
-      async function deleteBake(id) {
-        if (
-          !confirm(
-            `Are you sure you want to delete bake #${id}? This cannot be undone.`,
-          )
-        ) {
-          return;
+      // Model - handles data operations
+      class BakeModel {
+        constructor() {
+          this.dbName = "SourdoughDB";
+          this.dbVersion = 1;
+          this.db = null;
         }
 
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readwrite");
-          const store = transaction.objectStore("bakes");
-          const request = store.delete(id);
+        async init() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
 
-          request.onsuccess = () => {
-            console.log(`Bake #${id} deleted from database`);
-            showNotification(
-              `Bake #${id} has been deleted successfully.`,
-              "success",
-            );
-            resolve();
-            const bakeElement = document.getElementById(`bake-${id}`);
-            if (bakeElement) {
-              bakeElement.remove();
-            }
-          };
-
-          request.onerror = (event) => {
-            console.error(`Error deleting bake #${id}:`, event.target.error);
-            showNotification(`Error deleting bake #${id}.`, "error");
-            reject(event.target.error);
-          };
-        });
-      }
-
-      // Function to get all bakes from the database
-      async function getAllBakes() {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readonly");
-          const store = transaction.objectStore("bakes");
-          const request = store.getAll();
-
-          request.onsuccess = (event) => {
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            console.error("Error getting bakes:", event.target.error);
-            reject(event.target.error);
-          };
-        });
-      }
-
-      async function getBakeById(id) {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readonly");
-          const store = transaction.objectStore("bakes");
-          const request = store.get(id);
-
-          request.onsuccess = (event) => {
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            console.error(`Error getting bake #${id}:`, event.target.error);
-            reject(event.target.error);
-          };
-        });
-      }
-
-      // Function to update an existing bake
-      async function updateBake(bake) {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readwrite");
-          const store = transaction.objectStore("bakes");
-          const request = store.put(bake);
-
-          request.onsuccess = (event) => {
-            console.log("Bake updated successfully:", event.target.result);
-            resolve(event.target.result);
-          };
-
-          request.onerror = (event) => {
-            console.error("Error updating bake:", event.target.error);
-            reject(event.target.error);
-          };
-        });
-      }
-
-      // Function to fill the form with bake data
-      function fillFormWithBakeData(bake) {
-        const form = document.querySelector("#bake-editor form#bake-form");
-        form.name.value = bake.name || "";
-        form.date.value = bake.date || "";
-        form.notes.value = bake.notes || "";
-
-        // Store the bake ID in a data attribute for later reference
-        form.dataset.bakeId = bake.id;
-      }
-
-      // Consolidated function to handle both existing photos and new photo previews
-      function setupPhotoHandling() {
-        // Create photo container in the template if it doesn't exist
-        const form = document.querySelector("#bake-editor form#bake-form");
-        if (!document.getElementById("photo-container")) {
-          const photoContainer = document.createElement("div");
-          photoContainer.id = "photo-container";
-          photoContainer.className = "bake-photos";
-          photoContainer.style.marginTop = "10px";
-
-          // Insert the container before the submit button
-          const submitButtonParent = form.querySelector(
-            'button[type="submit"]',
-          ).parentNode;
-          form.insertBefore(photoContainer, submitButtonParent);
-        }
-
-        // Add event listener to the file input
-        const photoInput = form.querySelector('input[type="file"]');
-        photoInput.addEventListener("change", async (event) => {
-          await displaySelectedPhotos(Array.from(event.target.files));
-        });
-      }
-
-      // Function to display newly selected photos
-      async function displaySelectedPhotos(files) {
-        if (files.length === 0) return;
-
-        const photoContainer = document.getElementById("photo-container");
-
-        // Create a section for new photos if it doesn't exist
-        let newPhotosSection = photoContainer.querySelector(
-          ".new-photos-section",
-        );
-        if (!newPhotosSection) {
-          newPhotosSection = document.createElement("div");
-          newPhotosSection.className = "new-photos-section";
-
-          const heading = document.createElement("h4");
-          heading.textContent = "New Photos";
-          heading.style.margin = "10px 0 5px 0";
-
-          newPhotosSection.appendChild(heading);
-          photoContainer.appendChild(newPhotosSection);
-        } else {
-          // Clear previous new photos
-          const heading = newPhotosSection.querySelector("h4");
-          newPhotosSection.innerHTML = "";
-          newPhotosSection.appendChild(heading);
-        }
-
-        // Create a photo grid
-        const photoGrid = document.createElement("div");
-        photoGrid.className = "photo-grid";
-        photoGrid.style.display = "flex";
-        photoGrid.style.flexWrap = "wrap";
-        photoGrid.style.gap = "8px";
-        newPhotosSection.appendChild(photoGrid);
-
-        // Add loading message
-        const loadingMsg = document.createElement("p");
-        loadingMsg.textContent = `Loading ${files.length} image(s)...`;
-        loadingMsg.style.margin = "5px 0";
-        newPhotosSection.insertBefore(loadingMsg, photoGrid);
-
-        // Process each file
-        for (const file of files) {
-          try {
-            // Only process image files
-            if (!file.type.startsWith("image/")) continue;
-
-            let imageUrl;
-
-            // Handle HEIC files
-            if (
-              file.type === "image/heic" ||
-              file.name.toLowerCase().endsWith(".heic")
-            ) {
-              const jpegBlob = await heic2any({
-                blob: file,
-                toType: "image/jpeg",
-                quality: 0.8,
-              });
-              imageUrl = URL.createObjectURL(jpegBlob);
-            } else {
-              imageUrl = URL.createObjectURL(file);
-            }
-
-            // Create image element
-            const img = document.createElement("img");
-            img.src = imageUrl;
-            img.alt = file.name;
-            img.title = file.name;
-
-            // Add to photo grid
-            photoGrid.appendChild(img);
-          } catch (err) {
-            console.error("Error previewing image:", err);
-          }
-        }
-
-        // Remove loading message
-        if (loadingMsg && loadingMsg.parentNode) {
-          loadingMsg.remove();
-        }
-      }
-
-      // Display existing photos with checkboxes in a flexbox layout
-      function displayExistingPhotos(bake) {
-        const photoContainer = document.getElementById("photo-container");
-
-        // Clear container first
-        photoContainer.innerHTML = "";
-
-        if (!bake.photos || bake.photos.length === 0) {
-          return;
-        }
-
-        // Create a section for existing photos
-        const existingPhotosSection = document.createElement("div");
-        existingPhotosSection.className = "existing-photos-section";
-
-        const heading = document.createElement("h4");
-        heading.textContent = "Existing Photos";
-        heading.style.margin = "10px 0 5px 0";
-
-        existingPhotosSection.appendChild(heading);
-        photoContainer.appendChild(existingPhotosSection);
-
-        // Create a flexbox container for photos
-        const photoGrid = document.createElement("div");
-        photoGrid.className = "photo-grid";
-        photoGrid.style.display = "flex";
-        photoGrid.style.flexWrap = "wrap";
-        photoGrid.style.gap = "8px";
-        existingPhotosSection.appendChild(photoGrid);
-
-        // Add each photo to the grid
-        bake.photos.forEach((photo, index) => {
-          // Create a container for each photo and its checkbox
-          const photoContainer = document.createElement("div");
-          photoContainer.className = "photo-item";
-          photoContainer.style.position = "relative";
-
-          // Create the image element
-          const img = document.createElement("img");
-          img.src = photo.data;
-          img.alt = photo.name || `Photo ${index + 1}`;
-          img.title = photo.name || `Photo ${index + 1}`; // Add tooltip with filename
-
-          // Create the checkbox in the upper left corner
-          const checkboxLabel = document.createElement("label");
-          checkboxLabel.className = "photo-checkbox-label";
-          checkboxLabel.style.position = "absolute";
-          checkboxLabel.style.top = "5px";
-          checkboxLabel.style.left = "5px";
-          checkboxLabel.style.zIndex = "10";
-          checkboxLabel.style.background = "rgba(255, 255, 255, 0.7)";
-          checkboxLabel.style.borderRadius = "3px";
-          checkboxLabel.style.padding = "2px";
-
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = true; // Default to keeping photos
-          checkbox.className = "keep-photo-checkbox";
-          checkbox.setAttribute("data-photo-index", index);
-          checkbox.id = `keep-photo-${index}`;
-          checkbox.style.margin = "0";
-
-          checkboxLabel.appendChild(checkbox);
-
-          // Add elements to the photo container
-          photoContainer.appendChild(img);
-          photoContainer.appendChild(checkboxLabel);
-
-          // Add the photo container to the grid
-          photoGrid.appendChild(photoContainer);
-        });
-      }
-
-      // Update the openEditDialog function remains the same
-      async function openEditDialog(bakeId) {
-        try {
-          const bake = await getBakeById(bakeId);
-          if (bake) {
-            fillFormWithBakeData(bake);
-
-            const deleteButton = document.getElementById("delete-bake-button");
-            deleteButton.style.display = "inline-block";
-            deleteButton.onclick = () => {
-              deleteBake(bakeId).then(() => {
-                document.querySelector("#bake-editor").close();
-              });
+            request.onerror = (event) => {
+              console.error("IndexedDB error:", event.target.error);
+              reject("Error opening database");
             };
 
-            // Display existing photos using our consolidated container
-            displayExistingPhotos(bake);
+            request.onsuccess = (event) => {
+              this.db = event.target.result;
+              console.log("Database opened successfully");
+              resolve(this.db);
+            };
 
-            // Change submit button to say "Update" instead of "Save"
-            const submitBtn = document.querySelector(
-              '#bake-editor form#bake-form button[type="submit"]',
-            );
-            submitBtn.textContent = "Update";
-
-            // Open the dialog
-            document.querySelector("#bake-editor").showModal();
-          } else {
-            showNotification(`Could not find bake #${bakeId}`, "error");
-          }
-        } catch (error) {
-          console.error(
-            `Error opening edit dialog for bake #${bakeId}:`,
-            error,
-          );
-          showNotification("An error occurred while trying to edit", "error");
-        }
-      }
-
-      async function exportBakes() {
-        try {
-          // Get all bakes from IndexedDB
-          const bakes = await getAllBakes();
-
-          if (bakes.length === 0) {
-            showNotification("No bakes to export.", "info");
-            return;
-          }
-
-          // Create a downloadable JSON file
-          const dataStr = JSON.stringify(bakes, null, 2);
-          const dataBlob = new Blob([dataStr], { type: "application/json" });
-
-          // Create a download link and trigger it
-          const downloadLink = document.createElement("a");
-          downloadLink.href = URL.createObjectURL(dataBlob);
-
-          // Generate a filename with current date
-          const date = new Date().toISOString().split("T")[0];
-          downloadLink.download = `sourdough-bakes-${date}.json`;
-
-          // Append to body, click, and remove
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-
-          // Cleanup the object URL
-          setTimeout(() => URL.revokeObjectURL(downloadLink.href), 100);
-
-          showNotification(
-            `Exported ${bakes.length} bakes successfully!`,
-            "success",
-          );
-        } catch (error) {
-          console.error("Error exporting bakes:", error);
-          showNotification(
-            "Failed to export bakes. See console for details.",
-            "error",
-          );
-        }
-      }
-
-      // Process form submission
-      async function handleFormSubmit(event) {
-        event.preventDefault();
-
-        const form = event.target;
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalButtonText = submitButton.textContent;
-        submitButton.textContent = "Saving...";
-        submitButton.disabled = true;
-
-        const name = form.name.value.trim();
-        const date = form.date.value;
-        const notes = form.notes.value.trim();
-        const photos = Array.from(form.photos.files);
-        const bakeId = parseInt(form.dataset.bakeId) || null;
-
-        try {
-          let id;
-          if (bakeId) {
-            // This is an update to an existing bake
-            const existingBake = await getBakeById(bakeId);
-
-            // Update properties
-            existingBake.name = name;
-            existingBake.date = date;
-            existingBake.notes = notes;
-            existingBake.updatedAt = new Date().toISOString();
-
-            // Handle photo deletions - remove unchecked photos
-            const keepPhotoCheckboxes = form.querySelectorAll(
-              ".keep-photo-checkbox",
-            );
-            if (keepPhotoCheckboxes.length > 0 && existingBake.photos) {
-              // Create a new array of photos to keep
-              const photosToKeep = [];
-
-              // Loop through existing photos
-              existingBake.photos.forEach((photo, index) => {
-                // Find the corresponding checkbox
-                const checkbox = Array.from(keepPhotoCheckboxes).find(
-                  (cb) =>
-                    parseInt(cb.getAttribute("data-photo-index")) === index,
-                );
-
-                // If checkbox exists and is checked, keep this photo
-                if (checkbox && checkbox.checked) {
-                  photosToKeep.push(photo);
-                }
-              });
-
-              // Update the photos array
-              existingBake.photos = photosToKeep;
-            }
-
-            // Add new photos to the existing ones
-            if (photos.length > 0) {
-              if (!existingBake.photos) {
-                existingBake.photos = [];
+            request.onupgradeneeded = (event) => {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains("bakes")) {
+                const bakeStore = db.createObjectStore("bakes", {
+                  keyPath: "id",
+                  autoIncrement: true,
+                });
+                bakeStore.createIndex("date", "date", { unique: false });
+                bakeStore.createIndex("name", "name", { unique: false });
               }
-              existingBake.photos = [...existingBake.photos, ...photos];
-            }
-
-            // Update the bake in the database
-            await updateBake(existingBake);
-            id = bakeId;
-
-            showNotification(`Bake #${id} updated successfully!`, "success");
-          } else {
-            // This is a new bake
-            const bake = {
-              name,
-              date,
-              notes,
-              photos,
-              createdAt: new Date().toISOString(),
             };
+          });
+        }
 
-            // Store the bake in IndexedDB
-            id = await addBake(bake);
+        async getAll() {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readonly");
+            const store = transaction.objectStore("bakes");
+            const request = store.getAll();
 
-            showNotification(`Bake #${id} saved successfully!`, "success");
-          }
+            request.onsuccess = (event) => resolve(event.target.result);
+            request.onerror = (event) => reject(event.target.error);
+          });
+        }
 
-          // Clear the form and close dialog
-          resetEditor();
-          document.querySelector("#bake-editor").close();
+        async getById(id) {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readonly");
+            const store = transaction.objectStore("bakes");
+            const request = store.get(id);
 
-          // Refresh the bakes display
-          await displayBakes();
-        } catch (error) {
-          console.error("Error saving/updating bake:", error);
-          showNotification(
-            "Failed to save your bake. Please try again.",
-            "error",
-          );
-        } finally {
-          submitButton.textContent = originalButtonText;
-          submitButton.disabled = false;
+            request.onsuccess = (event) => resolve(event.target.result);
+            request.onerror = (event) => reject(event.target.error);
+          });
+        }
+
+        async create(bake) {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readwrite");
+            const store = transaction.objectStore("bakes");
+            const request = store.add(bake);
+
+            request.onsuccess = (event) => resolve(event.target.result);
+            request.onerror = (event) => reject(event.target.error);
+          });
+        }
+
+        async update(bake) {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readwrite");
+            const store = transaction.objectStore("bakes");
+            const request = store.put(bake);
+
+            request.onsuccess = (event) => resolve(event.target.result);
+            request.onerror = (event) => reject(event.target.error);
+          });
+        }
+
+        async delete(id) {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readwrite");
+            const store = transaction.objectStore("bakes");
+            const request = store.delete(id);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+          });
+        }
+
+        async clearAll() {
+          return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(["bakes"], "readwrite");
+            const store = transaction.objectStore("bakes");
+            const request = store.clear();
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+          });
         }
       }
 
-      // Display all bakes from the database
-      async function displayBakes() {
-        try {
-          const bakes = await getAllBakes();
-          const bakeListContainer = document.querySelector("#bake-list");
+      // View - handles UI rendering
+      class BakeView {
+        constructor() {
+          this.bakeTemplate = document.getElementById("bake-template");
+          this.bakeListContainer = document.getElementById("bake-list");
+          this.dialogElement = document.getElementById("bake-editor");
+          this.formTemplate = document.getElementById("bake-form-template");
+        }
 
-          // Clear the bake list container
-          bakeListContainer.innerHTML = "";
+        renderBakeList(bakes) {
+          this.bakeListContainer.innerHTML = "";
 
           // Sort bakes by date (newest first), tiebreak on id
           bakes.sort((a, b) => {
             const dateComparison = new Date(b.date) - new Date(a.date);
-            // If dates are equal, tiebreak using id (higher id = newer)
             return dateComparison !== 0 ? dateComparison : b.id - a.id;
           });
 
-          // Display each bake
           for (const bake of bakes) {
-            // Clone the template
-            const template = document.getElementById("bake-template");
-            const bakeElement = template.content
-              .cloneNode(true)
-              .querySelector("article");
-
-            // Set the ID
+            const bakeElement = this.bakeTemplate.content.cloneNode(true).querySelector("article");
             bakeElement.id = `bake-${bake.id}`;
 
-            // Add click event to the entire bake element
-            bakeElement.addEventListener("click", () => {
-              openEditDialog(bake.id);
-            });
-
-            // Set the bake name
             const nameElement = bakeElement.querySelector(".bake-name");
             nameElement.textContent = bake.name || `#${bake.id}`;
 
-            // Format the date (properly handling the timezone issue)
-            const dateStr = bake.date; // This is in "YYYY-MM-DD" format from the date input
-
-            // Parse the date correctly by explicitly setting it to local timezone
-            const [year, month, day] = dateStr
-              .split("-")
-              .map((num) => parseInt(num, 10));
-            const dateObj = new Date(year, month - 1, day); // month is 0-indexed in JS Date
-
+            const [year, month, day] = bake.date.split("-").map(num => parseInt(num, 10));
+            const dateObj = new Date(year, month - 1, day);
             const formattedDate = dateObj.toLocaleDateString("en-US", {
               year: "numeric",
               month: "short",
@@ -887,153 +447,646 @@
             timeElement.setAttribute("datetime", bake.date);
             timeElement.textContent = formattedDate;
 
-            // Load photos for this bake
+            // Set image if available
             const imgElement = bakeElement.querySelector(".bake-pic");
             if (bake.photos && bake.photos.length > 0) {
-              let objectUrl;
-
-              // Create object URL from the blob for display
-              const firstPhotoBlob = bake.photos[0];
-              if (firstPhotoBlob) {
-                console.log("Is Blob?", firstPhotoBlob instanceof Blob);
-                console.log("Type:", typeof firstPhotoBlob, firstPhotoBlob);
-                if (firstPhotoBlob.type.includes("heic")) {
-                  console.log("Converting HEIC to JPEG...");
-                  heic2any({ blob: firstPhotoBlob, toType: "image/jpeg", quality: 0.5 })
-                    .then((conversionResult) => {
-                      console.log("Conversion result:", conversionResult);
-                      objectUrl = URL.createObjectURL(conversionResult);
-                      console.log("objectUrl ", objectUrl);
-                      imgElement.src = objectUrl;
-                      // Clean up the object URL when image loads to prevent memory leaks
-                      imgElement.onload = () => URL.revokeObjectURL(objectUrl);
-                    })
-                    .catch((error) => {
-                      console.error("Error converting HEIC to PNG:", error);
-                    });
-                } else {
-                  objectUrl = URL.createObjectURL(firstPhotoBlob);
-                  imgElement.src = objectUrl;
-                  // Clean up the object URL when image loads to prevent memory leaks
-                  imgElement.onload = () => URL.revokeObjectURL(objectUrl);
+              const firstPhoto = bake.photos[0];
+              if (firstPhoto) {
+                // Handle different possible formats of stored photos
+                if (firstPhoto instanceof Blob) {
+                  // It's already a Blob object (from file input)
+                  if (firstPhoto.type && firstPhoto.type.includes("heic")) {
+                    heic2any({ blob: firstPhoto, toType: "image/jpeg", quality: 0.5 })
+                      .then((converted) => {
+                        const objectUrl = URL.createObjectURL(converted);
+                        imgElement.src = objectUrl;
+                        imgElement.onload = () => URL.revokeObjectURL(objectUrl);
+                      })
+                      .catch(error => console.error("Error converting HEIC:", error));
+                  } else {
+                    const objectUrl = URL.createObjectURL(firstPhoto);
+                    imgElement.src = objectUrl;
+                    imgElement.onload = () => URL.revokeObjectURL(objectUrl);
+                  }
+                } else if (typeof firstPhoto === 'string') {
+                  // It's likely a data URL string
+                  imgElement.src = firstPhoto;
+                } else if (firstPhoto.data) {
+                  // It's an object with a data property (stored data URL)
+                  imgElement.src = firstPhoto.data;
                 }
               }
             }
 
-            // Add to bake list container
-            bakeListContainer.appendChild(bakeElement);
+            this.bakeListContainer.appendChild(bakeElement);
           }
-        } catch (error) {
-          console.error("Error displaying bakes:", error);
-        }
-      }
-
-      // Function to clear all data from IndexedDB
-      async function clearAllBakes() {
-        if (
-          !confirm(
-            "Are you sure you want to delete all bakes and images? This cannot be undone.",
-          )
-        ) {
-          return;
         }
 
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(["bakes"], "readwrite");
-          const store = transaction.objectStore("bakes");
-          const request = store.clear();
+        showEditor(bake = null) {
+          // Get the dialog element
+          const dialog = this.dialogElement;
 
-          request.onsuccess = () => {
-            console.log("All bakes cleared from database");
-            resolve();
-            showNotification(
-              "All bakes have been cleared successfully.",
-              "success",
-            );
-            displayBakes(); // Refresh the display
-          };
+          // Clear the dialog content except for the close button form
+          const closeButtonForm = dialog.querySelector('form[method="dialog"]');
+          dialog.innerHTML = '';
+          dialog.appendChild(closeButtonForm);
 
-          request.onerror = (event) => {
-            console.error("Error clearing bakes:", event.target.error);
-            reject(event.target.error);
-            showNotification(
-              "Error clearing bakes: " + event.target.error,
-              "error",
-            );
-          };
-        });
-      }
+          // Clone the form template
+          const formClone = this.formTemplate.content.cloneNode(true);
+          const form = formClone.querySelector("form");
 
-      function resetEditor() {
-        // Get today's date in YYYY-MM-DD format
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0");
-        const day = String(today.getDate()).padStart(2, "0");
-        const formattedDate = `${year}-${month}-${day}`;
+          // Add the form to the dialog
+          dialog.appendChild(form);
 
-        const form = document.querySelector("#bake-editor form#bake-form");
+          // Get today's date as default
+          const today = new Date();
+          const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+          form.date.value = formattedDate;
 
-        // Reset all form fields
-        form.reset();
-        form.date.value = formattedDate;
+          // Create photo container
+          const photoContainer = document.createElement("div");
+          photoContainer.id = "photo-container";
+          photoContainer.className = "bake-photos";
+          photoContainer.style.marginTop = "10px";
 
-        // Clear the bakeId data attribute
-        form.dataset.bakeId = "";
+          const submitButtonParent = form.querySelector('button[type="submit"]').parentNode;
+          form.insertBefore(photoContainer, submitButtonParent);
 
-        // Reset the submit button
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Save";
+          // Set up photo input change listener
+          const photoInput = form.querySelector('input[type="file"]');
+          photoInput.addEventListener("change", async (event) => {
+            await this.displaySelectedPhotos(Array.from(event.target.files));
+          });
 
-        const deleteButton = document.getElementById("delete-bake-button");
-        deleteButton.style.display = "none";
+          const deleteButton = form.querySelector("#delete-bake-button");
+          const submitButton = form.querySelector('button[type="submit"]');
 
-        // Clear photo container
-        const photoContainer = document.getElementById("photo-container");
-        if (photoContainer) {
-          photoContainer.innerHTML = "";
+          if (bake) {
+            // Editing existing bake
+            form.name.value = bake.name || "";
+            form.date.value = bake.date || "";
+            form.notes.value = bake.notes || "";
+            form.dataset.bakeId = bake.id;
+
+            // Show delete button
+            deleteButton.style.display = "inline-block";
+
+            // Display existing photos
+            this.displayExistingPhotos(bake, photoContainer);
+
+            submitButton.textContent = "Update";
+          } else {
+            // Creating new bake
+            form.dataset.bakeId = "";
+            deleteButton.style.display = "none";
+            submitButton.textContent = "Save";
+          }
+
+          dialog.showModal();
+
+          return form;
         }
-      }
 
-      // Initialize when the page loads
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          await initDB();
-          // Check if there are any existing bakes, if not, try to fetch and load sample data
-          const existingBakes = await getAllBakes();
-          if (existingBakes.length === 0) {
+        displayExistingPhotos(bake, photoContainer) {
+          if (!bake.photos || bake.photos.length === 0) {
+            return;
+          }
+
+          // Create a section for existing photos
+          const existingPhotosSection = document.createElement("div");
+          existingPhotosSection.className = "existing-photos-section";
+
+          const heading = document.createElement("h4");
+          heading.textContent = "Existing Photos";
+          heading.style.margin = "10px 0 5px 0";
+
+          existingPhotosSection.appendChild(heading);
+          photoContainer.appendChild(existingPhotosSection);
+
+          // Create a flexbox container for photos
+          const photoGrid = document.createElement("div");
+          photoGrid.className = "photo-grid";
+          photoGrid.style.display = "flex";
+          photoGrid.style.flexWrap = "wrap";
+          photoGrid.style.gap = "8px";
+          existingPhotosSection.appendChild(photoGrid);
+
+          // Add each photo to the grid
+          bake.photos.forEach((photo, index) => {
+            const photoContainer = document.createElement("div");
+            photoContainer.className = "photo-item";
+            photoContainer.style.position = "relative";
+
+            const img = document.createElement("img");
+            img.src = typeof photo === 'string' ? photo : (photo.data || '');
+            img.alt = (photo.name || `Photo ${index + 1}`);
+            img.title = (photo.name || `Photo ${index + 1}`);
+
+            const checkboxLabel = document.createElement("label");
+            checkboxLabel.className = "photo-checkbox-label";
+            checkboxLabel.style.position = "absolute";
+            checkboxLabel.style.top = "5px";
+            checkboxLabel.style.left = "5px";
+            checkboxLabel.style.zIndex = "10";
+            checkboxLabel.style.background = "rgba(255, 255, 255, 0.7)";
+            checkboxLabel.style.borderRadius = "3px";
+            checkboxLabel.style.padding = "2px";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = true;
+            checkbox.className = "keep-photo-checkbox";
+            checkbox.setAttribute("data-photo-index", index);
+            checkbox.id = `keep-photo-${index}`;
+            checkbox.style.margin = "0";
+
+            checkboxLabel.appendChild(checkbox);
+            photoContainer.appendChild(img);
+            photoContainer.appendChild(checkboxLabel);
+            photoGrid.appendChild(photoContainer);
+          });
+        }
+
+        async displaySelectedPhotos(files) {
+          if (files.length === 0) return;
+
+          const photoContainer = document.getElementById("photo-container");
+          if (!photoContainer) return;
+
+          let newPhotosSection = photoContainer.querySelector(".new-photos-section");
+          if (!newPhotosSection) {
+            newPhotosSection = document.createElement("div");
+            newPhotosSection.className = "new-photos-section";
+
+            const heading = document.createElement("h4");
+            heading.textContent = "New Photos";
+            heading.style.margin = "10px 0 5px 0";
+
+            newPhotosSection.appendChild(heading);
+            photoContainer.appendChild(newPhotosSection);
+          } else {
+            const heading = newPhotosSection.querySelector("h4");
+            newPhotosSection.innerHTML = "";
+            newPhotosSection.appendChild(heading);
+          }
+
+          const photoGrid = document.createElement("div");
+          photoGrid.className = "photo-grid";
+          photoGrid.style.display = "flex";
+          photoGrid.style.flexWrap = "wrap";
+          photoGrid.style.gap = "8px";
+          newPhotosSection.appendChild(photoGrid);
+
+          const loadingMsg = document.createElement("p");
+          loadingMsg.textContent = `Loading ${files.length} image(s)...`;
+          loadingMsg.style.margin = "5px 0";
+          newPhotosSection.insertBefore(loadingMsg, photoGrid);
+
+          for (const file of files) {
             try {
-              console.log("No existing bakes found, trying to fetch sample data...");
-              const response = await fetch("bakes.json");
-              if (response.ok) {
-                const sampleBakes = await response.json();
-                console.log(`Loaded ${sampleBakes.length} sample bakes from file`);
+              if (!file.type.startsWith("image/")) continue;
 
-                for (const bake of sampleBakes) {
-                  // Remove any id field to let the database auto-generate new ids
-                  delete bake.id;
-                  await addBake(bake);
-                }
+              let imageUrl;
+
+              if (file.type === "image/heic" || file.name.toLowerCase().endsWith(".heic")) {
+                const jpegBlob = await heic2any({
+                  blob: file,
+                  toType: "image/jpeg",
+                  quality: 0.8,
+                });
+                imageUrl = URL.createObjectURL(jpegBlob);
+              } else {
+                imageUrl = URL.createObjectURL(file);
               }
-            } catch (error) {
-              console.log("No sample bakes.json file available:", error);
+
+              const img = document.createElement("img");
+              img.src = imageUrl;
+              img.alt = file.name;
+              img.title = file.name;
+
+              photoGrid.appendChild(img);
+            } catch (err) {
+              console.error("Error previewing image:", err);
             }
           }
 
-          await displayBakes();
-
-          // Add form submission event listener
-          const form = document.querySelector("#bake-editor form#bake-form");
-          form.addEventListener("submit", handleFormSubmit);
-
-          // Set up photo handling and previews
-          setupPhotoHandling();
-
-          resetEditor();
-        } catch (error) {
-          console.error("Initialization error:", error);
+          if (loadingMsg && loadingMsg.parentNode) {
+            loadingMsg.remove();
+          }
         }
+      }
+
+      // Controller - handles user interactions and coordinates model/view
+      class BakeController {
+        constructor() {
+          this.model = new BakeModel();
+          this.view = new BakeView();
+        }
+
+        async init() {
+          try {
+            await this.model.init();
+
+            // Initial display of bakes
+            await this.index();
+
+            // Set up event listeners for buttons in the navigation
+            this.setupNavButtons();
+          } catch (error) {
+            console.error("Initialization error:", error);
+          }
+        }
+
+        setupNavButtons() {
+          // Add bake button
+          document.querySelector('button#bake-new')
+            .onclick = (e) => {
+              e.preventDefault();
+              this.new();
+            };
+
+          // Delete all button
+          document.querySelector('button#bake-clear-all')
+            .onclick = (e) => {
+              e.preventDefault();
+              this.clearAll();
+            };
+
+          // Export button
+          document.querySelector('button#bake-export')
+            .onclick = (e) => {
+              e.preventDefault();
+              this.export();
+            };
+
+          // Import button
+          document.querySelector('button#bake-import')
+            .onclick = (e) => {
+              e.preventDefault();
+              this.import();
+            };
+        }
+
+        async index() {
+          try {
+            const bakes = await this.model.getAll();
+            this.view.renderBakeList(bakes);
+
+            // Add click event to each bake element
+            document.querySelectorAll('.bake').forEach(bake => {
+              bake.addEventListener('click', (e) => {
+                const bakeId = parseInt(e.currentTarget.id.replace('bake-', ''));
+                this.show(bakeId);
+              });
+            });
+          } catch (error) {
+            console.error("Error displaying bakes:", error);
+          }
+        }
+
+        new() {
+          const form = this.view.showEditor();
+          form.addEventListener("submit", (e) => this.handleFormSubmit(e));
+
+          // Handle delete button since we're using cloned form
+          const deleteButton = form.querySelector("#delete-bake-button");
+          if (deleteButton) {
+            deleteButton.style.display = "none";
+          }
+        }
+
+        async show(bakeId) {
+          try {
+            const bake = await this.model.getById(bakeId);
+            if (bake) {
+              const form = this.view.showEditor(bake);
+              form.addEventListener("submit", (e) => this.handleFormSubmit(e));
+
+              // Set up delete button
+              const deleteButton = form.querySelector("#delete-bake-button");
+              if (deleteButton) {
+                deleteButton.addEventListener("click", () => this.delete(bakeId));
+              }
+            } else {
+              console.error(`Could not find bake #${bakeId}`);
+            }
+          } catch (error) {
+            console.error(`Error opening bake #${bakeId}:`, error);
+          }
+        }
+
+        async handleFormSubmit(event) {
+          event.preventDefault();
+
+          const form = event.target;
+          const submitButton = form.querySelector('button[type="submit"]');
+          const originalButtonText = submitButton.textContent;
+          submitButton.textContent = "Saving...";
+          submitButton.disabled = true;
+
+          const name = form.name.value.trim();
+          const date = form.date.value;
+          const notes = form.notes.value.trim();
+          const photos = Array.from(form.photos.files);
+          const bakeId = parseInt(form.dataset.bakeId) || null;
+
+          try {
+            let id;
+            if (bakeId) {
+              // Update existing bake
+              const existingBake = await this.model.getById(bakeId);
+
+              existingBake.name = name;
+              existingBake.date = date;
+              existingBake.notes = notes;
+              existingBake.updatedAt = new Date().toISOString();
+
+              // Handle photo deletions
+              const keepPhotoCheckboxes = form.querySelectorAll(".keep-photo-checkbox");
+              if (keepPhotoCheckboxes.length > 0 && existingBake.photos) {
+                const photosToKeep = [];
+
+                existingBake.photos.forEach((photo, index) => {
+                  const checkbox = Array.from(keepPhotoCheckboxes).find(
+                    cb => parseInt(cb.getAttribute("data-photo-index")) === index
+                  );
+
+                  if (checkbox && checkbox.checked) {
+                    photosToKeep.push(photo);
+                  }
+                });
+
+                existingBake.photos = photosToKeep;
+              }
+
+              // Add new photos
+              if (photos.length > 0) {
+                if (!existingBake.photos) {
+                  existingBake.photos = [];
+                }
+
+                // Process each photo and convert to data URLs
+                for (const file of photos) {
+                  try {
+                    if (!file.type.startsWith("image/")) continue;
+
+                    const reader = new FileReader();
+                    await new Promise((resolve, reject) => {
+                      reader.onload = () => {
+                        existingBake.photos.push({
+                          name: file.name,
+                          type: file.type,
+                          data: reader.result,
+                          addedAt: new Date().toISOString()
+                        });
+                        resolve();
+                      };
+                      reader.onerror = reject;
+                      reader.readAsDataURL(file);
+                    });
+                  } catch (err) {
+                    console.error("Error processing image:", err);
+                  }
+                }
+              }
+
+              await this.model.update(existingBake);
+              id = bakeId;
+
+              console.log(`Bake #${id} updated successfully!`);
+            } else {
+              // Create new bake
+              const bake = {
+                name,
+                date,
+                notes,
+                photos: [],
+                createdAt: new Date().toISOString(),
+              };
+
+              // Process photos for new bake
+              for (const file of photos) {
+                try {
+                  if (!file.type.startsWith("image/")) continue;
+
+                  const reader = new FileReader();
+                  await new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                      bake.photos.push({
+                        name: file.name,
+                        type: file.type,
+                        data: reader.result,
+                        addedAt: new Date().toISOString()
+                      });
+                      resolve();
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                  });
+                } catch (err) {
+                  console.error("Error processing image:", err);
+                }
+              }
+
+              id = await this.model.create(bake);
+
+              console.log(`Bake #${id} saved successfully!`);
+            }
+
+            // Close dialog and refresh list
+            document.querySelector("#bake-editor").close();
+            await this.index();
+          } catch (error) {
+            console.error("Error saving/updating bake:", error);
+          } finally {
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+          }
+        }
+
+        async delete(bakeId) {
+          if (!confirm(`Are you sure you want to delete bake #${bakeId}? This cannot be undone.`)) {
+            return;
+          }
+
+          try {
+            await this.model.delete(bakeId);
+            console.log(`Bake #${bakeId} deleted successfully!`);
+            document.querySelector("#bake-editor").close();
+            await this.index();
+          } catch (error) {
+            console.error(`Error deleting bake #${bakeId}:`, error);
+          }
+        }
+
+        async clearAll() {
+          if (!confirm("Are you sure you want to delete all bakes and images? This cannot be undone.")) {
+            return;
+          }
+
+          try {
+            await this.model.clearAll();
+            console.log("All bakes have been cleared successfully");
+            await this.index();
+          } catch (error) {
+            console.error("Error clearing bakes:", error);
+          }
+        }
+
+        async export() {
+          try {
+            const bakes = await this.model.getAll();
+
+            if (bakes.length === 0) {
+              console.log("No bakes to export");
+              return;
+            }
+
+            const dataStr = JSON.stringify(bakes, null, 2);
+            const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(dataBlob);
+
+            const date = new Date().toISOString().split("T")[0];
+            downloadLink.download = `sourdough-bakes-${date}.json`;
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(() => URL.revokeObjectURL(downloadLink.href), 100);
+
+            console.log(`Exported ${bakes.length} bakes successfully!`);
+          } catch (error) {
+            console.error("Error exporting bakes:", error);
+          }
+        }
+        async export() {
+          try {
+            const bakes = await this.model.getAll();
+
+            if (bakes.length === 0) {
+              console.log("No bakes to export");
+              return;
+            }
+
+            const dataStr = JSON.stringify(bakes, null, 2);
+            const dataBlob = new Blob([dataStr], { type: "application/json" });
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = URL.createObjectURL(dataBlob);
+
+            const date = new Date().toISOString().split("T")[0];
+            downloadLink.download = `sourdough-bakes-${date}.json`;
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(() => URL.revokeObjectURL(downloadLink.href), 100);
+
+            console.log(`Exported ${bakes.length} bakes successfully!`);
+          } catch (error) {
+            console.error("Error exporting bakes:", error);
+          }
+        }
+
+        async import() {
+          const importDialog = document.getElementById("import-dialog");
+          const importForm = document.getElementById("import-form");
+          const importFile = document.getElementById("import-file");
+
+          // Reset the form
+          importForm.reset();
+
+          // Show the dialog
+          importDialog.showModal();
+
+          // Handle form submission
+          importForm.onsubmit = async (e) => {
+            e.preventDefault();
+
+            if (!importFile.files || importFile.files.length === 0) {
+              alert("Please select a file to import.");
+              return;
+            }
+
+            const file = importFile.files[0];
+
+            if (file.type !== "application/json" && !file.name.endsWith('.json')) {
+              alert("Please select a JSON file.");
+              return;
+            }
+
+            try {
+              // Read the file content
+              const reader = new FileReader();
+              reader.onload = async (event) => {
+                try {
+                  const importedData = JSON.parse(event.target.result);
+
+                  if (!Array.isArray(importedData)) {
+                    throw new Error("Invalid data format. Expected an array of bakes.");
+                  }
+
+                  // Confirm replacement of existing data
+                  const existingBakes = await this.model.getAll();
+                  if (existingBakes.length > 0) {
+                    if (!confirm(`This will replace your existing ${existingBakes.length} bake(s) with ${importedData.length} imported bake(s). Continue?`)) {
+                      return;
+                    }
+
+                    // Clear existing data
+                    await this.model.clearAll();
+                  }
+
+                  // Import each bake
+                  let importCount = 0;
+                  for (const bake of importedData) {
+                    // Remove id to ensure we create new entries
+                    const { id, ...bakeData } = bake;
+
+                    // Ensure required fields exist
+                    if (!bakeData.date) {
+                      bakeData.date = new Date().toISOString().split('T')[0];
+                    }
+
+                    // Add creation timestamp if missing
+                    if (!bakeData.createdAt) {
+                      bakeData.createdAt = new Date().toISOString();
+                    }
+
+                    await this.model.create(bakeData);
+                    importCount++;
+                  }
+
+                  console.log(`Imported ${importCount} bakes successfully!`);
+                  importDialog.close();
+
+                  // Refresh the list
+                  await this.index();
+                } catch (error) {
+                  console.error("Import error:", error);
+                  alert(`Error importing data: ${error.message}`);
+                }
+              };
+
+              reader.readAsText(file);
+            } catch (error) {
+              console.error("Error reading file:", error);
+              alert(`Error reading file: ${error.message}`);
+            }
+          };
+        }
+
+
+      }
+
+      // Initialize the application when the DOM is ready
+      document.addEventListener("DOMContentLoaded", () => {
+        const bakeController = new BakeController();
+        bakeController.init();
       });
     </script>
   </body>
