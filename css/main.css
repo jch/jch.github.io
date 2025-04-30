@@ -1,16 +1,20 @@
 * {
-  line-height: 1.5em;
+  line-height: 1.6em;
 }
 
 body {
   max-width: 80ch;
-  padding: 1em;
+  padding: 2em;
   margin: auto;
 }
 
 h1,h2,h3 {
   line-height: initial;
 }
+
+li { margin-block: 0.25em; }
+a { text-decoration: none; }
+a, a:visited { color: #00d; }
 
 .highlight pre {
   border-left: 2px solid palegoldenrod;
@@ -44,19 +48,5 @@ h1,h2,h3 {
     color: snow;
   }
 
-  a {
-    color: aqua;
-  }
-
-  a:visited {
-    color: orchid;
-  }
-
-  a:hover, a:focus {
-    color: lightsalmon;
-  }
-
-  a:active {
-    color: lightcoral;
-  }
+  a, a:visited { color: #0df; }
 }

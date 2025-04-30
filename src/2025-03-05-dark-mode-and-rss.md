@@ -82,3 +82,16 @@ img:not([src*=".svg"]), video {
    filter: invert(100%);
 }
 ```
+
+## Update 2025-04-30
+
+```css
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: black;
+    color: snow;
+  }
+
+  a, a:visited { color: #0df; }
+}
+```
