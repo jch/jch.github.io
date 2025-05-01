@@ -6,10 +6,14 @@ body {
   max-width: 80ch;
   padding: 2em;
   margin: auto;
+  @media (min-width: 850px) {
+    font-size: 1.15rem; /* desktop readability */
+  }
 }
 
 h1,h2,h3 {
-  line-height: initial;
+  line-height: initial; /* stay with 1.6 at large viewports */
+  margin-block-end: 1rem; /* associate with text below */
 }
 
 li { margin-block: 0.25em; }
@@ -17,8 +21,8 @@ a { text-decoration: none; }
 a, a:visited { color: #00d; }
 
 .highlight pre {
-  border-left: 2px solid palegoldenrod;
-  padding-inline-start: 0.75em;
+  border-left: 1px solid palegoldenrod;
+  padding-inline-start: 1em;
 }
 
 .pl-c {color: darkgray;}
