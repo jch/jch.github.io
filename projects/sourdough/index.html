@@ -14,30 +14,46 @@
       rel="stylesheet"
     />
     <style>
+      /* Reset based on: https://www.joshwcomeau.com/css/custom-css-reset/ */
+      * { box-sizing: border-box; }
+      body { -webkit-font-smoothing: antialiased; }
+      img, picture, video, canvas, svg {
+        display: block;
+        max-width: 100%;
+      }
+      input, button, textarea, select, ::-webkit-file-upload-button, ::file-selector-button {
+        cursor: pointer;
+        font: inherit;
+      }
+      p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+      p { text-wrap: pretty; }
+      h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+
       body {
         font-family: "IBM Plex Mono", monospace;
-        margin: 0;
         padding: 1em;
         line-height: 1.6em;
         background-color: beige;
       }
 
-      h1,h2,h3 {
-        font-family: "Permanent Marker", cursive;
-        font-weight: 400;
-        font-style: normal;
-        margin: 0;
-      }
-
+      h1,h2,h3 { font-family: "Permanent Marker", cursive; }
+      h1 { font-size: 2.8em; }
+      h2 { font-size: 1.5em; }
       a { color: peru; }
-
-      input, textarea {
-        font-size: 16px;
-        box-sizing: border-box;
-        width: 100%;
-      }
-
       li { padding-block: 0.25em; }
+      input, textarea { width: 100%; }
+
+      button, ::-webkit-file-upload-button, ::file-selector-button {
+        background-color: beige;
+        display: flex;
+        place-items: center;
+        padding: 0.25em 1em;
+        border: 1px solid lightgray;
+        border-radius: 3px;
+        box-shadow: 0 2px 1px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        flex: 0 0 auto;
+      }
 
       .marker-bread::marker {
         content: "🍞 ";
@@ -95,7 +111,7 @@
         max-width: 60ch;
         margin: auto;
         text-wrap: pretty;
-        padding: 1.5em;
+        padding-inline: 1.5em;
 
         /* phones */
         @media (max-width: 767px) {
@@ -187,7 +203,7 @@
 
     <div class="grid">
       <section id="recipe">
-        <h2>Recipe</h2>
+        <h1 style="margin-block-start: 0.25em;">Recipe</h1>
         <p><a href="https://jch.github.io/posts/2025-04-29-sourdough.html">Jerry Cheung</a></p>
         <ul>
           <li class="marker-bread">200g levain</li>
@@ -205,7 +221,7 @@
           <li>Shape and rise until doubled. Optional stretch and fold, coil folds.</li>
           <li>Preheat oven for 60 minutes at 500F with pizza stone</li>
         </ol>
-        <h3>Notes</h3>
+        <h2>Notes</h2>
         <p>
           1:1 ratio water/flour for levain makes it easier to stir. Control
           sourness with how much existing starter to use.
@@ -234,7 +250,7 @@
           proof overnight.
         </p>
         <p>Thanks Sarah for sharing your starter with me!</p>
-        <h3>Schedules</h3>
+        <h2>Schedules</h2>
         <ul>
           <li class="marker-clock">Default: levain overnight, mix everything in the morning, bulk rise during work, bake after work.</li>
           <li class="marker-clock">Fast morning: levain overnight, autolyse overnight, mix levain with dough, bulk rise during work, bake after work.</li>
@@ -251,7 +267,7 @@
       </form>
 
       <form id="bake-form">
-        <p><input type="text" name="name" placeholder="name" /></p>
+        <p><input type="text" name="name" placeholder="name" autofocus /></p>
         <p><input type="date" name="date" /></p>
         <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
         <p>
@@ -548,6 +564,7 @@
           }
 
           dialog.showModal();
+          form.name.focus();
 
           return form;
         }
