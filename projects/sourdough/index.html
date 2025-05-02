@@ -55,13 +55,8 @@
         flex: 0 0 auto;
       }
 
-      .marker-bread::marker {
-        content: "🍞 ";
-      }
-
-      .marker-clock::marker {
-        content: "🕒 ";
-      }
+      .marker-bread::marker { content: "🍞 "; }
+      .marker-clock::marker { content: "🕒 "; }
 
       .grid {
         padding-block-start: 4em; /* nav buttons */
@@ -80,20 +75,12 @@
         gap: 1em;
         z-index: 999;
 
-        > a,
-        button {
-          border: 0;
-          padding: 0;
-          margin: 0;
-          background: none;
-          font-size: 1.3em;
-          text-decoration: none;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        > a, button {
           display: block;
-          cursor: pointer;
-
+          text-decoration: none;
           background-color: ivory;
           border-radius: 50%;
+          font-size: 1.5em;
           width: 2em;
           height: 2em;
           display: flex;
@@ -102,7 +89,6 @@
           padding: 0;
           border: 0;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
           flex: 0 0 auto;
         }
       }
