@@ -42,6 +42,13 @@
       a { color: peru; }
       li { padding-block: 0.25em; }
       input, textarea { width: 100%; }
+      .button, button, ::-webkit-file-upload-button, ::file-selector-button {
+        font-size: 0.8em;
+        border: 1px solid rgba(156, 163, 175, 0.5);
+        border-radius: 3px;
+        padding: 0.2em 1em;
+        box-shadow: hsl(218, 13%, 50%, 0.1) 0 -2px 0 0 inset; /* [box-shadow:hsl(218,_13%,_50%,_0.1)_0_-2px_0_0_inset] */
+      }
 
       .marker-bread::marker { content: "🍞 "; }
       .marker-clock::marker { content: "🕒 "; }
@@ -75,8 +82,6 @@
           align-items: center;
           justify-content: center;
           padding: 0;
-          border: 0;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           flex: 0 0 auto;
         }
       }
@@ -103,6 +108,7 @@
       dialog {
         width: 90%;
         max-width: 350px;
+        border: 1px solid gray;
       }
 
       .bake {
@@ -168,12 +174,12 @@
   </head>
   <body>
     <nav id="nav-site">
-    <a href="#recipe" title="recipe">🍞</a>
-    <button id="bake-new" title="add">+</button>
-    <button id="bake-export" title="export">💾</button>
-    <button id="bake-import" title="import">📂</button>
-    <button id="bake-clear-all" title="clear all">🗑️</button>
-  </nav>
+      <a href="#recipe" title="recipe" class="button">🍞</a>
+      <button id="bake-new" title="add">+</button>
+      <button id="bake-export" title="export">💾</button>
+      <button id="bake-import" title="import">📂</button>
+      <button id="bake-clear-all" title="clear all">🗑️</button>
+    </nav>
 
     <div class="grid">
       <section id="recipe">
