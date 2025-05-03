@@ -25,6 +25,12 @@
         cursor: pointer;
         font: inherit;
       }
+      button, ::-webkit-file-upload-button, ::file-selector-button {
+        border: 0;
+        background: none;
+        padding: 0;
+      }
+
       p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
       p { text-wrap: pretty; }
       h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
@@ -42,7 +48,7 @@
       a { color: peru; }
       li { padding-block: 0.25em; }
       input, textarea { width: 100%; }
-      .button, button, ::-webkit-file-upload-button, ::file-selector-button {
+      .button, ::-webkit-file-upload-button, ::file-selector-button {
         font-size: 0.8em;
         border: 1px solid rgba(156, 163, 175, 0.5);
         border-radius: 3px;
@@ -175,10 +181,10 @@
   <body>
     <nav id="nav-site">
       <a href="#recipe" title="recipe" class="button">🍞</a>
-      <button id="bake-new" title="add">+</button>
-      <button id="bake-export" title="export">💾</button>
-      <button id="bake-import" title="import">📂</button>
-      <button id="bake-clear-all" title="clear all">🗑️</button>
+      <button id="bake-new" title="add" class="button">+</button>
+      <button id="bake-export" title="export" class="button">💾</button>
+      <button id="bake-import" title="import" class="button">📂</button>
+      <button id="bake-clear-all" title="clear all" class="button">🗑️</button>
     </nav>
 
     <div class="grid">
@@ -242,27 +248,8 @@
     </div>
 
     <dialog id="bake-editor">
-      <form method="dialog" style="display: flex; justify-content: end;">
-        <button type="submit">close</button>
-      </form>
-
-      <form id="bake-form">
-        <p><input type="text" name="name" placeholder="name" autofocus /></p>
-        <p><input type="date" name="date" /></p>
-        <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
-        <p>
-          <input type="file" name="photos" accept="image/*" multiple capture />
-        </p>
-        <p style="display: flex; justify-content: space-between">
-          <button type="submit">Save</button>
-          <button
-            type="button"
-            id="delete-bake-button"
-            style="display: none; color: crimson"
-          >
-            Delete
-          </button>
-        </p>
+      <form method="dialog">
+        <button type="submit" style="" alt="close">x</button>
       </form>
     </dialog>
 
@@ -281,31 +268,28 @@
         <p><input type="text" name="name" placeholder="name" /></p>
         <p><input type="date" name="date" /></p>
         <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
+        <p><input type="file" name="photos" accept="image/*" multiple capture /></p>
         <p>
-          <input type="file" name="photos" accept="image/*" multiple capture />
-        </p>
-        <p style="display: flex; justify-content: space-between">
-          <button type="submit">Save</button>
-          <button type="button" id="delete-bake-button" style="display: none; color: crimson">
+          <button type="submit" class="button" style="background-color: beige">Save</button>
+          <button type="button" id="delete-bake-button" style="display: none; color: crimson; font-size: 0.7em;">
             Delete
           </button>
         </p>
       </form>
     </template>
 
-
     <dialog id="import-dialog">
-      <form method="dialog" style="display: flex; justify-content: end;">
-        <button type="submit">close</button>
+      <form method="dialog">
+        <button type="submit">x</button>
       </form>
 
-      <h3>Import Bakes</h3>
       <p>Choose a JSON file with bakes to import. This will replace all existing bakes.</p>
       <form id="import-form">
         <p><input type="file" id="import-file" accept=".json" required /></p>
-        <button type="submit" id="import-submit">Import</button>
+        <button type="submit" id="import-submit" class="button" style="background-color: beige;">Import</button>
       </form>
     </dialog>
+
     <script>
       // Model - handles data operations
       class BakeModel {
