@@ -6,6 +6,13 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>My computers 2025</title>
+  <link>https://jch.github.io/posts/2025-05-03-my-computers-2025.html</link>
+  <guid isPermaLink="false">posts/2025-05-03-my-computers-2025.html</guid>
+  <pubDate>Sat, 03 May 2025 00:00:00 -0700</pubDate>
+</item>
+
+<item>
   <title>Sourdough</title>
   <link>https://jch.github.io/posts/2025-04-29-sourdough.html</link>
   <guid isPermaLink="false">posts/2025-04-29-sourdough.html</guid>
