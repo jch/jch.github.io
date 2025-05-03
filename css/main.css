@@ -1,21 +1,25 @@
-* {
-  line-height: 1.6em;
-}
+* { line-height: 1.6em; }
+
+html { font-size: 17px; }
 
 body {
   max-width: 80ch;
   padding: 2em;
   margin: auto;
+  font-family: sans-serif;
   @media (min-width: 850px) {
     font-size: 1.15rem; /* desktop readability */
   }
 }
 
 h1,h2,h3 {
+  font-family: monospace;
   line-height: initial; /* stay with 1.6 at large viewports */
   margin-block-end: 1rem; /* associate with text below */
 }
 
+ul { padding-left: 1em; }
+ol { padding-left: 1.2em; }
 li { margin-block: 0.25em; }
 a { text-decoration: none; }
 a, a:visited { color: #00d; }
