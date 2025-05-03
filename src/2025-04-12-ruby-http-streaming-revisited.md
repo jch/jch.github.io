@@ -1,14 +1,13 @@
 # Ruby HTTP Streaming Revisited
 
 This morning I read "You might not need Websockets". It reminded me of
-the rack-stream gem 13 years ago to explore the HTTP Streaming API.
+the rack-stream gem I wrote 13 years ago to explore the HTTP Streaming API.
 
-Here's a list of changes since then I've noticed:
+Here are changes since I last looked at this topic:
 
 - Rail's ActionCable abstracts websocket connection management
 - Turbo streaming can work through websockets or eventsource
-- ActionController::Streaming can stream layouts earlier with
-some caveats around middlewares and layouts
+- ActionController::Streaming can stream layouts earlier with some caveats around middlewares and layouts
 - falcon is a newer async ruby web server
 
 ## Links

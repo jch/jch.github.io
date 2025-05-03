@@ -16,13 +16,12 @@
 
     <div class="markdown-heading"><h1 class="heading-element">Ruby HTTP Streaming Revisited</h1><a id="user-content-ruby-http-streaming-revisited" class="anchor" aria-label="Permalink: Ruby HTTP Streaming Revisited" href="#ruby-http-streaming-revisited"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>This morning I read "You might not need Websockets". It reminded me of
-the rack-stream gem 13 years ago to explore the HTTP Streaming API.</p>
-<p>Here's a list of changes since then I've noticed:</p>
+the rack-stream gem I wrote 13 years ago to explore the HTTP Streaming API.</p>
+<p>Here are changes since I last looked at this topic:</p>
 <ul>
 <li>Rail's ActionCable abstracts websocket connection management</li>
 <li>Turbo streaming can work through websockets or eventsource</li>
-<li>ActionController::Streaming can stream layouts earlier with
-some caveats around middlewares and layouts</li>
+<li>ActionController::Streaming can stream layouts earlier with some caveats around middlewares and layouts</li>
 <li>falcon is a newer async ruby web server</li>
 </ul>
 <div class="markdown-heading"><h2 class="heading-element">Links</h2><a id="user-content-links" class="anchor" aria-label="Permalink: Links" href="#links"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
