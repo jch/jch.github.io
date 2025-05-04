@@ -1,1 +1,16 @@
-Sitemap: http://www.whatcodecraves.com/sitemap_index.xml.gz
+User-agent: *
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: CCbot
+Disallow: /
+User-agent: FacebookBot
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: GPTBot
+Disallow: /
+User-agent: PiplBot
+Disallow: /
