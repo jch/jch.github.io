@@ -12,8 +12,8 @@ body {
   }
 }
 
-h1,h2,h3 {
-  font-family: monospace;
+h1,h2,h3,h4,h5,h6 {
+  font-family: serif;
   line-height: initial; /* stay with 1.6 at large viewports */
   margin-block-end: 1rem; /* associate with text below */
 }
