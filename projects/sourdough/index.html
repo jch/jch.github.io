@@ -39,6 +39,9 @@
         font-family: "IBM Plex Mono", monospace;
         padding: 1em;
         line-height: 1.6em;
+      }
+
+      .bg-beige {
         background-color: beige;
       }
 
@@ -179,7 +182,7 @@
       }
     </style>
   </head>
-  <body>
+  <body class="bg-beige">
     <nav id="nav-site">
       <a href="#recipe" title="recipe" class="button">🍞</a>
       <button id="bake-new" title="add" class="button">+</button>
@@ -271,7 +274,7 @@
         <p><textarea name="notes" rows="5" placeholder="notes"></textarea></p>
         <p><input type="file" name="photos" accept="image/*" multiple capture /></p>
         <p>
-          <button type="submit" class="button" style="background-color: beige">Save</button>
+          <button type="submit" class="button bg-beige">Save</button>
           <button type="button" id="delete-bake-button" style="display: none; color: crimson; font-size: 0.7em;">
             Delete
           </button>
@@ -287,7 +290,7 @@
       <p>Choose a JSON file with bakes to import. This will replace all existing bakes.</p>
       <form id="import-form">
         <p><input type="file" id="import-file" accept=".json" required /></p>
-        <button type="submit" id="import-submit" class="button" style="background-color: beige;">Import</button>
+        <button type="submit" id="import-submit" class="button bg-beige">Import</button>
       </form>
     </dialog>
 
