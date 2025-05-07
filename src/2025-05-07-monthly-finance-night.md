@@ -18,7 +18,7 @@ Transfers between accounts are categorized transfers and cancel each other out. 
 
 I keep track of estimated income tax payments, but don't include them in our spending. I want to know how much money we need to cover our expenses, but income tax varies with income. No income, no income tax either. I do include property tax in our spending because that needs to be paid even if we don't earn income.
 
-I track investment dividend dates to help manage our cash flow, making sure we have enough cash on hand for a year of expenses. Cash beyond a year's expenses goes towards a savings goal like retirement or education.
+I track investment dividend dates to help manage our cash flow, making sure we have enough cash on hand for a year of expenses. Cash beyond a year's expenses goes towards investments.
 
 I don't try to distribute big expenses across months. For example, home property taxes and insurance is paid twice a year. It makes those months look heavy in spending, but I'm more interested in 1-year spend, or running 12-month average spending. I don't think it's useful to compare spending month to month, preferring to look at the bigger annual picture (2023 vs 2024).
 
