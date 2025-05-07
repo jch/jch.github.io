@@ -2,7 +2,7 @@
 
 I check our finances on the first of the month. It's frequent enough for details to be easy to look up, but infrequent enough to be on mind. I use PersonalCapital to aggregate spending across different accounts. I like to export to CSV because account syncing breaks occasionaly or I fat-finger something and lose history. I use [an app I made](https://jch.app) to review spending.
 
-* Open up doc with monthly notes
+* Open up doc with monthly notes, sorted newest first
   * Recurring items: pay things not on autopay, one time payments
   * Last month: follow up on notes. e.g. Did locksmith get reimbursed?
   * Current month: write down dates and notes for anything that needs referencing. e.g. 4/1 paid estimated tax $X,XXX
@@ -10,7 +10,7 @@ I check our finances on the first of the month. It's frequent enough for details
 * Export last month's transactions from PersonalCapital, and import it to [jch.app](https://jch.app)
 * Categorize transactions, sort / filter / skim for large transactions
 
-My guess is this takes me roughly 10 minutes. I login to accounts as needed, fix miscategorized transactions, and squint to see if anything weird stands out.
+This takes me ~10 minutes for most months, longer in January because I like to review the previous year, and longer in April for filing taxes. I login to accounts as needed, fix miscategorized transactions, and squint to see if anything weird stands out.
 
 For spending categories, I use a few broad categories rather than many granular ones; 'Home' includes mortgage, HOA dues, repairs, property taxes. 'Utilities' includes phone, internet, water, trash, electricity. Last year, the top 3 categories accounted for 75% of our spending, the top 5 for 85%. It's easier to remember fewer categories and consistently label things. Outside of the top categories, there's a 'General Merchandise' category for any one off things. If an expense could be multiple categories like a rental car (Automotive, Travel), I just pick one. Over time, the categories may change (Automotive and Hobby merged to Automotive), but they're similar enough in recent years to highlight big year-over-year changes. If I'm looking for something specific within a broad category, I can filter then search (Utilities, search for T-mobile).
 
