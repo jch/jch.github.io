@@ -1,6 +1,6 @@
 # Monthly finance night
 
-A tidy home is easier to clean. If there are legos all over the floor, I have to pick it up before I can vacuum (or get stabbed walking around at night). If there are dishes on the table, they need to be loaded in the dishwasher before that dried pesto stain can be wiped off.
+A tidy home is easier to clean. If there are legos all over the floor, I have to pick them up before I can vacuum (or get stabbed walking around). If there are dishes on the table, they need to be loaded in the dishwasher before that dried pesto stain can be wiped off.
 
 Similar to physically tiding up, I like to keep our finances tidy too. But unlike the necessary daily tidy in my home with two kids and a dog, the financial tidy happens once a month and takes around 10 minutes most months. I follow up on long running things, fix miscategorized transactions, and squint to see if anything weird stands out.
 
