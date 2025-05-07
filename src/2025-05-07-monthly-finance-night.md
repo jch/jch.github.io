@@ -22,4 +22,4 @@ I track investment dividend dates to help manage our cash flow, making sure we h
 
 I don't try to distribute big expenses across months. For example, home property taxes and insurance is paid twice a year. It makes those months look heavy in spending, but I'm more interested in 1-year spend, or running 12-month average spending. I don't think it's useful to compare spending month to month, preferring to look at the bigger annual picture (2023 vs 2024).
 
-I like to keep things simple, and this has worked well for me over the years. I have some other notes on personal finance at [jch/personal-finance](https://github.com/jch/personal-finance).
+Whatever the software and tools, keeping a monthly schedule has worked well for me. I keep some other notes on personal finance at [jch/personal-finance](https://github.com/jch/personal-finance).
