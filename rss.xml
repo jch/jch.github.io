@@ -6,6 +6,20 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>HENRY's Guide to Taxes, Loans, and Cars</title>
+  <link>https://jch.github.io/posts/2025-05-14-henrys-guide-taxes-loans-cars.html</link>
+  <guid isPermaLink="false">posts/2025-05-14-henrys-guide-taxes-loans-cars.html</guid>
+  <pubDate>Wed, 14 May 2025 00:00:00 -0700</pubDate>
+</item>
+
+<item>
+  <title>CSS Fragmentation issues with multi column</title>
+  <link>https://jch.github.io/posts/2025-05-08-css-multi-column-issues.html</link>
+  <guid isPermaLink="false">posts/2025-05-08-css-multi-column-issues.html</guid>
+  <pubDate>Thu, 08 May 2025 00:00:00 -0700</pubDate>
+</item>
+
+<item>
   <title>Monthly finance night</title>
   <link>https://jch.github.io/posts/2025-05-07-monthly-finance-night.html</link>
   <guid isPermaLink="false">posts/2025-05-07-monthly-finance-night.html</guid>
