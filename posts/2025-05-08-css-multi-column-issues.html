@@ -16,6 +16,7 @@
 
     <div class="markdown-heading"><h1 class="heading-element">CSS Fragmentation issues with multi column</h1><a id="user-content-css-fragmentation-issues-with-multi-column" class="anchor" aria-label="Permalink: CSS Fragmentation issues with multi column" href="#css-fragmentation-issues-with-multi-column"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>After reading <a href="https://www.smashingmagazine.com/2019/01/css-multiple-column-layout-multicol/" rel="nofollow">When and How to Use CSS Multi-Column Layout</a>, I tried to use it for a masonry layout for the <a href="https://jch.app" rel="nofollow">jch.app</a> dashboard.</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/multi-col-dash.png"><img src="/images/multi-col-dash.png" alt="" style="max-width: 100%;"></a></p>
 <p>While there is a <code>grid-template-rows: masonry</code>, it is not widely available in 2025. I wanted a single column of items on mobile, and 300px wide columns added as the viewport allowed. Items would have auto width and height, and allow the columns to determine width:</p>
 <div class="highlight highlight-source-css"><pre><span class="pl-kos">#</span><span class="pl-c1">container</span> {
   <span class="pl-c1">columns</span><span class="pl-kos">:</span> <span class="pl-c1">300<span class="pl-smi">px</span></span>;

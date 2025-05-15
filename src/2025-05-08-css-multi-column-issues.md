@@ -2,6 +2,8 @@
 
 After reading [When and How to Use CSS Multi-Column Layout](https://www.smashingmagazine.com/2019/01/css-multiple-column-layout-multicol/), I tried to use it for a masonry layout for the [jch.app](https://jch.app) dashboard.
 
+![](/images/multi-col-dash.png)
+
 While there is a `grid-template-rows: masonry`, it is not widely available in 2025. I wanted a single column of items on mobile, and 300px wide columns added as the viewport allowed. Items would have auto width and height, and allow the columns to determine width:
 
 ```css
