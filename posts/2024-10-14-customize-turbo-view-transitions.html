@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Customizing Turbo lifecycle events: iOS swipe view transitions</h1><a id="user-content-customizing-turbo-lifecycle-events-ios-swipe-view-transitions" class="anchor" aria-label="Permalink: Customizing Turbo lifecycle events: iOS swipe view transitions" href="#customizing-turbo-lifecycle-events-ios-swipe-view-transitions"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>View transitions became available in Safari 18. Turbo had support for this, and the default experience is great in other browsers. There's a small hiccup that the default iOS and Safari browser back/forward swipe navigation animations cannot be disabled, leading to a double animation:</p>
+<p><a target="_blank" rel="noopener noreferrer" href="/images/view-transition-double.gif"><img src="/images/view-transition-double.gif" alt="" style="max-width: 100%;"></a></p>
+<p>The intuitive turbo lifecycle callback to fix this would be to customize <code>turbo:before-render</code>. However, that's too late in the lifecycle. Instead, the fix was to conditionally disable view transitions on swipe gesture navigation by removing the view-transition meta tag in <code>turbo:before-cache</code>. Source and demo up at <a href="https://jch.github.io/turbo-cancel-view-transition/" rel="nofollow">https://jch.github.io/turbo-cancel-view-transition/</a>
+Safari has the least friendly progressive web app experience, but I'm using it for my personal project. Hope this helps you in yours.</p>
+  </body>
+</html>

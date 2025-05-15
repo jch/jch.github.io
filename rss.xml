@@ -90,6 +90,27 @@
 </item>
 
 <item>
+  <title>Customizing Turbo lifecycle events: iOS swipe view transitions</title>
+  <link>https://jch.github.io/posts/2024-10-14-customize-turbo-view-transitions.html</link>
+  <guid isPermaLink="false">posts/2024-10-14-customize-turbo-view-transitions.html</guid>
+  <pubDate>Mon, 14 Oct 2024 00:00:00 -0700</pubDate>
+</item>
+
+<item>
+  <title>Bake-off: It's Performance Week!</title>
+  <link>https://jch.github.io/posts/2024-09-14-bake-off-rails-performance-week.html</link>
+  <guid isPermaLink="false">posts/2024-09-14-bake-off-rails-performance-week.html</guid>
+  <pubDate>Sat, 14 Sep 2024 00:00:00 -0700</pubDate>
+</item>
+
+<item>
+  <title>Personal project deployment is both harder than easier than ever</title>
+  <link>https://jch.github.io/posts/2024-09-01-personal-project-deploy-is-harder-and-easier.html</link>
+  <guid isPermaLink="false">posts/2024-09-01-personal-project-deploy-is-harder-and-easier.html</guid>
+  <pubDate>Sun, 01 Sep 2024 00:00:00 -0700</pubDate>
+</item>
+
+<item>
   <title>Saving $1,000 in interest using money market funds to pay bills</title>
   <link>https://jch.github.io/posts/2024-08-19-saving-1000-interest-using-money-market-funds-for-bills.html</link>
   <guid isPermaLink="false">posts/2024-08-19-saving-1000-interest-using-money-market-funds-for-bills.html</guid>
@@ -101,6 +122,20 @@
   <link>https://jch.github.io/posts/2024-08-15-ruby-timezones-and-testing.html</link>
   <guid isPermaLink="false">posts/2024-08-15-ruby-timezones-and-testing.html</guid>
   <pubDate>Thu, 15 Aug 2024 00:00:00 -0700</pubDate>
+</item>
+
+<item>
+  <title>Managing Rails client side navigation state</title>
+  <link>https://jch.github.io/posts/2024-08-01-rails-manage-client-side-navigation-state.html</link>
+  <guid isPermaLink="false">posts/2024-08-01-rails-manage-client-side-navigation-state.html</guid>
+  <pubDate>Thu, 01 Aug 2024 00:00:00 -0700</pubDate>
+</item>
+
+<item>
+  <title>Skip tailwindcss build if already running</title>
+  <link>https://jch.github.io/posts/2024-05-14-skip-tailwind-if-running.html</link>
+  <guid isPermaLink="false">posts/2024-05-14-skip-tailwind-if-running.html</guid>
+  <pubDate>Tue, 14 May 2024 00:00:00 -0700</pubDate>
 </item>
 
 <item>

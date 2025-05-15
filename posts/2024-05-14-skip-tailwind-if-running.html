@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Skip tailwindcss build if already running</h1><a id="user-content-skip-tailwindcss-build-if-already-running" class="anchor" aria-label="Permalink: Skip tailwindcss build if already running" href="#skip-tailwindcss-build-if-already-running"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>This speeds up tests and other rake tasks. Not a big savings (~1s on my tiny app), but takes out the extra tailwind build step if it's already running.</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># end of Rakefile</span>
+<span class="pl-k">if</span> <span class="pl-v">Rails</span><span class="pl-kos">.</span><span class="pl-en">env</span><span class="pl-kos">.</span><span class="pl-en">test?</span> &amp;&amp; <span class="pl-c1">IO</span><span class="pl-kos">.</span><span class="pl-en">popen</span><span class="pl-kos">(</span><span class="pl-s">'ps'</span><span class="pl-kos">)</span><span class="pl-kos">.</span><span class="pl-en">readlines</span><span class="pl-kos">.</span><span class="pl-en">any?</span> <span class="pl-kos">{</span>|<span class="pl-s1">l</span>| <span class="pl-s1">l</span><span class="pl-kos">.</span><span class="pl-en">include?</span><span class="pl-kos">(</span><span class="pl-s">'tailwindcss -i'</span><span class="pl-kos">)</span><span class="pl-kos">}</span>
+  <span class="pl-en">puts</span> <span class="pl-s">"Rakefile: tailwindcss:watch running, skipping tailwindcss:build"</span>
+  <span class="pl-v">Rake</span>::<span class="pl-v">Task</span><span class="pl-kos">[</span><span class="pl-s">"test:prepare"</span><span class="pl-kos">]</span><span class="pl-kos">.</span><span class="pl-en">prerequisites</span><span class="pl-kos">.</span><span class="pl-en">delete</span><span class="pl-kos">(</span><span class="pl-s">"tailwindcss:build"</span><span class="pl-kos">)</span>
+<span class="pl-k">end</span></pre></div>
+  </body>
+</html>

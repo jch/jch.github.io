@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Managing Rails client side navigation state</h1><a id="user-content-managing-rails-client-side-navigation-state" class="anchor" aria-label="Permalink: Managing Rails client side navigation state" href="#managing-rails-client-side-navigation-state"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>tl;dr: Over thought it. Session made it obvious and simple</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-v">HoldingsController</span> &lt; <span class="pl-v">ApplicationController</span>
+  <span class="pl-k">def</span> <span class="pl-en">index</span>
+    <span class="pl-en">session</span><span class="pl-kos">[</span><span class="pl-pds">:period</span><span class="pl-kos">]</span> <span class="pl-c1">=</span> <span class="pl-en">params</span><span class="pl-kos">[</span><span class="pl-pds">:period</span><span class="pl-kos">]</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
+
+<span class="pl-c"># in the navigation partial</span>
+&lt;%= <span class="pl-en">link_to</span> <span class="pl-s">"Holdings"</span><span class="pl-kos">,</span> <span class="pl-en">holdings_path</span><span class="pl-kos">(</span><span class="pl-pds">period</span>: <span class="pl-en">session</span><span class="pl-kos">[</span><span class="pl-pds">:period</span><span class="pl-kos">]</span><span class="pl-kos">)</span> %&gt;</pre></div>
+<p>In my app, url path params maintains navigation state. For example, to see investment performance of holdings, there are links that look like:</p>
+<pre><code>/holdings              # 1 day performance by default
+/holdings?period=ytd   # year to date performance
+/holdings?period=all   # all time performance
+</code></pre>
+<p>This is straightforward within the Holdings#index action, but the global navigation always points to /holdings so if I navigate to another page and click on the "Holdings", it'll default back to 1 day performance instead of remembering that the user has previously selected YTD or ALL.</p>
+<p>What's have others done to keep this state globally? What makes the most sense from a UX perspective?</p>
+<div class="markdown-heading"><h2 class="heading-element">Persist in the database</h2><a id="user-content-persist-in-the-database" class="anchor" aria-label="Permalink: Persist in the database" href="#persist-in-the-database"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Attach this as a property of current user, persist / restore across requests. This feels right to me if the state is important across different instances of the app. If I choose YTD performance on my phone, then open the app on the web, I would expect my previous choice to stick. In this sense, it feels like a global user preference that's saved across all clients.</p>
+<div class="markdown-heading"><h2 class="heading-element">Persist in a session</h2><a id="user-content-persist-in-a-session" class="anchor" aria-label="Permalink: Persist in a session" href="#persist-in-a-session"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>This seems like a better abstraction than attaching it to user. If using cookie stores, users would go back to the default per client. If using database store, it'd be all clients.</p>
+<div class="markdown-heading"><h2 class="heading-element">Persist in localStorage</h2><a id="user-content-persist-in-localstorage" class="anchor" aria-label="Permalink: Persist in localStorage" href="#persist-in-localstorage"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Do it all client side. Per client. Persist and restore from stimulus. I like this one the least because it feels complex without additional benefit.</p>
+<p><a href="https://jch.app/demo" rel="nofollow">https://jch.app/demo</a> is a live demo.</p>
+  </body>
+</html>
