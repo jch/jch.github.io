@@ -6,6 +6,13 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>Fugit gem: defining recurring tasks for background jobs</title>
+  <link>https://jch.github.io/posts/2025-06-24-fugit-recurring-tasks.html</link>
+  <guid isPermaLink="false">posts/2025-06-24-fugit-recurring-tasks.html</guid>
+  <pubDate>Tue, 24 Jun 2025 00:00:00 -0700</pubDate>
+</item>
+
+<item>
   <title>HENRY's Guide to Taxes, Loans, and Cars</title>
   <link>https://jch.github.io/posts/2025-05-14-henrys-guide-taxes-loans-cars.html</link>
   <guid isPermaLink="false">posts/2025-05-14-henrys-guide-taxes-loans-cars.html</guid>

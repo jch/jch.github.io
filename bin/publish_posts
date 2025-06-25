@@ -1,11 +1,8 @@
 #!/bin/bash
 set -e
 
-if stat --version | grep GNU >/dev/null; then
-  echo "last published at $(stat --dereference --format='%y' $output_dir)"
-else
-  echo "last published at $(stat -f '%Sm' $output_dir)"
-fi
+echo "last published at $(stat -f '%Sm' $output_dir)" || \
+echo "last published at $(stat --dereference --format='%y' $output_dir)"
 
 # publish files newer than the last time $output_dir was modified. Publish more
 # recent entries first in case API fails

@@ -1,4 +1,4 @@
-Fugit gem: defining recurring tasks for background jobs
+# Fugit gem: defining recurring tasks for background jobs
 
 [Fugit](https://github.com/floraison/fugit) parses cron syntax and various time and date strings. It is a dependency of solid_queue and good_job. I didn't notice it at first because I was using cron syntax directly for my [side project](https://jch.app).
 
@@ -18,3 +18,5 @@ The readme has a lot of other examples, but the fun one that stood out to me was
 Fugit follows this specification.
 
 Anyways, thought I'd share this long-running stable and neat gem that's used by a lot of the popular ruby scheduling libs.
+
+[r/rails](https://www.reddit.com/r/ruby/comments/1ktrd7d/fugit_gem_defining_recurring_tasks_for_background/)
