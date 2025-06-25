@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Fugit gem: defining recurring tasks for background jobs</h1><a id="user-content-fugit-gem-defining-recurring-tasks-for-background-jobs" class="anchor" aria-label="Permalink: Fugit gem: defining recurring tasks for background jobs" href="#fugit-gem-defining-recurring-tasks-for-background-jobs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><a href="https://github.com/floraison/fugit">Fugit</a> parses cron syntax and various time and date strings. It is a dependency of solid_queue and good_job. I didn't notice it at first because I was using cron syntax directly for my <a href="https://jch.app" rel="nofollow">side project</a>.</p>
+<p>Personally, I don't mind cron syntax, but it turns out fugit also supports time zones. I have some tasks that run on Eastern time based on the stock market. Previously, I had two separate cron entries for daylight savings time. But now, fugit simplifies it to <code>US/Eastern</code>.</p>
+<p>The readme has a lot of other examples, but the fun one that stood out to me was <a href="https://github.com/floraison/fugit?tab=readme-ov-file#the-first-monday-of-the-month">"the first Monday of the month"</a>:</p>
+<blockquote>
+<p>Fugit tries to follow the man 5 crontab documentation.</p>
+</blockquote>
+<blockquote>
+<p>There is a surprising thing about this canon, all the columns are joined by ANDs, except for monthday and weekday which are joined together by OR if they are both set (they are not *).</p>
+</blockquote>
+<blockquote>
+<p>Many people (me included) are surprised when they try to specify "at 05:00 on the first Monday of the month" as 0 5 1-7 * 1 or 0 5 1-7 * mon and the results are off.</p>
+</blockquote>
+<blockquote>
+<p>The man page says:</p>
+</blockquote>
+<blockquote>
+<p>Note: The day of a command's execution can be specified by two fields -- day of month, and day of week. If both fields are restricted (ie, are not *), the command will be run when either field matches the current time. For example, ``30 4 1,15 * 5'' would cause a command to be run at 4:30 am on the 1st and 15th of each month, plus every Friday.
+Fugit follows this specification.</p>
+</blockquote>
+<p>Anyways, thought I'd share this long-running stable and neat gem that's used by a lot of the popular ruby scheduling libs.</p>
+<p><a href="https://www.reddit.com/r/ruby/comments/1ktrd7d/fugit_gem_defining_recurring_tasks_for_background/" rel="nofollow">r/rails</a></p>
+  </body>
+</html>
