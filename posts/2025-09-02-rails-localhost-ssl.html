@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">SSL for local Rails development</h1><a id="user-content-ssl-for-local-rails-development" class="anchor" aria-label="Permalink: SSL for local Rails development" href="#ssl-for-local-rails-development"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Works with <a href="https://localhost:3000" rel="nofollow">https://localhost:3000</a> or <a href="https://custom-hostname.local" rel="nofollow">https://custom-hostname.local</a>
+</li>
+<li>No insecure site warning because certificated is signed by a system trusted CA</li>
+</ul>
+<p>My goal was to test <a href="https://jch.app" rel="nofollow">jch.app</a> serviceworkers
+with different devices on the same network. While localhost is an exception allowed for serviceworkers,
+all other origins require a no-warning https connection. This meant the certificate
+must be signed with a system trusted CA.</p>
+<p>Fortunately, <code>mkcert</code> does exactly that. Some additional fiddling was
+needed to configure <code>puma</code> with command line options to reference the certs
+and listen for SSL connections. No additional gems,
+or configuration changes were necessary. Tested on macOS 15.6.1,
+puma 6.6.0, mkcert 1.4.4, and rails 8.0.2.</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"><span class="pl-c">#</span> Run from rails root</span>
+<span class="pl-c"><span class="pl-c">#</span> Create locally trusted certificate https://github.com/FiloSottile/mkcert</span>
+$ mkcert -install
+
+<span class="pl-c"><span class="pl-c">#</span> Used `sudo scutil --set LocalHostName` to set local hostname to `roboplan.local`</span>
+$ mkcert roboplan.local <span class="pl-s"><span class="pl-pds">"</span>*.roboplan.local<span class="pl-pds">"</span></span> roboplan.local localhost 127.0.0.1 ::1
+
+<span class="pl-c"><span class="pl-c">#</span> Rename to avoid shell escaping later</span>
+$ mkdir -p config/certs
+$ mv roboplan.local+5-key.pem config/certs/roboplan.local-key.pem
+$ mv roboplan.local+5.pem config/certs/roboplan.local.pem
+
+<span class="pl-c"><span class="pl-c">#</span> Added in bin/dev</span>
+$ bin/rails server -b <span class="pl-s"><span class="pl-pds">'</span>ssl://0.0.0.0?key=config/certs/roboplan.local-key.pem&amp;cert=config/certs/roboplan.local.pem<span class="pl-pds">'</span></span></pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Details</h2><a id="user-content-details" class="anchor" aria-label="Permalink: Details" href="#details"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Puma and Falcon support self-signed certificates with <code>localhost</code> gem, but
+the defaults did not add a system trusted CA causing certificate warnings
+that made serviceworkers unavailable.</p>
+<p>Additional notes:</p>
+<ul>
+<li>
+<code>mkcert</code> is a cross platform tool to install a system trusted CA, and use that to sign certs that won't give the insecure warning</li>
+<li>Rails will require <code>localhost</code> the development env without an explicit require</li>
+<li>
+<code>puma</code> reads from <code>config/puma/development.rb</code>, but does not evaluate the global <code>config/puma.rb</code>
+</li>
+<li>
+<code>localhost</code> setup uses <code>bake localhost:install</code>, but does not list <code>bake</code> as a dependency</li>
+<li>
+<code>puma</code> config <code>ssl_bind</code> still requires starting puma or rails server with <code>-b 'ssl://localhost:9292'</code> to handle SSL. Because of this, I preferred keeping all the config in one place as a CLI flag.</li>
+<li>
+<code>puma</code> docs start server with <code>puma</code>, but this loses the logging defaults I prefer with <code>rails server</code>
+</li>
+<li>
+<code>bin/setup</code> updated with <code>mkcert</code> steps for repeatability</li>
+<li>development certificates added to gitignore since they'll be specific to each host</li>
+</ul>
+<blockquote>
+<p>Service workers are only available in secure contexts: this means that their document is served over HTTPS, although browsers also treat <a href="http://localhost" rel="nofollow">http://localhost</a> as a secure context, to facilitate local development. <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API" rel="nofollow">MDN Service Worker API</a></p>
+</blockquote>
+<div class="markdown-heading"><h2 class="heading-element">Sources</h2><a id="user-content-sources" class="anchor" aria-label="Permalink: Sources" href="#sources"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li><a href="https://github.com/FiloSottile/mkcert">https://github.com/FiloSottile/mkcert</a></li>
+<li>
+<a href="https://github.com/puma/puma/blob/6-6-stable/README.md#self-signed-ssl-certificates-via-the-localhost-gem-for-development-use">https://github.com/puma/puma/blob/6-6-stable/README.md#self-signed-ssl-certificates-via-the-localhost-gem-for-development-use</a> puma localhost documentation</li>
+<li>
+<a href="https://github.com/puma/puma/releases/tag/v5.6.0">https://github.com/puma/puma/releases/tag/v5.6.0</a> Support localhost integration in ssl_bind</li>
+<li>
+<a href="https://github.com/puma/puma/releases/tag/v5.5.0">https://github.com/puma/puma/releases/tag/v5.5.0</a> new integration with the localhost gem</li>
+<li>
+<a href="https://github.com/basecamp/thruster/pull/40">https://github.com/basecamp/thruster/pull/40</a> TLS_LOCAL support is promising, but also fine to leave thruster focused on production</li>
+<li>
+<a href="https://gist.github.com/chaffeqa/d6c6ac491d3e1824a2980607d796e4a8">https://gist.github.com/chaffeqa/d6c6ac491d3e1824a2980607d796e4a8</a> creates cert dynamically in config/puma.rb and installs to system across platforms. This had the <code>ssl_bind</code> config, but was missing the <code>-b ssl://0.0.0.0:3001</code>. I found mkcert first, but this implementation may be easier to use with <code>bin/setup</code> and version control.</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API" rel="nofollow">https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API</a></li>
+</ul>
+  </body>
+</html>
