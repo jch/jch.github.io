@@ -1,6 +1,6 @@
 # Self hosting Rails on a Mac
 
-https://jch.app now runs on a 2016 Macbook Pro.
+https://jch.app now runs on a 2016 Macbook Pro with i7-6920HQ CPU @ 2.90GHz, 16GB DDR3 ram, and 2TB SSD.
 
 I feel warm and fuzzy keeping this 8 year old mac out of the e-waste bin. The app is low traffic, but it nonetheless strained the $7/month Digital Ocean VPS. While it's no Apple silicon or raspberry pi in efficiency, the laptop draws a modest 15-20W, translating to ~$3/month at my utility rates. This generation mac had 4 thunderbolt ports, so I also bought a $10 thunderbolt to ethernet adapter.
 
