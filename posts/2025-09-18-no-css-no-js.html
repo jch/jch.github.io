@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">No CSS, No Javascript. Longevity on the web.</h1><a id="user-content-no-css-no-javascript-longevity-on-the-web" class="anchor" aria-label="Permalink: No CSS, No Javascript. Longevity on the web." href="#no-css-no-javascript-longevity-on-the-web"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Remember <a href="https://csszengarden.com" rel="nofollow">CSS Zen Garden</a>? It started out as a site to allow designers to showcase how semantics (HTML) and visual design (CSS) can be separated. I remember being blown away by the early designs, but then being disappointed by the mess of relative and absolute positioning.</p>
+<p>Remember <a href="https://jquery.com" rel="nofollow">jQuery</a>? The interface was so simple, and it proliferated so many plugins that followed a similar design. These were the early polyfills for the modern web platform we know today.</p>
+<p>I've switched operating systems, hardware architectures, desktops, laptops, and phones. Somehow, through all of that, a website written 20 years ago still works today. Other than retro-nostalgic emulation, is that true for anything else?</p>
+<p>Herman has written a great post on <a href="https://herman.bearblog.dev/building-software-to-last-forever/" rel="nofollow">Building software to last forever</a>. As I develop my financial independence <a href="https://jch.app" rel="nofollow">jch.app</a>, I'm thinking how I'll make it last forever.</p>
+<div class="markdown-heading"><h2 class="heading-element">HTML First</h2><a id="user-content-html-first" class="anchor" aria-label="Permalink: HTML First" href="#html-first"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I start with the semantics and affordances of a design with unstyled HTML first. Think text, links, forms, and buttons.</p>
+<p>I target <a href="https://web.dev/baseline" rel="nofollow">Web Platform Baseline</a> and use MDN daily as a resource. Practically, I develop with Safari and Safari iOS because they tend to be the lowest common denominator, and I'm in that ecosystem.</p>
+<div class="markdown-heading"><h2 class="heading-element">CSS Next</h2><a id="user-content-css-next" class="anchor" aria-label="Permalink: CSS Next" href="#css-next"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Then I enter my CSS Zen Garden phase. Thankfully, with grid, flexbox, and multi-col layouts in baseline, there are many more tools available than the early days of the web. There's also room for some delightful flourishes with color and animations.</p>
+<p>I use tailwind because it lets me prototype quickly. A dependency isn't detrimental to longevity if it lives close to a standard, and doesn't lock into the vendor. I could easily switch back to BEM-style naming and CSS.</p>
+<div class="markdown-heading"><h2 class="heading-element">Finally, Javascript</h2><a id="user-content-finally-javascript" class="anchor" aria-label="Permalink: Finally, Javascript" href="#finally-javascript"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>If I stopped now, the app should be fully usable and aesthetically pleasing. I sprinkle on Javascript for the final bit of polish. For example, I recently added drag and drop reordering. Initially, I did this with the baseline Drag and Drop API, but found it clunky on touch devices. Much like how jQuery would polyfill capabilities that weren't quite ready for primetime, I add js dependencies sparingly for the same reason.</p>
+<p>I use <code>&lt;noscript&gt;</code> wherever I enhance components, and also a <code>.no-js</code> CSS class defined within <code>noscript</code> to help hide UI as needed.</p>
+<div class="markdown-heading"><h2 class="heading-element">Try it out</h2><a id="user-content-try-it-out" class="anchor" aria-label="Permalink: Try it out" href="#try-it-out"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Try turning off CSS and Javascript when visiting <a href="https://jch.app" rel="nofollow">jch.app</a>. The default browser styles remind me of Craigslist in a good way. The site works as intended. Turn on CSS. It's a big jump in layout and the experience, but the semantics between pages and functionality stay the same. Finally, turn on javascript. These changes are subtle. Service workers add device-specific native features like push notifications and icons. View transitions adds an extra bit of silkiness to the experience.</p>
+<div class="markdown-heading"><h2 class="heading-element">Longevity elsewhere</h2><a id="user-content-longevity-elsewhere" class="anchor" aria-label="Permalink: Longevity elsewhere" href="#longevity-elsewhere"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I've written about self-hosting jch.app on old hardware. There isn't an infrastructure equivalent of "baseline", but "unix-y" comes close.</p>
+  </body>
+</html>
