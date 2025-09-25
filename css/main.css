@@ -20,13 +20,14 @@
 
 body {
   max-width: 65ch;
-  padding: 2em;
+  padding: calc(.333vw + 1em);
   margin: auto;
 }
 
 h1,h2,h3,h4,h5,h6 {
   line-height: calc(var(--ratio) * pow(var(--ratio), -1));
-  hyphens: auto;
+  text-wrap: balance;
+  /*hyphens: auto;*/
 }
 
 h1 { font-size: var(--s3); }
