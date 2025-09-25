@@ -27,7 +27,6 @@ body {
 h1,h2,h3,h4,h5,h6 {
   line-height: calc(var(--ratio) * pow(var(--ratio), -1));
   text-wrap: balance;
-  /*hyphens: auto;*/
 }
 
 h1 { font-size: var(--s3); }
@@ -35,10 +34,8 @@ h2 { font-size: var(--s2); }
 h3 { font-size: var(--s1); }
 pre { font-size: var(--s-1); font-family: var(--font-mono); }
 small { font-size: var(--s-2); }
-
-ul { padding-left: 1em; }
-ol { padding-left: 1.2em; }
-li { margin-block: 0.25em; }
+p { text-wrap: pretty; }
+li { margin-block: var(--s-2); }
 a { text-decoration: none; color: oklch(0.6 0.4 264); }
 a:visited { color: oklch(0.3 0.2 264); }
 
