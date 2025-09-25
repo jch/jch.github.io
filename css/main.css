@@ -1,22 +1,39 @@
-* { line-height: 1.6em; }
+:root {
+    --font-mono: Menlo, Monaco, Consolas, monospace;
+    --ratio: 1.4;
+    --base-size: 1rem;
+    --s-2: calc(var(--base-size) * pow(var(--ratio), -2));
+    --s-1: calc(var(--base-size) * pow(var(--ratio), -1));
+    --s1:  calc(var(--base-size) * pow(var(--ratio), 1));
+    --s2:  calc(var(--base-size) * pow(var(--ratio), 2));
+    --s3:  calc(var(--base-size) * pow(var(--ratio), 3));
 
-html { font-size: 17px; }
+    /* macOS, iOS */
+    /* Chrome on macOS */
+    /* Windows */
+    /* Android, Chrome OS */
+    /* fallback */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: calc(.333vw + 1em);
+    line-height: var(--ratio);
+}
 
 body {
   max-width: 80ch;
   padding: 2em;
   margin: auto;
-  font-family: sans-serif;
-  @media (min-width: 850px) {
-    font-size: 1.15rem; /* desktop readability */
-  }
 }
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: serif;
-  line-height: initial; /* stay with 1.6 at large viewports */
-  margin-block-end: 1rem; /* associate with text below */
+  line-height: calc(var(--ratio) * pow(var(--ratio), -1));
+  hyphens: auto;
 }
+
+h1 { font-size: var(--s3); }
+h2 { font-size: var(--s2); }
+h3 { font-size: var(--s1); }
+pre { font-size: var(--s-1); font-family: var(--font-mono); }
+small { font-size: var(--s-2); }
 
 ul { padding-left: 1em; }
 ol { padding-left: 1.2em; }
