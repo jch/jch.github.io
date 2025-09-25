@@ -134,7 +134,7 @@ Here's the final search as you type form without styles for readability. Note th
 
 ```html
 <form id="search-form" action="/securities" data-turbo-action="replace" data-turbo-permanent>
-  <input name="q" type="search" value="<%= params[:q] %>" class="border-0 ring-0 py-2 pl-8 w-full" placeholder="Search" oninput="this.form.requestSubmit()" autofocus autocomplete="off" spellcheck="false" />
+  <input name="q" type="search" value="<%= params[:q] %>" placeholder="Search" oninput="this.form.requestSubmit()" autofocus autocomplete="off" spellcheck="false" />
 </form>
 ```
 
