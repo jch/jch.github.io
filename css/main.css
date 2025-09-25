@@ -19,7 +19,7 @@
 }
 
 body {
-  max-width: 80ch;
+  max-width: 65ch;
   padding: 2em;
   margin: auto;
 }
@@ -40,11 +40,6 @@ ol { padding-left: 1.2em; }
 li { margin-block: 0.25em; }
 a { text-decoration: none; color: oklch(0.6 0.4 264); }
 a:visited { color: oklch(0.3 0.2 264); }
-
-.highlight pre {
-  border-left: 1px solid palegoldenrod;
-  padding-inline-start: 1em;
-}
 
 .pl-c {color: darkgray;}
 .pl-c1, .pl-s .pl-v {color: deepskyblue;}
