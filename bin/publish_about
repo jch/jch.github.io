@@ -5,11 +5,10 @@ cat <<HOME | jsg -l layout.html > $root_dir/about/index.html
 Hi! I'm Jerry Cheung.
 
 * I'm a dad.
-* I [write software](/projects) for fun.
-* I like helping people with their [personal finances](https://github.com/jch/personal-finance).
-* I used to work for GitHub, Intridea, Coupa, IBM, Starbucks. I think I can still pull a decent shot of espresso, but haven't tried in years.
+* I [make software](https://jch.app) to help people with their finances, and [open source tools for developers](/projects).
+* I worked for GitHub, Intridea, Coupa, IBM, Starbucks.
 * I graduated from UC Berkeley in computer science. 61A was taught in Scheme.
-* I used to [blog about cars](http://rockyroadblog.com). *current
+* I like cars and used to [write about them](http://rockyroadblog.com). *current
   * 1987 Toyota Celica
   * 1989 Honda CRX*
   * 1990 Buick Reatta*
