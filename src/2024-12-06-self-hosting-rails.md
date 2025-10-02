@@ -38,7 +38,7 @@ $ curl ifconfig.co
 $ nc -zv PUBLIC_IP 22
 ```
 
-## Dyanmic DNS
+## Dynamic DNS
 
 I'm using Cloudflare for DNS, which has an API.
 
