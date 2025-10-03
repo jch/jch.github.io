@@ -4,10 +4,27 @@ require "time"
 require 'debug'
 
 rss_items = []
-src_files = `find #{ENV["src_dir"]} -type f -name '*.md' | sort -r`
-src_files.each_line do |path|
-  title = `head -n1 < #{path}`.gsub(/^[\s#]+/, "").chomp
-  href = path.gsub(ENV["src_dir"], ENV["output_dir"]).gsub(/md$/, "html").chomp
+html_files = `find #{ENV["output_dir"]} -type f -name '*.html' | sort -r`
+html_files.each_line do |path|
+  html_content = File.read(path.chomp)
+
+  # Extract title from HTML title tag or first h1
+  case html_content
+  when /<title[^>]*>(.*?)<\/title>/m
+    title = $1.strip.gsub(/<[^>]*>/, '')  # Remove any HTML tags from title
+  when /<h1[^>]*>(.*?)<\/h1>/m
+    title = $1.strip.gsub(/<[^>]*>/, '')  # Remove any HTML tags from title
+  else
+    raise "Unable to find title from html for #{path}"
+  end
+
+  # Remove everything up to and including <body>
+  html_content = html_content.sub(/.*?<div class="markdown-heading">.*?<\/div>/mi, '')
+
+  # Remove everything from </body> onwards
+  html_content = html_content.sub(/<\/body.*/mi, '')
+
+  href = path
 
   # Extract date from file name
   if path =~ /(\d{4}-\d{2}-\d{2})/
@@ -19,8 +36,9 @@ src_files.each_line do |path|
 <item>
   <title>#{title}</title>
   <link>https://jch.github.io/#{href}</link>
-  <guid isPermaLink="false">#{href}</guid>
+  <guid>https://jch.github.io/#{href}</guid>
   <pubDate>#{date}</pubDate>
+  <description><![CDATA[#{html_content}]]></description>
 </item>
   ITEM
 end
