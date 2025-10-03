@@ -29,7 +29,7 @@ rss_feed = <<-RSS
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>Jerry Cheung Blog RSS Feed</title>
+  <title>Jerry Cheung</title>
   <link>https://jch.github.io/</link>
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
