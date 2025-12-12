@@ -36,8 +36,7 @@ pre { font-size: var(--s-1); font-family: var(--font-mono); }
 small { font-size: var(--s-2); }
 p { text-wrap: pretty; }
 li { margin-block: var(--s-2); }
-a { text-decoration: none; color: oklch(0.6 0.4 264); }
-a:visited { color: oklch(0.3 0.2 264); }
+a { text-decoration: none; text-underline-offset: 2px; }
 
 .pl-c {color: darkgray;}
 .pl-c1, .pl-s .pl-v {color: deepskyblue;}
@@ -63,9 +62,9 @@ a:visited { color: oklch(0.3 0.2 264); }
 @media (prefers-color-scheme: dark) {
   body {
     background-color: black;
-    color: snow;
+    color: Gainsboro;
   }
 
-  a { color: oklch(0.87 0.21 233); }
-  a:visited { color: oklch(0.5 0.21 233) }
+  a { color: DodgerBlue; }
+  a:visited { color: Plum; }
 }
