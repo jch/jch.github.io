@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a> . <a href="/rss.xml">rss</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">December 2025</h1><a id="user-content-december-2025" class="anchor" aria-label="Permalink: December 2025" href="#december-2025"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>What I’m learning and building</p>
+<p><strong>Learning</strong></p>
+<ul>
+<li>
+<a href="https://youtu.be/vvPklRN0Tco?si=b7ajyUXefS83IG7-" rel="nofollow">The Easy Way to Pick UI Colors</a>. <a href="https://www.youtube.com/@whosajid" rel="nofollow">Sajid</a>. Good refresher on Refactoring UI book concepts.</li>
+<li>
+<a href="https://www.youtube.com/watch?v=8xJzHq8ru0M" rel="nofollow">Phoenix LiveView - Interactive Apps without Javascript - ElixirConf EU 2019</a>. <a href="https://www.youtube.com/watch?v=FADQAnq0RpA" rel="nofollow">The Road To LiveView 1.0</a>. Chris McCord. A change in programming model. RPC hiding HTTP request-response over the network. Hotwire Turbo works are a coarser granularity (partials, pages) than LiveView (props). Similar goals of better abstraction of managing client-side state.</li>
+<li>Apple Developer Design Guidelines. Thinking in terms of components and semantics. SwiftUI as declarative ui. Applying different constraints and details on different platforms. Instead of "write once, run everywhere", "learn once, and apply appropriately". Media query and web components are web analogs, but without enough constraints. Reactive prop system under <a href="https://github.com/tc39/proposal-signals?tab=readme-ov-file">Signals proposal</a>. Done today via libraries (react, svelte)</li>
+<li>Svelte. Reactive props, templates feel like html.</li>
+</ul>
+<p><strong>Building</strong></p>
+<ul>
+<li>Tags checkbox filtering with pills. No confusion which label associated with checkbox</li>
+<li>Collapsible search box. Semantic and self contained. Use :focus-within and :placeholder-shown with css animations. Mobile viewport too narrow, hiding title doesn’t work with a nested :not. :before pseudo element doesn’t work on self-closing tags for adding an icon in a search input.</li>
+<li>Dark mode with tailwind dark: utility. CSS variables to constrain permutations. Do we actually need a text-quiet and text-quieter?</li>
+</ul>
+  </body>
+</html>

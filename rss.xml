@@ -6,6 +6,61 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>December 2025</title>
+  <link>https://jch.github.io/posts/2025-12-12-december.html
+</link>
+  <guid>https://jch.github.io/posts/2025-12-12-december.html
+</guid>
+  <pubDate>Fri, 12 Dec 2025 00:00:00 +0800</pubDate>
+  <description><![CDATA[
+<p>What I’m learning and building</p>
+<p><strong>Learning</strong></p>
+<ul>
+<li>
+<a href="https://youtu.be/vvPklRN0Tco?si=b7ajyUXefS83IG7-" rel="nofollow">The Easy Way to Pick UI Colors</a>. <a href="https://www.youtube.com/@whosajid" rel="nofollow">Sajid</a>. Good refresher on Refactoring UI book concepts.</li>
+<li>
+<a href="https://www.youtube.com/watch?v=8xJzHq8ru0M" rel="nofollow">Phoenix LiveView - Interactive Apps without Javascript - ElixirConf EU 2019</a>. <a href="https://www.youtube.com/watch?v=FADQAnq0RpA" rel="nofollow">The Road To LiveView 1.0</a>. Chris McCord. A change in programming model. RPC hiding HTTP request-response over the network. Hotwire Turbo works are a coarser granularity (partials, pages) than LiveView (props). Similar goals of better abstraction of managing client-side state.</li>
+<li>Apple Developer Design Guidelines. Thinking in terms of components and semantics. SwiftUI as declarative ui. Applying different constraints and details on different platforms. Instead of "write once, run everywhere", "learn once, and apply appropriately". Media query and web components are web analogs, but without enough constraints. Reactive prop system under <a href="https://github.com/tc39/proposal-signals?tab=readme-ov-file">Signals proposal</a>. Done today via libraries (react, svelte)</li>
+<li>Svelte. Reactive props, templates feel like html.</li>
+</ul>
+<p><strong>Building</strong></p>
+<ul>
+<li>Tags checkbox filtering with pills. No confusion which label associated with checkbox</li>
+<li>Collapsible search box. Semantic and self contained. Use :focus-within and :placeholder-shown with css animations. Mobile viewport too narrow, hiding title doesn’t work with a nested :not. :before pseudo element doesn’t work on self-closing tags for adding an icon in a search input.</li>
+<li>Dark mode with tailwind dark: utility. CSS variables to constrain permutations. Do we actually need a text-quiet and text-quieter?</li>
+</ul>
+  ]]></description>
+</item>
+
+<item>
+  <title>Reducing Tailwind asset size</title>
+  <link>https://jch.github.io/posts/2025-11-20-tailwind-diet.html
+</link>
+  <guid>https://jch.github.io/posts/2025-11-20-tailwind-diet.html
+</guid>
+  <pubDate>Thu, 20 Nov 2025 00:00:00 +0800</pubDate>
+  <description><![CDATA[
+<p>I consolidated the form and typography styling I was using across <a href="https://jch.app" rel="nofollow">jch.app</a>
+and reduced the stylesheet bundle size 56% from 156kb to 68k. There's more room to trim
+from the default reset and utility classes, but this felt like a good stopping place.</p>
+<pre><code>$ find public -name '*.css' | xargs du -sh | sort -n
+
+# Baseline 2058e695fa2cac93a48520e85f6ae6d4f2846345
+4.0K	public/assets/application.tailwind-2569b4b8.css
+156K	public/assets/tailwind-1836982c.css
+
+# After removing @tailwindcss/forms 513a0b726ab6a99ea5d5c59a4fc41178546d214d
+8.0K	public/assets/application.tailwind-18ab7e13.css
+ 88K	public/assets/tailwind-44187fa0.css
+
+# After removing @tailwindcss/typography
+8.0K  public/assets/application.tailwind-89bca1fa.css
+ 68K  public/assets/tailwind-59d86ce3.css
+</code></pre>
+  ]]></description>
+</item>
+
+<item>
   <title>Quiet, but discoverable</title>
   <link>https://jch.github.io/posts/2025-10-07-notifications-quiet-default.html
 </link>
