@@ -6,12 +6,194 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>Pico CSS notes</title>
+  <link>https://jch.github.io/posts/2026-02-24-picocss.html
+</link>
+  <guid>https://jch.github.io/posts/2026-02-24-picocss.html
+</guid>
+  <pubDate>Tue, 24 Feb 2026 00:00:00 -0800</pubDate>
+  <description><![CDATA[
+<ul>
+<li><a href="#user-content-introduction">Introduction</a></li>
+<li><a href="#user-content-modules">Modules</a></li>
+<li><a href="#user-content-minimal-reset">Minimal reset</a></li>
+<li><a href="#user-content-customization-with-css-variables">Customization with CSS variables</a></li>
+<li><a href="#user-content-low-specificity-defaults">Low specificity defaults</a></li>
+<li><a href="#user-content-responsiveness">Responsiveness</a></li>
+<li><a href="#user-content-icons">Icons</a></li>
+<li><a href="#user-content-conclusion">Conclusion</a></li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Introduction</h2><a id="user-content-introduction" class="anchor" aria-label="Permalink: Introduction" href="#introduction"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<blockquote>
+<p><em>A minimalist and lightweight starter kit that prioritizes semantic syntax, making every HTML element responsive and elegant by default.</em>
+<em>Write HTML, Add Pico CSS, and Voilà!</em></p>
+<p>— <a href="https://picocss.com/" rel="nofollow">picocss.com</a></p>
+</blockquote>
+<p>I've used this project for prototyping and some personal projects I haven't published. It lets me start with something beautiful without the distraction of setting up a design system. Up till now, I've used it by referencing the full source via CDN, but I wanted to dig into its internals and learn how it works.</p>
+<p>After installing npm, sass, and pico v2.1.1, I tested it with the default options:</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> main.scss</span>
+<span class="pl-k">@use</span> <span class="pl-v">pico</span>;</pre></div>
+<p>Compiled with:</p>
+<div class="highlight highlight-source-shell"><pre>npx sass --load-path=node_modules/@picocss/pico/scss main.scss main.css</pre></div>
+<p>The primary way to customize pico is via CSS variables, but sass allows customization at the compilation step. This allows you to choose a theme color, compile without css classes, change the css variable prefix, and ignore modules to reduce bundle size.</p>
+<div class="markdown-heading"><h2 class="heading-element">Modules</h2><a id="user-content-modules" class="anchor" aria-label="Permalink: Modules" href="#modules"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>The descriptive module names preview what they're used for. I wanted to see the size of each of the modules after compilation. I took the default options from the docs and disabled every module. Compiling that outputs no CSS selectors and a copyright comment on the top. This serves as the baseline size.</p>
+<p>Next I prompted Claude Sonnet 4.6 with</p>
+<ol>
+<li>Enable each module one at a time</li>
+<li>run npx sass --load-path=node_modules/@picocss/pico/scss main.scss with-module-XX.css replacing XX with module name</li>
+<li>diff with previous and get the character count</li>
+<li>add a comment to final main.css with the difference in size and description of what the module does</li>
+</ol>
+<p>The annotated listing is:</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> main.scss</span>
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>pico<span class="pl-pds">"</span></span> <span class="pl-k">with</span> (
+  <span class="pl-v">$theme-color</span>: <span class="pl-s"><span class="pl-pds">"</span>yellow<span class="pl-pds">"</span></span>,
+  <span class="pl-v">$modules</span>: (
+    <span class="pl-c"><span class="pl-c">//</span> Themes</span>
+    <span class="pl-s"><span class="pl-pds">"</span>themes/default<span class="pl-pds">"</span></span>: false,         <span class="pl-c"><span class="pl-c">//</span> +8106 — breakpoints, responsive typography, and color palette</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Layout</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/document<span class="pl-pds">"</span></span>: false,       <span class="pl-c"><span class="pl-c">//</span> +756  — html/body resets: box-sizing, scrollbar, font-size, line-height</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/landmarks<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +317  — semantic sectioning: header, main, footer, aside padding/margin</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/container<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +612  — .container max-width centering with responsive breakpoints</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/section<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +213  — section vertical padding and spacing</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/grid<span class="pl-pds">"</span></span>: false,           <span class="pl-c"><span class="pl-c">//</span> +454  — CSS grid helper: .grid equal-column responsive layout</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/overflow-auto<span class="pl-pds">"</span></span>: false,  <span class="pl-c"><span class="pl-c">//</span> +87   — overflow-auto wrapper for horizontal scroll</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Content</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/link<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +2144 — &lt;a&gt; color, underline, hover/focus styles incl. role=button</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/typography<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +4742 — headings h1–h6, p, ul/ol/dl, blockquote, strong, em, mark, del</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/embedded<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +441  — img, svg, video, canvas max-width and responsive sizing</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/button<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +7304 — &lt;button&gt; and input[type=submit/reset/button] full styling</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/table<span class="pl-pds">"</span></span>: false,         <span class="pl-c"><span class="pl-c">//</span> +1244 — &lt;table&gt;, thead, tbody, tfoot, tr, th, td, overflow-auto</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/code<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +1603 — &lt;code&gt;, &lt;pre&gt;, &lt;kbd&gt;, &lt;samp&gt; monospace and block styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/figure<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +195  — &lt;figure&gt; margin/padding and &lt;figcaption&gt; muted color</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/misc<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +282  — &lt;hr&gt;, &lt;abbr&gt;, &lt;dialog&gt;, &lt;template&gt;, &lt;details&gt;/&lt;summary&gt;</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Forms</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/basics<span class="pl-pds">"</span></span>: true,          <span class="pl-c"><span class="pl-c">//</span> +14186 — input, textarea, select, fieldset, label full form system</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/checkbox-radio-switch<span class="pl-pds">"</span></span>: false, <span class="pl-c"><span class="pl-c">//</span> +6240 — styled checkboxes, radio buttons, and toggle switches</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-color<span class="pl-pds">"</span></span>: false,     <span class="pl-c"><span class="pl-c">//</span> +373  — &lt;input type=color&gt; sizing and border styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-date<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +2221 — date/time/week/month input styles and calendar icon</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-file<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +896  — &lt;input type=file&gt; custom file picker button styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-range<span class="pl-pds">"</span></span>: false,     <span class="pl-c"><span class="pl-c">//</span> +3287 — &lt;input type=range&gt; track, thumb, and focus styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-search<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +1730 — &lt;input type=search&gt; clear button and search icon styles</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Components</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/accordion<span class="pl-pds">"</span></span>: false,  <span class="pl-c"><span class="pl-c">//</span> +3248 — &lt;details&gt;/&lt;summary&gt; accordion animation and chevron icon</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/card<span class="pl-pds">"</span></span>: false,       <span class="pl-c"><span class="pl-c">//</span> +2105 — .card with padding, background, border-radius, shadow</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/dropdown<span class="pl-pds">"</span></span>: false,   <span class="pl-c"><span class="pl-c">//</span> +7139 — &lt;details role=list&gt; dropdown menu with positioning and animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/group<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +6565 — .group for inline button+input combos with joined borders</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/loading<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +2559 — [aria-busy=true] spinning loader with CSS animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/modal<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +3794 — &lt;dialog&gt; modal overlay, transitions, close button</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/nav<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +2910 — &lt;nav&gt; with breadcrumb, pagination, and link list styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/progress<span class="pl-pds">"</span></span>: false,   <span class="pl-c"><span class="pl-c">//</span> +1873 — &lt;progress&gt; bar with fill color and animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/tooltip<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +5366 — [data-tooltip] attribute-based tooltip with arrow</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Utilities</span>
+    <span class="pl-s"><span class="pl-pds">"</span>utilities/accessibility<span class="pl-pds">"</span></span>: false, <span class="pl-c"><span class="pl-c">//</span> +459 — .visually-hidden / [hidden] and focus-visible helpers</span>
+    <span class="pl-s"><span class="pl-pds">"</span>utilities/reduce-motion<span class="pl-pds">"</span></span>: false  <span class="pl-c"><span class="pl-c">//</span> +490 — prefers-reduced-motion: disables transitions and animations</span>
+  )
+);</pre></div>
+<p>The docs mention a lightweight version without classes and uncommon components is about ~50% smaller. I compared the full with light and came up with:</p>
+<div class="highlight highlight-source-shell"><pre>$ wc -c full.css light.css 
+ 91913 full.css
+ 48315 light.css</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Minimal reset</h2><a id="user-content-minimal-reset" class="anchor" aria-label="Permalink: Minimal reset" href="#minimal-reset"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Resets are grouped with their respective components. The document level resets are pretty minimal.</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> scss/layout/_document.scss</span>
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>sass:map<span class="pl-pds">"</span></span>;
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>../settings<span class="pl-pds">"</span></span> <span class="pl-k">as</span> <span class="pl-c1">*</span>;
+
+<span class="pl-k">@if</span> <span class="pl-v">map</span>.<span class="pl-c1">get</span>(<span class="pl-v">$modules</span>, <span class="pl-s"><span class="pl-pds">"</span>layout/document<span class="pl-pds">"</span></span>) {
+  <span class="pl-c"><span class="pl-c">/*</span>*</span>
+<span class="pl-c">   * Document</span>
+<span class="pl-c">   * Content-box &amp; Responsive typography</span>
+<span class="pl-c">   <span class="pl-c">*/</span></span>
+
+  <span class="pl-c"><span class="pl-c">//</span> Reboot based on :</span>
+  <span class="pl-c"><span class="pl-c">//</span> - normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css</span>
+  <span class="pl-c"><span class="pl-c">//</span> - sanitize.css v13.0.0 | CC0 1.0 Universal | github.com/csstools/sanitize.css</span>
+  <span class="pl-c"><span class="pl-c">//</span> ––––––––––––––––––––</span>
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Add border box sizing in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Backgrounds do not repeat by default (opinionated)</span>
+  <span class="pl-ent">*</span>,
+  <span class="pl-ent">*</span><span class="pl-e">::before</span>,
+  <span class="pl-ent">*</span><span class="pl-e">::after</span> {
+    <span class="pl-c1"><span class="pl-c1">box-sizing</span></span>: <span class="pl-c1">border-box</span>; <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">background-repeat</span></span>: <span class="pl-c1">no-repeat</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+  }
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Add text decoration inheritance in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Add vertical alignment inheritance in all browsers (opinionated)</span>
+  <span class="pl-e">::before</span>,
+  <span class="pl-e">::after</span> {
+    <span class="pl-c1"><span class="pl-c1">text-decoration</span></span>: <span class="pl-c1">inherit</span>; <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">vertical-align</span></span>: <span class="pl-c1">inherit</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+  }
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Change the line height in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Breaks words to prevent overflow in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 3. Use a 4-space tab width in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 4. Remove the grey highlight on links in iOS (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 5. Prevent adjustments of font size after orientation changes in iOS</span>
+  :<span class="pl-c1">where</span>(<span class="pl-v">:root</span>),
+  :<span class="pl-c1">where</span>(<span class="pl-v">:host</span>) {
+    <span class="pl-c1">-webkit-tap-highlight-color</span>: <span class="pl-c1">transparent</span>; <span class="pl-c"><span class="pl-c">//</span> 4</span>
+    <span class="pl-c1"><span class="pl-c1">-webkit-text-size-adjust</span></span>: <span class="pl-c1">100<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">//</span> 5</span>
+    <span class="pl-c1"><span class="pl-c1">text-size-adjust</span></span>: <span class="pl-c1">100<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">//</span> 5</span>
+    <span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">background-color</span>);
+    <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">color</span>);
+    <span class="pl-c1"><span class="pl-c1">font-weight</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-weight</span>);
+    <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-size</span>);
+    <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">line-height</span>); <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">font-family</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-family</span>);
+    <span class="pl-c1"><span class="pl-c1">text-underline-offset</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">text-underline-offset</span>);
+    <span class="pl-c1"><span class="pl-c1">text-rendering</span></span>: <span class="pl-c1">optimizeLegibility</span>;
+    <span class="pl-c1"><span class="pl-c1">overflow-wrap</span></span>: <span class="pl-c1">break-word</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+    <span class="pl-c1"><span class="pl-c1">tab-size</span></span>: <span class="pl-c1">4</span>; <span class="pl-c"><span class="pl-c">//</span> 3</span>
+  }
+}</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Customization with CSS variables</h2><a id="user-content-customization-with-css-variables" class="anchor" aria-label="Permalink: Customization with CSS variables" href="#customization-with-css-variables"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>By using CSS variables for customization, the applied styles are evaluated when the element is about to be rendered. This simplifies reasoning about which rule is being applied. This also makes the source files agnostic to file load order during compilation. It's ok for components to depend on variables that haven't been defined yet because they aren't used until "runtime" (at the time of render).</p>
+<p>When I browsed components through the web inspector, I found the cascade levels to be shallow and easy to reason about.</p>
+<div class="markdown-heading"><h2 class="heading-element">Low specificity defaults</h2><a id="user-content-low-specificity-defaults" class="anchor" aria-label="Permalink: Low specificity defaults" href="#low-specificity-defaults"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><code>:where</code> is used to set defaults with zero specificity. This means any other style definition (element, id, class, inline) would override it.</p>
+<p>An example for links:</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/*</span>
+<span class="pl-c">// matches</span>
+<span class="pl-c">&lt;a&gt;Link&lt;/a&gt;</span>
+<span class="pl-c">&lt;button role="link"&gt;Something&lt;/button&gt;</span>
+<span class="pl-c"></span>
+<span class="pl-c">// doesn't match</span>
+<span class="pl-c">&lt;a role="button"&gt;&lt;/a&gt;</span>
+<span class="pl-c">*/</span>
+<span class="pl-kos">:</span><span class="pl-c1">where</span>(<span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">not</span>([<span class="pl-c1">role</span><span class="pl-c1">=</span><span class="pl-s">button</span>]))<span class="pl-kos">,</span>
+[<span class="pl-c1">role</span><span class="pl-c1">=</span><span class="pl-s">link</span>] {
+  <span class="pl-s1">--pico-color</span><span class="pl-kos">:</span> <span class="pl-en">var</span>(<span class="pl-s1">--pico-primary</span>);
+  <span class="pl-s1">--pico-background-color</span><span class="pl-kos">:</span> transparent;
+  <span class="pl-s1">--pico-underline</span><span class="pl-kos">:</span> <span class="pl-en">var</span>(<span class="pl-s1">--pico-primary-underline</span>);
+  <span class="pl-c">/* ... */</span>
+}</pre></div>
+<p>0 specificity <code>:where(:root)</code> is also used for document level resets shown in the listing above.</p>
+<div class="markdown-heading"><h2 class="heading-element">Responsiveness</h2><a id="user-content-responsiveness" class="anchor" aria-label="Permalink: Responsiveness" href="#responsiveness"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>There are px defined breakpoints and typography variables are scaled for readability. I like this default for prose, but find it looks cartoonish when interfaces with more forms and app components. The breakpoints can be customized, and there are default ratios defined for font scaling. The same is true for spacing.</p>
+<div class="markdown-heading"><h2 class="heading-element">Icons</h2><a id="user-content-icons" class="anchor" aria-label="Permalink: Icons" href="#icons"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>There are a handful of svg icons directly embedded into the CSS. A magnifying glass for search, a normalized downward caret for dropdowns for example. I like how these are inlined to avoid additional setup for assets, and also makes them cached alongside the CSS.</p>
+<div class="markdown-heading"><h2 class="heading-element">Conclusion</h2><a id="user-content-conclusion" class="anchor" aria-label="Permalink: Conclusion" href="#conclusion"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>What draws me to this project is being able to write semantic HTML with beautiful defaults. Reading the source also gives me an appreciation for how to customize and extend pico.</p>
+  ]]></description>
+</item>
+
+<item>
   <title>December 2025</title>
   <link>https://jch.github.io/posts/2025-12-12-december.html
 </link>
   <guid>https://jch.github.io/posts/2025-12-12-december.html
 </guid>
-  <pubDate>Fri, 12 Dec 2025 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 12 Dec 2025 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>What I’m learning and building</p>
 <p><strong>Learning</strong></p>
@@ -38,7 +220,7 @@
 </link>
   <guid>https://jch.github.io/posts/2025-11-20-tailwind-diet.html
 </guid>
-  <pubDate>Thu, 20 Nov 2025 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 20 Nov 2025 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I consolidated the form and typography styling I was using across <a href="https://jch.app" rel="nofollow">jch.app</a>
 and reduced the stylesheet bundle size 56% from 156kb to 68k. There's more room to trim
@@ -66,7 +248,7 @@ from the default reset and utility classes, but this felt like a good stopping p
 </link>
   <guid>https://jch.github.io/posts/2025-10-07-notifications-quiet-default.html
 </guid>
-  <pubDate>Tue, 07 Oct 2025 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 07 Oct 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>When a new iOS lands, a handful of features are highlighted after the phone restarts. The majority of changes are slowly discovered over several days; Frequently delightful like finding spare change in the couch, sometimes gross like finding stale cereal in the couch.</p>
 <p>The most common interactions do not justify additional explanations. Take the new liquid glass UI: I use it based on previous experience with touch interfaces and the subtle animations like sliding across a toggle are enough to teach me new behavior. Bigger changes like hiding unknown senders in Messages warrant a popup the first time, and offer a way to switch back to previous behavior. Mail also did this with Categories by offering to go back to having everything in one list.</p>
@@ -94,7 +276,7 @@ from the default reset and utility classes, but this felt like a good stopping p
 </link>
   <guid>https://jch.github.io/posts/2025-09-18-no-css-no-js.html
 </guid>
-  <pubDate>Thu, 18 Sep 2025 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 18 Sep 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Remember <a href="https://csszengarden.com" rel="nofollow">CSS Zen Garden</a>? It started out as a site to allow designers to showcase how semantics (HTML) and visual design (CSS) can be separated. I remember being blown away by the early designs, but then being disappointed by the mess of relative and absolute positioning.</p>
 <p>Remember <a href="https://jquery.com" rel="nofollow">jQuery</a>? The interface was so simple, and it proliferated so many plugins that followed a similar design. These were the early polyfills for the modern web platform we know today.</p>
@@ -122,7 +304,7 @@ from the default reset and utility classes, but this felt like a good stopping p
 </link>
   <guid>https://jch.github.io/posts/2025-09-02-rails-localhost-ssl.html
 </guid>
-  <pubDate>Tue, 02 Sep 2025 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 02 Sep 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <ul>
 <li>Works with <a href="https://localhost:3000" rel="nofollow">https://localhost:3000</a> or <a href="https://custom-hostname.local" rel="nofollow">https://custom-hostname.local</a>
@@ -202,7 +384,7 @@ that made serviceworkers unavailable.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-08-21-japan.html
 </guid>
-  <pubDate>Thu, 21 Aug 2025 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 21 Aug 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>This was our first trip to Japan. Max was 10 years old and Stella was 5. August was hot and humid (26c/80f), but we were lucky and arrived a week after a heat advisory. Occasional showers helped with temperatures and our kids enjoyed splashing around. The highlight of the trip was having Big Max and Rin show us around Tokyo. Stella now calls them “our Japanese best friends”.</p>
 <p>I enjoyed all of the food, except for one ramen place in Osaka and a weird deep fried tuna ball thing. Instead of online reviews, I preferred finding a dense street of restaurants and wandering around. Train stations and malls were good ways to escape the heat, eat, and rest. We didn’t do omakase because the kids were too young, but conveyor belt sushi was delicious, fun, and very affordable. Though breakfast came included in two of our stays, we preferred trying out different onigiri’s and pastries from 7-11, Lawsons, and Family Marts. Breakfast, lunch, and dinners ran around ~1k yen, ~3-5k yen, and 5-9k yen respectively, with only a few meals being significantly more.</p>
@@ -260,7 +442,7 @@ that made serviceworkers unavailable.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-06-24-fugit-recurring-tasks.html
 </guid>
-  <pubDate>Tue, 24 Jun 2025 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 24 Jun 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a href="https://github.com/floraison/fugit">Fugit</a> parses cron syntax and various time and date strings. It is a dependency of solid_queue and good_job. I didn't notice it at first because I was using cron syntax directly for my <a href="https://jch.app" rel="nofollow">side project</a>.</p>
 <p>Personally, I don't mind cron syntax, but it turns out fugit also supports time zones. I have some tasks that run on Eastern time based on the stock market. Previously, I had two separate cron entries for daylight savings time. But now, fugit simplifies it to <code>US/Eastern</code>.</p>
@@ -292,7 +474,7 @@ Fugit follows this specification.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-05-14-henrys-guide-taxes-loans-cars.html
 </guid>
-  <pubDate>Wed, 14 May 2025 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 14 May 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I shared my personal experiences with these personal finance topics with r/HENRYfinance. This brings them all together and links to the comments. HENRY stands for High Earner Not Rich Yet. I also keep notes about personal finance in <a href="https://github.com/jch/personal-finance">jch/personal-finance</a> and build a investment and spending tracker at <a href="https://jch.app" rel="nofollow">jch.app</a>.</p>
 <div class="markdown-heading"><h2 class="heading-element">HENRY's Car Buying Guide</h2><a id="user-content-henrys-car-buying-guide" class="anchor" aria-label="Permalink: HENRY's Car Buying Guide" href="#henrys-car-buying-guide"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -402,7 +584,7 @@ Bad: Beware margin calls during market downturns</p>
 </link>
   <guid>https://jch.github.io/posts/2025-05-08-css-multi-column-issues.html
 </guid>
-  <pubDate>Thu, 08 May 2025 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 08 May 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>After reading <a href="https://www.smashingmagazine.com/2019/01/css-multiple-column-layout-multicol/" rel="nofollow">When and How to Use CSS Multi-Column Layout</a>, I tried to use it for a masonry layout for the <a href="https://jch.app" rel="nofollow">jch.app</a> dashboard.</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/multi-col-dash.png"><img src="/images/multi-col-dash.png" alt="" style="max-width: 100%;"></a></p>
@@ -439,7 +621,7 @@ Bad: Beware margin calls during market downturns</p>
 </link>
   <guid>https://jch.github.io/posts/2025-05-07-monthly-finance-night.html
 </guid>
-  <pubDate>Wed, 07 May 2025 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 07 May 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>A tidy home is easier to clean. If there are legos all over the floor, I have to pick them up before I can vacuum (or get stabbed walking around). If there are dishes on the table, they need to be loaded in the dishwasher before that dried pesto stain can be wiped off.</p>
 <p>Similar to physically tiding up, I like to keep our finances tidy too. But unlike the necessary daily tidy in my home with two kids and a dog, the financial tidy happens once a month and takes around 10 minutes most months. I follow up on long running things, fix miscategorized transactions, and squint to see if anything weird stands out.</p>
@@ -466,7 +648,7 @@ Bad: Beware margin calls during market downturns</p>
 </link>
   <guid>https://jch.github.io/posts/2025-05-03-my-computers-2025.html
 </guid>
-  <pubDate>Sat, 03 May 2025 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 03 May 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>The last time I was excited <a href="/posts/2008-02-12-my-computing-environment.html">about hardware was 2008</a>, when I spent hard earned Starbucks money to buy a 12" iBook G4. Since then, I've been spoiled by company provided Apple laptops at each place I've worked. They've all been beautiful machines, each faster than the last. What's missing in each of those was a sense of excitement and pride in ownership. I stopped maintaining my own home server, piecing together and recycling old hardware. I didn't need to do custom software builds to squeeze the last bit of performance, another new laptop was always just around the corner.</p>
 <p>Since leaving my job and starting to build software for fun again (<a href="https://jch.app" rel="nofollow">jch.app</a>), I've slowly rediscovered that original joy of computing, from software down to hardware. I've dusted off the cobwebs off this blog, adding RSS and dark mode. I installed Debian Bookworm (my last linux was, <em>checks notes</em>, Debian Woody, released July 2002) on a e-waste Thinkpad T480s (thanks Dad!). <a href="/posts/2024-12-06-self-hosting-rails.html">Production is hosted on a 2016 macbook pro</a> with a dead battery and a set of bash scripts (yolo).</p>
@@ -480,7 +662,7 @@ Bad: Beware margin calls during market downturns</p>
 </link>
   <guid>https://jch.github.io/posts/2025-04-29-sourdough.html
 </guid>
-  <pubDate>Tue, 29 Apr 2025 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 29 Apr 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/projects/sourdough/nine.png"><img src="/projects/sourdough/nine.png" alt="" style="max-width: 100%;"></a></p>
 <p>During covid, I ran out of yeast. I tried to make my own sourdough starter from flour and water, but ended up with a hoochy moldy mess.</p>
@@ -499,7 +681,7 @@ Bad: Beware margin calls during market downturns</p>
 </link>
   <guid>https://jch.github.io/posts/2025-04-13-popovers-css-anchor.html
 </guid>
-  <pubDate>Sun, 13 Apr 2025 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 13 Apr 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Popover made it into baseline this year. I wanted to use it to replace the dialog
 modal sheet I was using because it comes with soft dismiss built-in. Initial testing
@@ -536,7 +718,7 @@ modal sheet.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-04-12-ruby-http-streaming-revisited.html
 </guid>
-  <pubDate>Sat, 12 Apr 2025 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 12 Apr 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>This morning I read "You might not need Websockets". It reminded me of
 the rack-stream gem I wrote 13 years ago to explore the HTTP Streaming API.</p>
@@ -573,7 +755,7 @@ the rack-stream gem I wrote 13 years ago to explore the HTTP Streaming API.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-03-14-ios-pwa-dialog-bug.html
 </guid>
-  <pubDate>Fri, 14 Mar 2025 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 14 Mar 2025 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>This was a fun one. I'm adding a modal dialog to quickly
 add a number of stock shares.</p>
@@ -604,7 +786,7 @@ input loses focus <code>onblur</code>. This seems to unfreeze the page. Note thi
 </link>
   <guid>https://jch.github.io/posts/2025-03-05-dark-mode-and-rss.html
 </guid>
-  <pubDate>Wed, 05 Mar 2025 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 05 Mar 2025 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Bit of clean up for the blog. I've cleaned up the CSS to use browser defaults
 for the most part. Instead of using hex colors, I used <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/named-color" rel="nofollow">named colors</a>
@@ -697,7 +879,7 @@ I used <code>black</code> for OLED screens instead of a dark gray.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-02-19-environmental-hardware-upgrades-iphone-16e.html
 </guid>
-  <pubDate>Wed, 19 Feb 2025 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 19 Feb 2025 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Apple announced the new iPhone 16e today. It's basically the same formula they used with their SE lineup for years. The latest processing power, in an older body style (XR?), with slightly worse camera to avoid cannablizing sales from the flagship phones, for a lower price. I've been a fan of the SE line up for years because I like how smaller phones fit in the hand, starting with my first iPhone 5s (2013), followed by the SE (2016), then SE2 (2020).</p>
 <p>I broke with tradition in 2022 and purchased a 13 mini thinking it  would better capture family and travel photos, while still keeping the small form factor. While it's still a good phone, my original reasons for upgrading hasn't really panned out. The photos are better in low light, but for the quick point-and-shoot food/kid/dog photos, I'm not missing much. The phone's still small, but it's thicker than the SE, feeling bulky in jeans. The tiniest tiny annoyance is that it doesn't sit flush on a flat surface without a case (it does with the Apple case). The screen is larger without the bezels, but personally, I didn't mind the small screen of the SE.</p>
@@ -714,7 +896,7 @@ I used <code>black</code> for OLED screens instead of a dark gray.</p>
 </link>
   <guid>https://jch.github.io/posts/2025-01-30-building-modern-search.html
 </guid>
-  <pubDate>Thu, 30 Jan 2025 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 30 Jan 2025 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>This article documents what I learned building a search page for stocks, ETFs, and other securities for <a href="https://jch.app" rel="nofollow">https://jch.app</a>. I start with built-in HTML elements and attributes for accessibility, add CSS for layout and visual design, and progressively enhance the user experience with Turbo, and one line of javascript. At the end, I'll talk about some experiments that led to dead ends and share interesting links and references.</p>
 <div class="markdown-heading"><h2 class="heading-element">HTML and CSS</h2><a id="user-content-html-and-css" class="anchor" aria-label="Permalink: HTML and CSS" href="#html-and-css"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -942,7 +1124,7 @@ I used <code>black</code> for OLED screens instead of a dark gray.</p>
 </link>
   <guid>https://jch.github.io/posts/2024-12-06-self-hosting-rails.html
 </guid>
-  <pubDate>Fri, 06 Dec 2024 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 06 Dec 2024 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><a href="https://jch.app" rel="nofollow">https://jch.app</a> now runs on a 2016 Macbook Pro with i7-6920HQ CPU @ 2.90GHz, 16GB DDR3 ram, and 2TB SSD.</p>
 <p>I feel warm and fuzzy keeping this 8 year old mac out of the e-waste bin. The app is low traffic, but it nonetheless strained the $7/month Digital Ocean VPS. While it's no Apple silicon or raspberry pi in efficiency, the laptop draws a modest 15-20W, translating to ~$3/month at my utility rates. This generation mac had 4 thunderbolt ports, so I also bought a $10 thunderbolt to ethernet adapter.</p>
@@ -1188,7 +1370,7 @@ curl http://roboplan-dev.local:3000</pre></div>
 </link>
   <guid>https://jch.github.io/posts/2024-11-01-html-currency-input.html
 </guid>
-  <pubDate>Fri, 01 Nov 2024 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 01 Nov 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>When entering a money value, I like to see the number in my locale. For example, <code>1000000</code> is easier to read as <code>$1,000,000</code>, but a German would expect <code>1.000.000 €</code>. There are many different approaches spanning a decade+ of internet posts. This post talks about the difference approaches and tradeoffs, and what I implemented for my app <a href="https://jch.app" rel="nofollow">https://jch.app</a>.</p>
 <div class="markdown-heading"><h2 class="heading-element">Context</h2><a id="user-content-context" class="anchor" aria-label="Permalink: Context" href="#context"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -1318,7 +1500,7 @@ curl http://roboplan-dev.local:3000</pre></div>
 </link>
   <guid>https://jch.github.io/posts/2024-10-27-things-i-learned.html
 </guid>
-  <pubDate>Sun, 27 Oct 2024 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 27 Oct 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <ol>
 <li>View transitions and Turbo <a href="https://jch.github.io/turbo-cancel-view-transition/" rel="nofollow">https://jch.github.io/turbo-cancel-view-transition/</a>. Better understanding of Turbo lifecycle events.</li>
@@ -1339,7 +1521,7 @@ curl http://roboplan-dev.local:3000</pre></div>
 </link>
   <guid>https://jch.github.io/posts/2024-10-14-customize-turbo-view-transitions.html
 </guid>
-  <pubDate>Mon, 14 Oct 2024 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 14 Oct 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>View transitions became available in Safari 18. Turbo had support for this, and the default experience is great in other browsers. There's a small hiccup that the default iOS and Safari browser back/forward swipe navigation animations cannot be disabled, leading to a double animation:</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/view-transition-double.gif"><img src="/images/view-transition-double.gif" alt="" style="max-width: 100%;"></a></p>
@@ -1354,7 +1536,7 @@ Safari has the least friendly progressive web app experience, but I'm using it f
 </link>
   <guid>https://jch.github.io/posts/2024-09-14-bake-off-rails-performance-week.html
 </guid>
-  <pubDate>Sat, 14 Sep 2024 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 14 Sep 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>tl;dr I spent a week to bring <a href="https://jch.app" rel="nofollow">https://jch.app</a> from 3s+ pages to ~150ms at the 99%tile</p>
 <p>Back again after my earlier rant about deployments this week. I run a personal project for tracking my investments at <a href="https://jch.app" rel="nofollow">https://jch.app</a>. Once I was happy with the functionality, the slow page loads became annoying. I hope this random collection of notes and search keywords helps another solo dev out there.</p>
@@ -1378,7 +1560,7 @@ Safari has the least friendly progressive web app experience, but I'm using it f
 </link>
   <guid>https://jch.github.io/posts/2024-09-01-personal-project-deploy-is-harder-and-easier.html
 </guid>
-  <pubDate>Sun, 01 Sep 2024 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 01 Sep 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Played with kamal for the first time today to deploy my app to a digital ocean droplet. No problems with the interface, but so many layers to the actual machine and a pain to debug at each layer.</p>
 <p>Ruby, docker, registry, vm, actual hardware.</p>
@@ -1394,7 +1576,7 @@ Safari has the least friendly progressive web app experience, but I'm using it f
 </link>
   <guid>https://jch.github.io/posts/2024-08-19-saving-1000-interest-using-money-market-funds-for-bills.html
 </guid>
-  <pubDate>Mon, 19 Aug 2024 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 19 Aug 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>When interest rates were near 0% between 2008 through 2020, it made a negligible
 difference to pay bills from checkings or savings. But with savings rates
@@ -1442,7 +1624,7 @@ good set-and-forget system.</p>
 </link>
   <guid>https://jch.github.io/posts/2024-08-15-ruby-timezones-and-testing.html
 </guid>
-  <pubDate>Thu, 15 Aug 2024 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 15 Aug 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I had a test in <a href="https://jch.app" rel="nofollow">jch.app</a> which fetched data by date, and kept
 being off by one day. The minimal failing test case became:</p>
@@ -1512,7 +1694,7 @@ timecop's travel functionality, I decided to remove the dependency.</p>
 </link>
   <guid>https://jch.github.io/posts/2024-08-01-rails-manage-client-side-navigation-state.html
 </guid>
-  <pubDate>Thu, 01 Aug 2024 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 01 Aug 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>tl;dr: Over thought it. Session made it obvious and simple</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-v">HoldingsController</span> &lt; <span class="pl-v">ApplicationController</span>
@@ -1546,7 +1728,7 @@ timecop's travel functionality, I decided to remove the dependency.</p>
 </link>
   <guid>https://jch.github.io/posts/2024-05-14-skip-tailwind-if-running.html
 </guid>
-  <pubDate>Tue, 14 May 2024 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 14 May 2024 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>This speeds up tests and other rake tasks. Not a big savings (~1s on my tiny app), but takes out the extra tailwind build step if it's already running.</p>
 <div class="highlight highlight-source-ruby"><pre><span class="pl-c"># end of Rakefile</span>
@@ -1563,7 +1745,7 @@ timecop's travel functionality, I decided to remove the dependency.</p>
 </link>
   <guid>https://jch.github.io/posts/2016-04-01-rails-5-protect-production-database.html
 </guid>
-  <pubDate>Fri, 01 Apr 2016 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 01 Apr 2016 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Rails 5 <a href="https://github.com/rails/rails/pull/22967">prevents bad things™</a> from happening to production databases:</p>
 <div class="highlight highlight-source-shell"><pre>$ RAILS_ENV=production rake db:drop
@@ -1593,7 +1775,7 @@ DISABLE_DATABASE_ENVIRONMENT_CHECK=1</pre></div>
 </link>
   <guid>https://jch.github.io/posts/2016-02-10-how-to-sort-github-notifications-in-gmail.html
 </guid>
-  <pubDate>Wed, 10 Feb 2016 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 10 Feb 2016 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Too many GitHub notifications in Gmail? This post gives an example of how to use
 <a href="https://developers.google.com/apps-script/" rel="nofollow">Google app script</a> to automatically
@@ -1732,7 +1914,7 @@ stops processing a thread as soon as we label one of it's messages.</p>
 </link>
   <guid>https://jch.github.io/posts/2016-01-14-how-to-have-effective-one-on-ones.html
 </guid>
-  <pubDate>Thu, 14 Jan 2016 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 14 Jan 2016 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I have half hour weekly one on one meetings with my manager, Dave. We usually
 talk about work, life, and career goals. Before these meetings, I felt
@@ -1795,7 +1977,7 @@ to talk about long term goals.</p>
 </link>
   <guid>https://jch.github.io/posts/2016-01-02-building-reusable-ruby-scripts.html
 </guid>
-  <pubDate>Sat, 02 Jan 2016 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 02 Jan 2016 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <blockquote>
 <p>Write programs that do one thing and do it well. Write programs to work
@@ -2026,7 +2208,7 @@ $stderr<span class="pl-kos">.</span><span class="pl-en">puts</span> <span class=
 </link>
   <guid>https://jch.github.io/posts/2013-05-17-protecting-resque-server.html
 </guid>
-  <pubDate>Fri, 17 May 2013 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 17 May 2013 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Resque ships with a Sinatra app that can be mounted within your application for
 inspecting the status of your workers and jobs. By default, there's no
@@ -2095,7 +2277,7 @@ last approach, and <a href="https://twitter.com/jonmagic" rel="nofollow">@jonmag
 </link>
   <guid>https://jch.github.io/posts/2013-05-09-interview-your-libraries.html
 </guid>
-  <pubDate>Thu, 09 May 2013 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 09 May 2013 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I love working with John Barnette, even if we don't work on the same stuff
 regularly. The other day, he wrote this in a discussion:</p>
@@ -2146,7 +2328,7 @@ grill it with some hard questions and see if it's worth adding.</p>
 </link>
   <guid>https://jch.github.io/posts/2013-03-05-ruby-incompatible-encoding.html
 </guid>
-  <pubDate>Tue, 05 Mar 2013 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 05 Mar 2013 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>String encodings is like air. Completely necessary and never on your mind
 until something goes wrong. Encoding bugs are painful and often feel like the
@@ -2216,7 +2398,7 @@ string-encoding-in-heroku) to the correct default encoding.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-07-23-ruby-on-rack.html
 </guid>
-  <pubDate>Mon, 23 Jul 2012 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 23 Jul 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Rack is a simple and flexible library for building Ruby web applications and
 web frameworks. It powers frameworks like Rails and Sinatra, and can be used
@@ -2538,7 +2720,7 @@ screencast</a>.</li>
 </link>
   <guid>https://jch.github.io/posts/2012-07-05-blogging-reboot-lessons-learned.html
 </guid>
-  <pubDate>Thu, 05 Jul 2012 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 05 Jul 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>It's been four years since I initially started this blog. I had no
 expectations or goals for what this blog would be. But now as I read
@@ -2587,7 +2769,7 @@ I'll go next - both as a developer, and as an individual.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-06-14-and-you-thought-render-farms-were-just-for-pixar.html
 </guid>
-  <pubDate>Thu, 14 Jun 2012 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 14 Jun 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Rails views are typically rendered after some controller action is executed. But the code that powers Rails controllers is flexible and extensible enough to create custom rendering objects that can reuse views and helpers, but live outside of web request processing. In this post, I'll cover what a Rails controller is and what it's composed of. I'll also go over how to extend it to create your own custom renderers, and show an example of how you can render views in your background jobs and push the results to your frontend.</p>
 <div class="markdown-heading"><h2 class="heading-element">What's a Controller?</h2><a id="user-content-whats-a-controller" class="anchor" aria-label="Permalink: What's a Controller?" href="#whats-a-controller"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -2677,7 +2859,7 @@ I'll go next - both as a developer, and as an individual.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-05-24-building-streaming-rest-apis-with-ruby.html
 </guid>
-  <pubDate>Thu, 24 May 2012 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 24 May 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/ben-and-jerrys-ice-cream.png"><img align="right" src="/images/ben-and-jerrys-ice-cream.png" style="max-width: 100%;"></a></p>
 Twitter popularized the term "firehose API", to mean a realtime stream of data sent through a persistent connection. But even if you're not a realtime service, streaming APIs are great for pushing data from the backend to clients. They reduce resource usage because the server can decide when it's a good time to send a incremental chunk of data. They can also improve the responsiveness of your user experience.  The same HTTP API can be reused to power multiple different apps. For example, you could write your web frontend with a Javascript frameworks like [Backbone.js](<a href="http://documentcloud.github.com/backbone/">http://documentcloud.github.com/backbone/</a>), but reuse the same API to power a native iOS application. Follow the jump to read about how streaming APIs work, and how you can write one with [Rack::Stream](<a href="https://github.com/intridea/rack-stream">https://github.com/intridea/rack-stream</a>).
@@ -2854,7 +3036,7 @@ GOODBYE<span class="pl-k">!</span></pre></div>
 </link>
   <guid>https://jch.github.io/posts/2012-03-22-define-custom-callbacks-for-activerecord-and-more.html
 </guid>
-  <pubDate>Thu, 22 Mar 2012 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 22 Mar 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Rails ActiveRecord models have a lifecycle that developers are allowed to hook into. But while most of us know about <code>before_save</code> and <code>after_update</code>, there are a few lesser unknown callbacks that are good to know about before you reinvent them. In this post, I'll cover all of the available ActiveRecord lifecycle callbacks, and also show how you can define custom callbacks for normal ruby objects.</p>
 <div class="markdown-heading"><h2 class="heading-element">Meet the Callbacks</h2><a id="user-content-meet-the-callbacks" class="anchor" aria-label="Permalink: Meet the Callbacks" href="#meet-the-callbacks"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -2935,7 +3117,7 @@ GOODBYE<span class="pl-k">!</span></pre></div>
 </link>
   <guid>https://jch.github.io/posts/2012-03-12-real-web-performance-for-users-not-robots.html
 </guid>
-  <pubDate>Mon, 12 Mar 2012 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 12 Mar 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>If I told you that a page took 130 requests to load 170 KB of data? Would you
@@ -3035,7 +3217,7 @@ optimization, so "fast enough" for today is good enough for us.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-03-12-faraday-one-http-client-to-rule-them-all.html
 </guid>
-  <pubDate>Mon, 12 Mar 2012 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 12 Mar 2012 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/faraday-cage.jpg"><img align="right" src="/images/faraday-cage.jpg" style="max-width: 100%;"></a></p>
 Faraday is a Ruby HTTP client which allow developers to customize its behavior with middlewares. If you're familiar with [Rack](<a href="http://rack.rubyforge.org/" rel="nofollow">http://rack.rubyforge.org/</a>), then you'll love Faraday. Rather than re-implement yet another HTTP client, Faraday has adapters for popular libraries like Net::HTTP, excon, patron, and em-http. On top of having a consistent interface between different adapters, Faraday also allows you to manipulate request and responses before and after a request is executed.  This tutorial gives an introduction of common use cases built into Faraday, and also explains how to extend Faraday with custom middleware. The code is well tested and easy to follow, so I recommend browsing the source code to find extra options and features not covered in this tutorial.
@@ -3237,7 +3419,7 @@ Faraday is a Ruby HTTP client which allow developers to customize its behavior w
 </link>
   <guid>https://jch.github.io/posts/2012-03-06-writing-a-custom-rails-cache-store.html
 </guid>
-  <pubDate>Tue, 06 Mar 2012 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 06 Mar 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>When you use Rails built-in helpers for page, action, and fragment caching, the cached data is stored into an instance of ActiveSupport::Cache::Store. But while the interface for using the cache stores are the same, each cache store implementation has different performance characteristics and are suited for different jobs. In this post, I'll cover what cache stores are available with Rails by default, how to tune them, and how to write your own custom cache store.</p>
 <div class="markdown-heading"><h2 class="heading-element">Grabbing the Code</h2><a id="user-content-grabbing-the-code" class="anchor" aria-label="Permalink: Grabbing the Code" href="#grabbing-the-code"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -3314,7 +3496,7 @@ config.cache_store = [:memory_store, {:size =&gt; 536870912}]
 </link>
   <guid>https://jch.github.io/posts/2012-02-29-pry-productivity-from-your-code.html
 </guid>
-  <pubDate>Wed, 29 Feb 2012 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 29 Feb 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ea9799eb497552dc2db5cc19df7142d9b11d44bcd600ed7cdb57efdf8224cb4d/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067"><img align="right" src="https://camo.githubusercontent.com/ea9799eb497552dc2db5cc19df7142d9b11d44bcd600ed7cdb57efdf8224cb4d/68747470733a2f2f696d672e736b697463682e636f6d2f32303132303232392d62623767796a73373133387136796834376832776561376375732e6a7067" data-canonical-src="https://img.skitch.com/20120229-bb7gyjs7138q6yh47h2wea7cus.jpg" style="max-width: 100%;"></a></p>
 <p>You've heard of Pry right? It's a full-featured alternative to the classic IRB shell that we use in Ruby, and it's <strong>awesome sauce</strong>. If you've ever felt like you wanted a crowbar to pry open your code during runtime... well, Pry is your answer.</p>
@@ -3351,7 +3533,7 @@ end
 </link>
   <guid>https://jch.github.io/posts/2012-02-28-balancing-pain-and-happiness.html
 </guid>
-  <pubDate>Tue, 28 Feb 2012 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 28 Feb 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>When building a product for your audience, you need to empathize with their
@@ -3395,7 +3577,7 @@ for your business and for yourself.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-01-24-prototyping-with-compass-and-serve.html
 </guid>
-  <pubDate>Tue, 24 Jan 2012 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 24 Jan 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>For prototyping a new webapp, I like to get an HTML prototype on screen as
 fast as possible. There are a number of ways to achieve this, ranging from the
@@ -3609,7 +3791,7 @@ html prototypes by cutting down on the amount of setup work needed to be done.</
 </link>
   <guid>https://jch.github.io/posts/2012-01-11-hunting-down-execution-order-test-failures.html
 </guid>
-  <pubDate>Wed, 11 Jan 2012 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 11 Jan 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Unit tests should pass when run in random order. But for an existing legacy
 project certain tests might depend on the execution order. One test might run
@@ -3652,7 +3834,7 @@ munge on text.</p>
 </link>
   <guid>https://jch.github.io/posts/2012-01-11-backbonejs-sessions-and-authentication.html
 </guid>
-  <pubDate>Wed, 11 Jan 2012 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 11 Jan 2012 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>Building an API driven Javascript app brings about challenges for authentication that I've taken for granted when working with traditional http frameworks. In this post, I'll outline the basic concepts of what a session is, and how we manage sessions with Backbone.js.</p>
@@ -3705,7 +3887,7 @@ munge on text.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-12-19-useful-libraries-rake-pipeline-and-spade.html
 </guid>
-  <pubDate>Mon, 19 Dec 2011 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 19 Dec 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>In doing research for whether Ember.js would be a good fit for Opperator, I
@@ -3778,7 +3960,7 @@ view the results in a browser.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-12-01-planning-a-big-data-migration.html
 </guid>
-  <pubDate>Thu, 01 Dec 2011 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 01 Dec 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>It doesn't matter if data is being migrated from SQL to NoSQL, from flat
 files to key-value store, or from XML to an object database, or every
@@ -3852,7 +4034,7 @@ repeatedly slows down your whole team.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-11-30-grape-api-versioning.html
 </guid>
-  <pubDate>Wed, 30 Nov 2011 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 30 Nov 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com/post/13546958887/grape-api-versioning" rel="nofollow">Opperator blog</a></em></p>
 <p><i><strong>Behind the Curtain</strong> posts explore the development of a piece of Opperator's architecture, including the what, why, and how.</i></p>
@@ -3976,7 +4158,7 @@ creating the initial feature branch and kicking off the discussion.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-11-23-developers-what-are-you-thankful-for.html
 </guid>
-  <pubDate>Wed, 23 Nov 2011 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 23 Nov 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6cec9cb200fbf7888baafd477477c238806ec53cb8ccfac6d7e791e073d58f35/687474703a2f2f6d656469612e74756d626c722e636f6d2f74756d626c725f6c76327034693574387431717a736377642e706e67"><img src="https://camo.githubusercontent.com/6cec9cb200fbf7888baafd477477c238806ec53cb8ccfac6d7e791e073d58f35/687474703a2f2f6d656469612e74756d626c722e636f6d2f74756d626c725f6c76327034693574387431717a736377642e706e67" alt="Gobble Gobble" data-canonical-src="http://media.tumblr.com/tumblr_lv2p4i5t8t1qzscwd.png" style="max-width: 100%;"></a></p>
@@ -4016,7 +4198,7 @@ smooth, but it is buckets full of cranberry awesomesauce. So take a moment and r
 </link>
   <guid>https://jch.github.io/posts/2011-11-21-scrappy-guide-to-prelaunch-bootstrapping.html
 </guid>
-  <pubDate>Mon, 21 Nov 2011 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 21 Nov 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><em>Republished from <a href="http://blog.opperator.com" rel="nofollow">Opperator blog</a></em></p>
 <p>A lot of startup advice revolves around launching a minimal viable product quickly. You’re happy to put in plenty of sweat and elbow grease for your fledging product, but what about all of your non-core competencies? How will you collect emails from interested users? Or how about keeping your audience engaged on your blog? You want something simple to setup, but with enough functionality to get stuff done.  Without further ado, here’s the list of tools we used to get Opperator’s community machine up and running.</p>
@@ -4048,7 +4230,7 @@ smooth, but it is buckets full of cranberry awesomesauce. So take a moment and r
 </link>
   <guid>https://jch.github.io/posts/2011-11-21-project-readme-y-u-no-have.html
 </guid>
-  <pubDate>Mon, 21 Nov 2011 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 21 Nov 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Pick any popular open source library. It'll have more documentation than your
 application code - I guarantee it. Test and documentation are both
@@ -4155,7 +4337,7 @@ write yours today!</p>
 </link>
   <guid>https://jch.github.io/posts/2011-06-01-rubies-to-prevent-devops-mayhem.html
 </guid>
-  <pubDate>Wed, 01 Jun 2011 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 01 Jun 2011 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <div>
 
@@ -4283,7 +4465,7 @@ webapp, don't forget to add some killer devops to go along with it.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-04-08-nodejs-jumpstart.html
 </guid>
-  <pubDate>Fri, 08 Apr 2011 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 08 Apr 2011 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>In a nutshell, Node is a Javascript framework for building network
 apps.  Network apps are broader in scope than webapps. They don't need
@@ -4384,7 +4566,7 @@ a blocking way, you can’t write slow programs. </p>
 </link>
   <guid>https://jch.github.io/posts/2011-01-11-my-web-development-toolbox-2010-edition.html
 </guid>
-  <pubDate>Tue, 11 Jan 2011 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 11 Jan 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>2010 was a big shift in work environment for me. I migrated from an office to
 a completely distributed and remote team at <a href="http://outspokes.com" rel="nofollow">Outspokes</a>
@@ -4478,7 +4660,7 @@ hurting.</p>
 </link>
   <guid>https://jch.github.io/posts/2011-01-05-modular-cocoa-interfaces.html
 </guid>
-  <pubDate>Wed, 05 Jan 2011 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 05 Jan 2011 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>While iOS projects have the advantage of multiple NIB files, this is
 not the default for development on OSX. When working on a Mac or iOS
@@ -4578,7 +4760,7 @@ nasty merges.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-08-12-fixing-common-bundler-problems.html
 </guid>
-  <pubDate>Thu, 12 Aug 2010 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 12 Aug 2010 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/gembundler.png"><img src="/images/gembundler.png" style="max-width: 100%;"></a></p>
 When [bundler](<a href="http://gembundler.com/" rel="nofollow">http://gembundler.com/</a>) first came out, I really wanted
@@ -4686,7 +4868,7 @@ problems.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-06-22-resque-cheatsheet.html
 </guid>
-  <pubDate>Tue, 22 Jun 2010 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 22 Jun 2010 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/octocat_happy.gif"><img src="/images/octocat_happy.gif" style="max-width: 100%;"></a></p>
 Coded and used by the [Github](<a href="http://github.com/">http://github.com/</a>) team,
@@ -4749,7 +4931,7 @@ Alternatively, you can add this line at the beginning of your
 </link>
   <guid>https://jch.github.io/posts/2010-06-14-starting-at-intridea.html
 </guid>
-  <pubDate>Mon, 14 Jun 2010 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 14 Jun 2010 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a href="http://intridea.com" rel="nofollow"><img src="/images/intridea-logo.png" style="max-width: 100%;"></a>
 Three weeks ago, I started as a full time software developer at
@@ -4833,7 +5015,7 @@ on it", but really I was thinking "Score!"</p>
 </link>
   <guid>https://jch.github.io/posts/2010-06-11-getting-around-in-mongodb.html
 </guid>
-  <pubDate>Fri, 11 Jun 2010 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 11 Jun 2010 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p><a href="http://mongodb.com" rel="nofollow"><img src="/images/mongodb.png" style="max-width: 100%;"></a>
 I started working with <a href="http://www.mongodb.org" rel="nofollow">MongoDB</a> a few days
@@ -4972,7 +5154,7 @@ Advanced Queries link was especially useful.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-05-14-email-deliverability.html
 </guid>
-  <pubDate>Fri, 14 May 2010 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 14 May 2010 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Delivering email is easy.  Having that email actually get received is
 freaking hard.  In this era rife with spammers, if you don't jump
@@ -5109,7 +5291,7 @@ along with it.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-03-03-beerpad-hackathon-hosting-with-heroku.html
 </guid>
-  <pubDate>Wed, 03 Mar 2010 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 03 Mar 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>When I started <a href="/articles/2010/02/27/hackathon-beerpad">planning out
 Beerpad</a>, I wanted to focus on
@@ -5218,7 +5400,7 @@ awesome.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-03-01-reaction-to-37signals-getting-real.html
 </guid>
-  <pubDate>Mon, 01 Mar 2010 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 01 Mar 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>The gray and wet weather outside put me in an gloomy mood, so I didn't want to write any 'unhappy' code and regret it later.  Instead, I headed to Cup of Joe on the corner of Dizengoff and Gordon to read 37Signal's book 'Getting Real' while enjoying a creamy cappuccino.  Follow the jump for a short book review.</p>
 <p>First of all, <a href="http://gettingreal.37signals.com/" rel="nofollow">the book</a> is <a href="http://gettingreal.37signals.com/toc.php" rel="nofollow">free online</a> and not a long read.  The book is about 37Signal's preferred way of creating web applications and covers all areas of their business from a high level.  The book is broken down into a collection of 91 essays, most of which are a single page.  Each essay ends with one or more quotes from external sources supporting the idea of the essay.</p>
@@ -5235,7 +5417,7 @@ awesome.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-02-27-hackathon-beerpad.html
 </guid>
-  <pubDate>Sat, 27 Feb 2010 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 27 Feb 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/beerpad_logo.png"><img src="/images/beerpad_logo.png" alt="beerpad logo: cup of beer" style="max-width: 100%;"></a> To spice things up from
 <a href="http://outspokes.com" rel="nofollow">Outspokes</a> and consulting, Arthur, Jeff and I
@@ -5310,7 +5492,7 @@ me</a>. -Jerry</p>
 </link>
   <guid>https://jch.github.io/posts/2010-02-24-page-caching-gotcha-on-heroku.html
 </guid>
-  <pubDate>Wed, 24 Feb 2010 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 24 Feb 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Andrew noticed that his beer reviews weren't showing up on
 <a href="http://beerpad.heroku.com/" rel="nofollow">beerpad</a> after he published them. His reviews
@@ -5455,7 +5637,7 @@ end
 </link>
   <guid>https://jch.github.io/posts/2010-01-21-rails-dependency-management.html
 </guid>
-  <pubDate>Thu, 21 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 21 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Rails has two methods of adding external libraries to a project,
 <a href="http://docs.rubygems.org/" rel="nofollow">rubygems</a> and
@@ -5552,7 +5734,7 @@ dependencies to your application.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-01-19-tips-of-the-day.html
 </guid>
-  <pubDate>Tue, 19 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 19 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <ul>
 <li>debugging django SQL problems</li>
@@ -5603,7 +5785,7 @@ instead of only the basic method.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-01-14-tips-of-the-day.html
 </guid>
-  <pubDate>Thu, 14 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 14 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <ul>
 <li>deleting remote git tags</li>
@@ -5628,7 +5810,7 @@ git tag -l
 </link>
   <guid>https://jch.github.io/posts/2010-01-13-tips-of-the-day.html
 </guid>
-  <pubDate>Wed, 13 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 13 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <ul>
 <li>backspace in GNU screen with Apple Terminal, SSH, and Ubuntu</li>
@@ -5696,7 +5878,7 @@ processing</a></p>
 </link>
   <guid>https://jch.github.io/posts/2010-01-12-tips-of-the-day.html
 </guid>
-  <pubDate>Tue, 12 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 12 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <ul>
 <li>dumping and restoring databases from RDS</li>
@@ -5736,7 +5918,7 @@ weren't being set properly.  The fix was to access the app from
 </link>
   <guid>https://jch.github.io/posts/2010-01-11-ruby-rails-gmail-smtp.html
 </guid>
-  <pubDate>Mon, 11 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 11 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>When you want to send a quick email in a ruby script, it's easy to
 send it through Gmail.  You don't have to worry about email
@@ -5824,7 +6006,7 @@ file.</p>
 </link>
   <guid>https://jch.github.io/posts/2010-01-11-a-day-in-python-library-hell.html
 </guid>
-  <pubDate>Mon, 11 Jan 2010 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 11 Jan 2010 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I haven't used python as my main day-to-day language, but I've already
 run into problems with the tools and libraries that has had me pulling
@@ -5881,7 +6063,7 @@ and choose a standard way of distributing libraries.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-12-09-ruby-python-cheatsheet.html
 </guid>
-  <pubDate>Wed, 09 Dec 2009 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 09 Dec 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Some equivalents for my reference:</p>
 <table>
@@ -5940,7 +6122,7 @@ and choose a standard way of distributing libraries.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-10-30-first-month-of-first-startup.html
 </guid>
-  <pubDate>Fri, 30 Oct 2009 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 30 Oct 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>It's been a month since I left my job at
 <a href="http://www.coupa.com/" rel="nofollow">Coupa</a> and co-founded
@@ -6026,7 +6208,7 @@ Demopit launch taught me.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-06-09-rails-application-maintenance.html
 </guid>
-  <pubDate>Tue, 09 Jun 2009 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 09 Jun 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 
 <p><a target="_blank" rel="noopener noreferrer" href="/images/check_engine.jpg"><img src="/images/check_engine.jpg" alt="check engine light" style="max-width: 100%;"></a></p>
@@ -6142,7 +6324,7 @@ rather than to wait for your engine to fall out.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-06-04-introspecting-rails-models-and-controllers.html
 </guid>
-  <pubDate>Thu, 04 Jun 2009 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 04 Jun 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Once models and controllers grow to a certain size and complexity, it
 gets tricky to figure out what callbacks act upon them.  This is
@@ -6226,7 +6408,7 @@ comments ;)</p>
 </link>
   <guid>https://jch.github.io/posts/2009-04-14-ruby-postgresql-gem-cleanup.html
 </guid>
-  <pubDate>Tue, 14 Apr 2009 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 14 Apr 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I ran into some trouble with getting a good native postgresql driver
 installed.  Here are some links and resources I found to be useful.  I
@@ -6261,7 +6443,7 @@ sudo env ARCHFLAGS="-arch i386" gem install pg
 </link>
   <guid>https://jch.github.io/posts/2009-04-10-fast-tracked-iphone-development.html
 </guid>
-  <pubDate>Fri, 10 Apr 2009 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 10 Apr 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Jumping into a new language, a new framework, and a new set of tools
 is overwhelming!  But the best way to learn is to be utterly crushed
@@ -6335,7 +6517,7 @@ bootstrapping links as I go along.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-04-08-adventures-with-active-record-find.html
 </guid>
-  <pubDate>Wed, 08 Apr 2009 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 08 Apr 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Retrieving records from the database and mapping the results into
 ActiveRecord models are a big part of every Rails app.  A large
@@ -6516,7 +6698,7 @@ before.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-03-17-rails-2.2.2-chicken-and-egg-migrations-headache.html
 </guid>
-  <pubDate>Tue, 17 Mar 2009 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 17 Mar 2009 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>For this upcoming March release, we plan to upgrade from Rails 2.1 to
 Rails 2.2.2. When testing bootstrapping fresh instances of our app, we
@@ -6590,7 +6772,7 @@ have to do.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-02-28-rails-and-gems-documentation-anywhere.html
 </guid>
-  <pubDate>Sat, 28 Feb 2009 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 28 Feb 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p><a target="_blank" rel="noopener noreferrer" href="/images/mobile-me.png"><img src="/images/mobile-me.png" alt="stick figure of me and macbook" style="max-width: 100%;"></a> A great thing about
 <a href="http://www.coupa.com/" rel="nofollow">Coupa</a> work is how I can hack it up without a
@@ -6648,7 +6830,7 @@ blazingly fast.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-02-18-another-irbrc-jewel.html
 </guid>
-  <pubDate>Wed, 18 Feb 2009 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 18 Feb 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>A while back, I discovered the magical
 <a href="http://giantrobots.thoughtbot.com/2008/12/23/script-console-tips" rel="nofollow">.irbrc</a>.
@@ -6677,7 +6859,7 @@ end
 </link>
   <guid>https://jch.github.io/posts/2009-02-11-multiple-gmail-accounts-on-osx-done-right.html
 </guid>
-  <pubDate>Wed, 11 Feb 2009 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 11 Feb 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I learned this tip from Seggy and I've explained it to several people
 already. If you've fallen in love with Gmail's web interface, then
@@ -6731,7 +6913,7 @@ apps if you don't mind IMAP, or if you only have a single account.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-02-06-emacs-refactoring.html
 </guid>
-  <pubDate>Fri, 06 Feb 2009 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 06 Feb 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>While I waited for Coupa customers to be upgraded, I decided to clean
 up my .emacs config file.  My .emacs was never a pretty thing to
@@ -6787,7 +6969,7 @@ I'll know it won't suck.</p>
 </link>
   <guid>https://jch.github.io/posts/2009-01-11-rails-like-javascript-date-helpers.html
 </guid>
-  <pubDate>Sun, 11 Jan 2009 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 11 Jan 2009 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I'm a fan of
 <a href="http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/Time/Calculations.html" rel="nofollow">ActiveSupport::CoreExtensions::Time::Calculations</a>.
@@ -6889,7 +7071,7 @@ to write the rest of the methods if they're needed.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-12-13-rails-flash-with-ajax.html
 </guid>
-  <pubDate>Sat, 13 Dec 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 13 Dec 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>One small annoyance about working with the
 <a href="http://api.rubyonrails.org/classes/ActionController/Flash.html" rel="nofollow">flash</a>
@@ -6953,7 +7135,7 @@ nice simple plugin.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-12-08-osx-gui-tool-httpclient.html
 </guid>
-  <pubDate>Mon, 08 Dec 2008 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 08 Dec 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Kyle sent out this <a href="http://ditchnet.org/httpclient/" rel="nofollow">amazing tool</a> for
 testing and debugging at the HTTP level.  This would've been a
@@ -6983,7 +7165,7 @@ sessions can be saved.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-11-25-how-to-make-an-api-for-a-rails-app.html
 </guid>
-  <pubDate>Tue, 25 Nov 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 25 Nov 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I've come across the same problem in my personal projects and also at
 work.  You have an existing Rails app that has some authentication and
@@ -7090,7 +7272,7 @@ methods work the same way, so it's really a matter of personal taste.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-11-08-deploying-into-the-night.html
 </guid>
-  <pubDate>Sat, 08 Nov 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 08 Nov 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Yesterday was an emotional roller coaster of brutality and
 awesomeness, mixed with a good share of productivity.  The day started
@@ -7163,7 +7345,7 @@ because I wrote the fixes for it.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-11-07-subversion-for-the-lazy.html
 </guid>
-  <pubDate>Fri, 07 Nov 2008 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 07 Nov 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>I've been asked about subversion enough times to justify writing this
 quick and dirty article to save me future time.  Read this guide if
@@ -7284,7 +7466,7 @@ lots of time too.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-11-07-dump-test-data-from-production-to-development-with-yaml-db.html
 </guid>
-  <pubDate>Fri, 07 Nov 2008 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 07 Nov 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>For <a href="http://money.whatcodecraves.com/" rel="nofollow">Money app</a>, I ran into a
 problem with the charts drawing ugly x-axis when the datapoints were
@@ -7321,7 +7503,7 @@ have a need for it.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-10-30-javascript-menus.html
 </guid>
-  <pubDate>Thu, 30 Oct 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 30 Oct 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>One feature we're releasing for this sprint is a quick access menu on
 every page for the common day-to-day actions used in Coupa.
@@ -7405,7 +7587,7 @@ still be control-f'ing for that link we wanted.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-10-24-hacking-live-systems.html
 </guid>
-  <pubDate>Fri, 24 Oct 2008 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 24 Oct 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>After my evening jog, I hopped onto the QA environment around 11pm
 because I wanted to look something up for another blog post I was
@@ -7453,7 +7635,7 @@ minute hour run, or typing frantically while figeting my leg.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-10-13-where-to-find-things-in-rails.html
 </guid>
-  <pubDate>Mon, 13 Oct 2008 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 13 Oct 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>When I started learning Rails, I was amazed when all kinds of magical
 things started working.  The problem was that I never felt in control
@@ -7504,7 +7686,7 @@ do.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-09-16-coupa-and-rails2.html
 </guid>
-  <pubDate>Tue, 16 Sep 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 16 Sep 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Joy and churchbells this morning here in sunny San Mateo!  David
 smacked down Rails 1.2.3 with a heavy hand and replaced it with the
@@ -7594,7 +7776,7 @@ kid on the block.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-17-week-of-insomnia.html
 </guid>
-  <pubDate>Sun, 17 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 17 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Contrary to what you might think, I think insomnia's fantastic.  It
 puts me in this limbo state where my mind feels like lead and I suck
@@ -7704,7 +7886,7 @@ of the good stuff leak out.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-13-mini-apps-galore.html
 </guid>
-  <pubDate>Wed, 13 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 13 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I'm warming up to the idea of using small webapps that do <em>less</em>.
 Instead of full blown behemoth applications that take a lot of time to
@@ -7782,7 +7964,7 @@ curve, it's the <em>right</em> amount of extensibility to get stuff done.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-12-picking-at-capistrano.html
 </guid>
-  <pubDate>Tue, 12 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 12 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Here is the setup I wanted with <a href="http://www.capify.org/" rel="nofollow">Capistrano</a>
 with my <a href="http://housing.whatcodecraves.com/" rel="nofollow">housing app</a>.  I wanted
@@ -7848,7 +8030,7 @@ general web search.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-11-tweaking-apache-with-phusion-passenger.html
 </guid>
-  <pubDate>Mon, 11 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 11 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Carrying over from weekend cleanup, I started exploring the different
 deployment options available.  Here are some bleak notes as I go
@@ -7875,7 +8057,7 @@ manually remove /opt when I was purging it.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-10-debian-ubuntu-specific-rails-with-postgresql.html
 </guid>
-  <pubDate>Sun, 10 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 10 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I spent the weekend migrating from my shared hosting at Dreamhost over
 to VPS hosting at <a href="http://www.silverrack.com/" rel="nofollow">SilverRack</a>.  In the
@@ -7920,7 +8102,7 @@ back</a>.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-07-messy-ruby-requires.html
 </guid>
-  <pubDate>Thu, 07 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 07 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>At some point in tinkering with a language, you outgrow simple scripts
 and want to organize your code into separate modules that live in
@@ -8023,7 +8205,7 @@ woes!</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-06-flaco-crusher.html
 </guid>
-  <pubDate>Wed, 06 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 06 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Originally, this post was titled 'Ruby Markdown Implementations' and
 I was going to talk about
@@ -8110,7 +8292,7 @@ features that could be useful to other people :)</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-05-flaco-rewrite.html
 </guid>
-  <pubDate>Tue, 05 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 05 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I've been happily using my own ghetto blog I named <a href="/articles/2008/01/27/flaco-blog">Flaco
 Blog</a>.  The beauty of forcing myself to eat my
@@ -8154,7 +8336,7 @@ it.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-03-my-keyboard.html
 </guid>
-  <pubDate>Sun, 03 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 03 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>... is awesome.  I have the same keyboard at home and at work.  It
 does everything that I want a keyboard to do.  It looks fantastic.  It
@@ -8202,7 +8384,7 @@ a good deal when it comes to comfort and features.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-08-02-emacs-info.html
 </guid>
-  <pubDate>Sat, 02 Aug 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 02 Aug 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Just a quick cheatsheet of how to get around in Info mode in Emacs.</p>
 <ul>
@@ -8236,7 +8418,7 @@ head</a></p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-30-rails-string-inflections.html
 </guid>
-  <pubDate>Wed, 30 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 30 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I've been using
 <a href="http://api.rubyonrails.org/classes/ActiveSupport/CoreExtensions/String/Inflections.html#M000488" rel="nofollow">constantize</a>
@@ -8338,7 +8520,7 @@ calculate paths to files based on their class names.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-24-rspecing-acts-as-state-machine.html
 </guid>
-  <pubDate>Thu, 24 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 24 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>One of my favorite plugins I've seen so far is
 <a href="http://agilewebdevelopment.com/plugins/acts_as_state_machine" rel="nofollow">acts_as_state_machine</a>.
@@ -8413,7 +8595,7 @@ might be a good excuse to open a github account and play with that too
 </link>
   <guid>https://jch.github.io/posts/2008-07-18-first-sprint.html
 </guid>
-  <pubDate>Fri, 18 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 18 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Today at work, I sat in my first <a href="http://en.wikipedia.org/wiki/Planning_poker" rel="nofollow">planning
 poker</a> meeting.  This was
@@ -8446,7 +8628,7 @@ next week will bring more updates in that area.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-15-dangerous-scaffolding.html
 </guid>
-  <pubDate>Tue, 15 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 15 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I did something bad today.  It wasn't bad enough to destroy working
 customer instances, but it was enough to make all the dev team all up
@@ -8487,7 +8669,7 @@ this.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-13-capify-my-app.html
 </guid>
-  <pubDate>Sun, 13 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 13 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>After a complete Saturday of vegging out, I decided to accomplish
 something today.  My initial target was to pull Craigslist rental
@@ -8554,7 +8736,7 @@ commands.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-09-fuck-fixtures.html
 </guid>
-  <pubDate>Wed, 09 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 09 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>When you first start testing a newly created application, fixtures
 might seem very appealing.  They're easy to write, they make sense,
@@ -8606,7 +8788,7 @@ post</a>.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-07-04-rails-web-engineering.html
 </guid>
-  <pubDate>Fri, 04 Jul 2008 00:00:00 +0800</pubDate>
+  <pubDate>Fri, 04 Jul 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>The day after I came back from Australia, I started my new job at
 <a href="http://www.coupa.com" rel="nofollow">Coupa Software</a>.  I'm absolutely loving it at
@@ -8666,7 +8848,7 @@ about it.  It really <em>really</em> helps out with testing.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-06-28-platform-of-choice.html
 </guid>
-  <pubDate>Sat, 28 Jun 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 28 Jun 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I kept some rants and notes to myself a while back about what I
 thought about some of the operating systems I've used and currently
@@ -8801,7 +8983,7 @@ I did on that computer.  I haven't kept up with Vista at all.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-06-11-fuzz-testing-and-being-a-dick.html
 </guid>
-  <pubDate>Wed, 11 Jun 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 11 Jun 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I really couldn't help myself with this one.  Someone gave me the
 privledge to play around with their pet project, and the first thing I
@@ -8819,7 +9001,7 @@ greatly encapsulates my <em>feelings</em> towards input validation.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-05-20-my-perl.html
 </guid>
-  <pubDate>Tue, 20 May 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 20 May 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>My first exposure to Perl was near the end of high school when I was
 working as a computer assistant at the USDA Forest Service.  I really
@@ -8910,7 +9092,7 @@ you're having a good time with Perl.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-05-03-kernel-designs.html
 </guid>
-  <pubDate>Sat, 03 May 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 03 May 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I really enjoyed my introductory operating systems class at Berkeley.
 The class focused on classic high level OS concepts like process
@@ -9000,7 +9182,7 @@ enforced.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-04-22-emacs-tips.html
 </guid>
-  <pubDate>Tue, 22 Apr 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 22 Apr 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>Earlier, I wrote a quick into of how to <a href="/articles/2008/02/14/customizing_emacs">customize your
 emacs</a>, but then I realized
@@ -9101,7 +9283,7 @@ available for other languages.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-03-12-rails-tips.html
 </guid>
-  <pubDate>Wed, 12 Mar 2008 00:00:00 +0800</pubDate>
+  <pubDate>Wed, 12 Mar 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I have started, abandoned, and restarted many pet rails projects.  All
 hype aside, I've collected a fair amount of rails idioms.  Whenever I
@@ -9310,7 +9492,7 @@ end_sql
 </link>
   <guid>https://jch.github.io/posts/2008-03-10-premature-software-testing.html
 </guid>
-  <pubDate>Mon, 10 Mar 2008 00:00:00 +0800</pubDate>
+  <pubDate>Mon, 10 Mar 2008 00:00:00 -0700</pubDate>
   <description><![CDATA[
 <p>I've fallen victim to it a few times now and would like to remind
 myself of the causes and consequences.  Don't get me wrong, I love
@@ -9412,7 +9594,7 @@ wrong kind will give you the runs.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-02-14-customizing-emacs.html
 </guid>
-  <pubDate>Thu, 14 Feb 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 14 Feb 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>My editor of choice is eight megs and constantly swapping.  I didn't
 meticulously choose my editor, but rather had one forced upon me
@@ -9507,7 +9689,7 @@ about autoload and optimizing some of the calls.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-02-14-common-latex-usage.html
 </guid>
-  <pubDate>Thu, 14 Feb 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 14 Feb 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Since high school, I've used word processors less and less.  I hate
 how slow they load, I hate how annoying and proprietary the formats
@@ -9584,7 +9766,7 @@ more control than CSS offers.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-02-12-my-computing-environment.html
 </guid>
-  <pubDate>Tue, 12 Feb 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 12 Feb 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>It happens to all developers.  You're stuck in a place where you need
 to get dev work done, but you have to use a computer that isn't
@@ -9681,7 +9863,7 @@ review to it someday.
 </link>
   <guid>https://jch.github.io/posts/2008-02-05-setup-rails-with-postgresql.html
 </guid>
-  <pubDate>Tue, 05 Feb 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 05 Feb 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Everytime I set up a Rails project, there are many braindead steps
 that need to be followed.  Instead of doing a web search each time I
@@ -9764,7 +9946,7 @@ svn ps svn:ignore 'database.yml' config
 </link>
   <guid>https://jch.github.io/posts/2008-02-05-css-tips-and-tricks.html
 </guid>
-  <pubDate>Tue, 05 Feb 2008 00:00:00 +0800</pubDate>
+  <pubDate>Tue, 05 Feb 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>These aren't organized in any way for now.  Maybe when I collect
 enough of them, I'll create a cookbook of some kind.</p>
@@ -9809,7 +9991,7 @@ it's really intuitive after you learn it:</p>
 </link>
   <guid>https://jch.github.io/posts/2008-01-31-infuriating-job-applications.html
 </guid>
-  <pubDate>Thu, 31 Jan 2008 00:00:00 +0800</pubDate>
+  <pubDate>Thu, 31 Jan 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Spring is in the air, but instead of allergies, I'm seeing my peers
 being hit hard by job anxieties.  Thanks to this gloomy weather, I've
@@ -9888,7 +10070,7 @@ contacted within the time a recruiter says.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-01-27-flaco-blog.html
 </guid>
-  <pubDate>Sun, 27 Jan 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sun, 27 Jan 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>A while back I was chatting to Arthur and bitching about all the
 various blog systems.  To date, I've tried a wide cross section of
@@ -10171,7 +10353,7 @@ pages are being rebuilt, rather than all index pages.</p>
 </link>
   <guid>https://jch.github.io/posts/2008-01-26-shoot-em-up-debugging.html
 </guid>
-  <pubDate>Sat, 26 Jan 2008 00:00:00 +0800</pubDate>
+  <pubDate>Sat, 26 Jan 2008 00:00:00 -0800</pubDate>
   <description><![CDATA[
 <p>Debugging is like a video game.  Unfortunately, it's the meanest video
 game you will ever play.  The objective is to destroy bugs, but each

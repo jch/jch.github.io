@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/">blog</a> . <a href="/projects">projects</a> . <a href="/about">about</a> . <a href="/rss.xml">rss</a>
+      </nav>
+    </header>
+
+    <div class="markdown-heading"><h1 class="heading-element">Pico CSS notes</h1><a id="user-content-pico-css-notes" class="anchor" aria-label="Permalink: Pico CSS notes" href="#pico-css-notes"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li><a href="#user-content-introduction">Introduction</a></li>
+<li><a href="#user-content-modules">Modules</a></li>
+<li><a href="#user-content-minimal-reset">Minimal reset</a></li>
+<li><a href="#user-content-customization-with-css-variables">Customization with CSS variables</a></li>
+<li><a href="#user-content-low-specificity-defaults">Low specificity defaults</a></li>
+<li><a href="#user-content-responsiveness">Responsiveness</a></li>
+<li><a href="#user-content-icons">Icons</a></li>
+<li><a href="#user-content-conclusion">Conclusion</a></li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Introduction</h2><a id="user-content-introduction" class="anchor" aria-label="Permalink: Introduction" href="#introduction"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<blockquote>
+<p><em>A minimalist and lightweight starter kit that prioritizes semantic syntax, making every HTML element responsive and elegant by default.</em>
+<em>Write HTML, Add Pico CSS, and Voilà!</em></p>
+<p>— <a href="https://picocss.com/" rel="nofollow">picocss.com</a></p>
+</blockquote>
+<p>I've used this project for prototyping and some personal projects I haven't published. It lets me start with something beautiful without the distraction of setting up a design system. Up till now, I've used it by referencing the full source via CDN, but I wanted to dig into its internals and learn how it works.</p>
+<p>After installing npm, sass, and pico v2.1.1, I tested it with the default options:</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> main.scss</span>
+<span class="pl-k">@use</span> <span class="pl-v">pico</span>;</pre></div>
+<p>Compiled with:</p>
+<div class="highlight highlight-source-shell"><pre>npx sass --load-path=node_modules/@picocss/pico/scss main.scss main.css</pre></div>
+<p>The primary way to customize pico is via CSS variables, but sass allows customization at the compilation step. This allows you to choose a theme color, compile without css classes, change the css variable prefix, and ignore modules to reduce bundle size.</p>
+<div class="markdown-heading"><h2 class="heading-element">Modules</h2><a id="user-content-modules" class="anchor" aria-label="Permalink: Modules" href="#modules"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>The descriptive module names preview what they're used for. I wanted to see the size of each of the modules after compilation. I took the default options from the docs and disabled every module. Compiling that outputs no CSS selectors and a copyright comment on the top. This serves as the baseline size.</p>
+<p>Next I prompted Claude Sonnet 4.6 with</p>
+<ol>
+<li>Enable each module one at a time</li>
+<li>run npx sass --load-path=node_modules/@picocss/pico/scss main.scss with-module-XX.css replacing XX with module name</li>
+<li>diff with previous and get the character count</li>
+<li>add a comment to final main.css with the difference in size and description of what the module does</li>
+</ol>
+<p>The annotated listing is:</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> main.scss</span>
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>pico<span class="pl-pds">"</span></span> <span class="pl-k">with</span> (
+  <span class="pl-v">$theme-color</span>: <span class="pl-s"><span class="pl-pds">"</span>yellow<span class="pl-pds">"</span></span>,
+  <span class="pl-v">$modules</span>: (
+    <span class="pl-c"><span class="pl-c">//</span> Themes</span>
+    <span class="pl-s"><span class="pl-pds">"</span>themes/default<span class="pl-pds">"</span></span>: false,         <span class="pl-c"><span class="pl-c">//</span> +8106 — breakpoints, responsive typography, and color palette</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Layout</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/document<span class="pl-pds">"</span></span>: false,       <span class="pl-c"><span class="pl-c">//</span> +756  — html/body resets: box-sizing, scrollbar, font-size, line-height</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/landmarks<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +317  — semantic sectioning: header, main, footer, aside padding/margin</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/container<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +612  — .container max-width centering with responsive breakpoints</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/section<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +213  — section vertical padding and spacing</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/grid<span class="pl-pds">"</span></span>: false,           <span class="pl-c"><span class="pl-c">//</span> +454  — CSS grid helper: .grid equal-column responsive layout</span>
+    <span class="pl-s"><span class="pl-pds">"</span>layout/overflow-auto<span class="pl-pds">"</span></span>: false,  <span class="pl-c"><span class="pl-c">//</span> +87   — overflow-auto wrapper for horizontal scroll</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Content</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/link<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +2144 — &lt;a&gt; color, underline, hover/focus styles incl. role=button</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/typography<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +4742 — headings h1–h6, p, ul/ol/dl, blockquote, strong, em, mark, del</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/embedded<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +441  — img, svg, video, canvas max-width and responsive sizing</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/button<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +7304 — &lt;button&gt; and input[type=submit/reset/button] full styling</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/table<span class="pl-pds">"</span></span>: false,         <span class="pl-c"><span class="pl-c">//</span> +1244 — &lt;table&gt;, thead, tbody, tfoot, tr, th, td, overflow-auto</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/code<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +1603 — &lt;code&gt;, &lt;pre&gt;, &lt;kbd&gt;, &lt;samp&gt; monospace and block styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/figure<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +195  — &lt;figure&gt; margin/padding and &lt;figcaption&gt; muted color</span>
+    <span class="pl-s"><span class="pl-pds">"</span>content/misc<span class="pl-pds">"</span></span>: false,          <span class="pl-c"><span class="pl-c">//</span> +282  — &lt;hr&gt;, &lt;abbr&gt;, &lt;dialog&gt;, &lt;template&gt;, &lt;details&gt;/&lt;summary&gt;</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Forms</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/basics<span class="pl-pds">"</span></span>: true,          <span class="pl-c"><span class="pl-c">//</span> +14186 — input, textarea, select, fieldset, label full form system</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/checkbox-radio-switch<span class="pl-pds">"</span></span>: false, <span class="pl-c"><span class="pl-c">//</span> +6240 — styled checkboxes, radio buttons, and toggle switches</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-color<span class="pl-pds">"</span></span>: false,     <span class="pl-c"><span class="pl-c">//</span> +373  — &lt;input type=color&gt; sizing and border styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-date<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +2221 — date/time/week/month input styles and calendar icon</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-file<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +896  — &lt;input type=file&gt; custom file picker button styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-range<span class="pl-pds">"</span></span>: false,     <span class="pl-c"><span class="pl-c">//</span> +3287 — &lt;input type=range&gt; track, thumb, and focus styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>forms/input-search<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +1730 — &lt;input type=search&gt; clear button and search icon styles</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Components</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/accordion<span class="pl-pds">"</span></span>: false,  <span class="pl-c"><span class="pl-c">//</span> +3248 — &lt;details&gt;/&lt;summary&gt; accordion animation and chevron icon</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/card<span class="pl-pds">"</span></span>: false,       <span class="pl-c"><span class="pl-c">//</span> +2105 — .card with padding, background, border-radius, shadow</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/dropdown<span class="pl-pds">"</span></span>: false,   <span class="pl-c"><span class="pl-c">//</span> +7139 — &lt;details role=list&gt; dropdown menu with positioning and animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/group<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +6565 — .group for inline button+input combos with joined borders</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/loading<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +2559 — [aria-busy=true] spinning loader with CSS animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/modal<span class="pl-pds">"</span></span>: false,      <span class="pl-c"><span class="pl-c">//</span> +3794 — &lt;dialog&gt; modal overlay, transitions, close button</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/nav<span class="pl-pds">"</span></span>: false,        <span class="pl-c"><span class="pl-c">//</span> +2910 — &lt;nav&gt; with breadcrumb, pagination, and link list styles</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/progress<span class="pl-pds">"</span></span>: false,   <span class="pl-c"><span class="pl-c">//</span> +1873 — &lt;progress&gt; bar with fill color and animation</span>
+    <span class="pl-s"><span class="pl-pds">"</span>components/tooltip<span class="pl-pds">"</span></span>: false,    <span class="pl-c"><span class="pl-c">//</span> +5366 — [data-tooltip] attribute-based tooltip with arrow</span>
+
+    <span class="pl-c"><span class="pl-c">//</span> Utilities</span>
+    <span class="pl-s"><span class="pl-pds">"</span>utilities/accessibility<span class="pl-pds">"</span></span>: false, <span class="pl-c"><span class="pl-c">//</span> +459 — .visually-hidden / [hidden] and focus-visible helpers</span>
+    <span class="pl-s"><span class="pl-pds">"</span>utilities/reduce-motion<span class="pl-pds">"</span></span>: false  <span class="pl-c"><span class="pl-c">//</span> +490 — prefers-reduced-motion: disables transitions and animations</span>
+  )
+);</pre></div>
+<p>The docs mention a lightweight version without classes and uncommon components is about ~50% smaller. I compared the full with light and came up with:</p>
+<div class="highlight highlight-source-shell"><pre>$ wc -c full.css light.css 
+ 91913 full.css
+ 48315 light.css</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Minimal reset</h2><a id="user-content-minimal-reset" class="anchor" aria-label="Permalink: Minimal reset" href="#minimal-reset"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Resets are grouped with their respective components. The document level resets are pretty minimal.</p>
+<div class="highlight highlight-source-css-scss"><pre><span class="pl-c"><span class="pl-c">//</span> scss/layout/_document.scss</span>
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>sass:map<span class="pl-pds">"</span></span>;
+<span class="pl-k">@use</span> <span class="pl-s"><span class="pl-pds">"</span>../settings<span class="pl-pds">"</span></span> <span class="pl-k">as</span> <span class="pl-c1">*</span>;
+
+<span class="pl-k">@if</span> <span class="pl-v">map</span>.<span class="pl-c1">get</span>(<span class="pl-v">$modules</span>, <span class="pl-s"><span class="pl-pds">"</span>layout/document<span class="pl-pds">"</span></span>) {
+  <span class="pl-c"><span class="pl-c">/*</span>*</span>
+<span class="pl-c">   * Document</span>
+<span class="pl-c">   * Content-box &amp; Responsive typography</span>
+<span class="pl-c">   <span class="pl-c">*/</span></span>
+
+  <span class="pl-c"><span class="pl-c">//</span> Reboot based on :</span>
+  <span class="pl-c"><span class="pl-c">//</span> - normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css</span>
+  <span class="pl-c"><span class="pl-c">//</span> - sanitize.css v13.0.0 | CC0 1.0 Universal | github.com/csstools/sanitize.css</span>
+  <span class="pl-c"><span class="pl-c">//</span> ––––––––––––––––––––</span>
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Add border box sizing in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Backgrounds do not repeat by default (opinionated)</span>
+  <span class="pl-ent">*</span>,
+  <span class="pl-ent">*</span><span class="pl-e">::before</span>,
+  <span class="pl-ent">*</span><span class="pl-e">::after</span> {
+    <span class="pl-c1"><span class="pl-c1">box-sizing</span></span>: <span class="pl-c1">border-box</span>; <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">background-repeat</span></span>: <span class="pl-c1">no-repeat</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+  }
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Add text decoration inheritance in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Add vertical alignment inheritance in all browsers (opinionated)</span>
+  <span class="pl-e">::before</span>,
+  <span class="pl-e">::after</span> {
+    <span class="pl-c1"><span class="pl-c1">text-decoration</span></span>: <span class="pl-c1">inherit</span>; <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">vertical-align</span></span>: <span class="pl-c1">inherit</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+  }
+
+  <span class="pl-c"><span class="pl-c">//</span> 1. Change the line height in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 2. Breaks words to prevent overflow in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 3. Use a 4-space tab width in all browsers (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 4. Remove the grey highlight on links in iOS (opinionated)</span>
+  <span class="pl-c"><span class="pl-c">//</span> 5. Prevent adjustments of font size after orientation changes in iOS</span>
+  :<span class="pl-c1">where</span>(<span class="pl-v">:root</span>),
+  :<span class="pl-c1">where</span>(<span class="pl-v">:host</span>) {
+    <span class="pl-c1">-webkit-tap-highlight-color</span>: <span class="pl-c1">transparent</span>; <span class="pl-c"><span class="pl-c">//</span> 4</span>
+    <span class="pl-c1"><span class="pl-c1">-webkit-text-size-adjust</span></span>: <span class="pl-c1">100<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">//</span> 5</span>
+    <span class="pl-c1"><span class="pl-c1">text-size-adjust</span></span>: <span class="pl-c1">100<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">//</span> 5</span>
+    <span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">background-color</span>);
+    <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">color</span>);
+    <span class="pl-c1"><span class="pl-c1">font-weight</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-weight</span>);
+    <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-size</span>);
+    <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">line-height</span>); <span class="pl-c"><span class="pl-c">//</span> 1</span>
+    <span class="pl-c1"><span class="pl-c1">font-family</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">font-family</span>);
+    <span class="pl-c1"><span class="pl-c1">text-underline-offset</span></span>: <span class="pl-c1">var</span>(<span class="pl-v">#{<span class="pl-v">$css-var-prefix</span>}</span><span class="pl-c1">text-underline-offset</span>);
+    <span class="pl-c1"><span class="pl-c1">text-rendering</span></span>: <span class="pl-c1">optimizeLegibility</span>;
+    <span class="pl-c1"><span class="pl-c1">overflow-wrap</span></span>: <span class="pl-c1">break-word</span>; <span class="pl-c"><span class="pl-c">//</span> 2</span>
+    <span class="pl-c1"><span class="pl-c1">tab-size</span></span>: <span class="pl-c1">4</span>; <span class="pl-c"><span class="pl-c">//</span> 3</span>
+  }
+}</pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Customization with CSS variables</h2><a id="user-content-customization-with-css-variables" class="anchor" aria-label="Permalink: Customization with CSS variables" href="#customization-with-css-variables"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>By using CSS variables for customization, the applied styles are evaluated when the element is about to be rendered. This simplifies reasoning about which rule is being applied. This also makes the source files agnostic to file load order during compilation. It's ok for components to depend on variables that haven't been defined yet because they aren't used until "runtime" (at the time of render).</p>
+<p>When I browsed components through the web inspector, I found the cascade levels to be shallow and easy to reason about.</p>
+<div class="markdown-heading"><h2 class="heading-element">Low specificity defaults</h2><a id="user-content-low-specificity-defaults" class="anchor" aria-label="Permalink: Low specificity defaults" href="#low-specificity-defaults"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p><code>:where</code> is used to set defaults with zero specificity. This means any other style definition (element, id, class, inline) would override it.</p>
+<p>An example for links:</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/*</span>
+<span class="pl-c">// matches</span>
+<span class="pl-c">&lt;a&gt;Link&lt;/a&gt;</span>
+<span class="pl-c">&lt;button role="link"&gt;Something&lt;/button&gt;</span>
+<span class="pl-c"></span>
+<span class="pl-c">// doesn't match</span>
+<span class="pl-c">&lt;a role="button"&gt;&lt;/a&gt;</span>
+<span class="pl-c">*/</span>
+<span class="pl-kos">:</span><span class="pl-c1">where</span>(<span class="pl-ent">a</span><span class="pl-kos">:</span><span class="pl-c1">not</span>([<span class="pl-c1">role</span><span class="pl-c1">=</span><span class="pl-s">button</span>]))<span class="pl-kos">,</span>
+[<span class="pl-c1">role</span><span class="pl-c1">=</span><span class="pl-s">link</span>] {
+  <span class="pl-s1">--pico-color</span><span class="pl-kos">:</span> <span class="pl-en">var</span>(<span class="pl-s1">--pico-primary</span>);
+  <span class="pl-s1">--pico-background-color</span><span class="pl-kos">:</span> transparent;
+  <span class="pl-s1">--pico-underline</span><span class="pl-kos">:</span> <span class="pl-en">var</span>(<span class="pl-s1">--pico-primary-underline</span>);
+  <span class="pl-c">/* ... */</span>
+}</pre></div>
+<p>0 specificity <code>:where(:root)</code> is also used for document level resets shown in the listing above.</p>
+<div class="markdown-heading"><h2 class="heading-element">Responsiveness</h2><a id="user-content-responsiveness" class="anchor" aria-label="Permalink: Responsiveness" href="#responsiveness"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>There are px defined breakpoints and typography variables are scaled for readability. I like this default for prose, but find it looks cartoonish when interfaces with more forms and app components. The breakpoints can be customized, and there are default ratios defined for font scaling. The same is true for spacing.</p>
+<div class="markdown-heading"><h2 class="heading-element">Icons</h2><a id="user-content-icons" class="anchor" aria-label="Permalink: Icons" href="#icons"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>There are a handful of svg icons directly embedded into the CSS. A magnifying glass for search, a normalized downward caret for dropdowns for example. I like how these are inlined to avoid additional setup for assets, and also makes them cached alongside the CSS.</p>
+<div class="markdown-heading"><h2 class="heading-element">Conclusion</h2><a id="user-content-conclusion" class="anchor" aria-label="Permalink: Conclusion" href="#conclusion"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>What draws me to this project is being able to write semantic HTML with beautiful defaults. Reading the source also gives me an appreciation for how to customize and extend pico.</p>
+  </body>
+</html>
