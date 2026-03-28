@@ -6,6 +6,168 @@
   <description>Jerry Cheung blog posts</description>
   <atom:link href="https://jch.github.io/rss.xml" rel="self" type="application/rss+xml" />
   <item>
+  <title>Campfire lessons: colors, icons, and inputs</title>
+  <link>https://jch.github.io/posts/2026-03-28-campfire-css-colors-icons-inputs.html
+</link>
+  <guid>https://jch.github.io/posts/2026-03-28-campfire-css-colors-icons-inputs.html
+</guid>
+  <pubDate>Sat, 28 Mar 2026 00:00:00 -0700</pubDate>
+  <description><![CDATA[
+<p>Gather around folks, here's what I learned and applied to <a href="https://jch.app" rel="nofollow">jch.app</a> from 37signal's "Modern CSS Patterns in Campfire", and the source code from Campfire and Fizzy.</p>
+<p>I test drove these techniques on the Holdings page. I needed these changes to be incremental and opt-in to avoid breaking other pages.</p>
+<div class="markdown-heading"><h2 class="heading-element">Colors</h2><a id="user-content-colors" class="anchor" aria-label="Permalink: Colors" href="#colors"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>Up until I shipped dark mode, I used tailwind's color utilities. Tailwind does come with a <code>dark:</code>, but it was hard to reason about and I found myself repeating a lot of utilties with slight variations (border-pink-300, bg-pink-300) and needing to find-and-replace several things to try different colors.</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/* before */</span>
+<span class="pl-ent">input</span><span class="pl-kos">:</span><span class="pl-c1">focus</span> {
+  <span class="pl-k">@apply</span> border-pink-300;      <span class="pl-c">/* light mode */</span>
+  <span class="pl-k">@apply</span> dark:border-pink-900; <span class="pl-c">/* dark mode */</span>
+}</pre></div>
+<p>This pushed me to add an abstraction for semantic colors on top of the primitive color definitions.</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/* after */</span>
+<span class="pl-kos">:</span><span class="pl-c1">root</span> {
+  <span class="pl-c">/* semantic colors */</span>
+  <span class="pl-s1">--color-highlight</span><span class="pl-kos">:</span> <span class="pl-en">oklch</span>(<span class="pl-en">var</span>(<span class="pl-s1">--lch-pink</span>));
+  
+  <span class="pl-c">/* primitive colors */</span>
+  --lch-pink<span class="pl-kos">:</span> ...; <span class="pl-c">/* light mode default */</span>
+  <span class="pl-k">@media</span> (<span class="pl-c1">prefers-color-scheme</span><span class="pl-kos">:</span> dark) {
+    --lch-pink<span class="pl-kos">:</span> ...;  <span class="pl-c">/* redefine it to fit dark */</span>
+  }
+}
+
+<span class="pl-ent">input</span><span class="pl-kos">:</span><span class="pl-c1">focus</span> {
+  <span class="pl-c1">border</span><span class="pl-kos">:</span> <span class="pl-c1">1<span class="pl-smi">px</span></span> solid <span class="pl-en">var</span>(<span class="pl-s1">--color-highlight</span>);
+}</pre></div>
+<p>Instead of describing a border color as light pink in light mode, and dark pink in dark mode, it's styled with a single semantic <code>--color-highlight</code> and allows <code>--lch-pink</code> to be redefined by dark mode.</p>
+<p>Not every color needed a semantic name. The pattern I learned was to define raw color primitives as <code>--lch-[color]-[lighter|light|dark|darker]</code> and optionally add semantic named colors like <code>--color-[semantic-name]</code>. When applying colors in dark mode, redefine the raw <code>--lch-*</code> color vars while relying on semantic <code>--color-*</code> vars for styling.</p>
+<p>One aha moment was realizing that the variables are resolved at render. Notice how <code>--color-highlight: oklch(var(--lch-pink))</code> uses <code>--lch-pink</code> before it is defined. This works because when a <code>input:focus</code> selector matches an element, <code>--lch-pink</code> will resolve to a value based on light or dark mode. Trust that the variables will have a value defined at some point, whether it's a app wide value in <code>:root</code>, as a fallback, in a component or variant, or inline at the html itself. This also explains why <code>application.html.erb</code> can load all the stylesheets and not worry about the load order.</p>
+<div class="highlight highlight-text-html-erb"><pre><span class="pl-k">&lt;%=</span> stylesheet_link_tag :all <span class="pl-k">%&gt;</span><span class="pl-en"></span><span class="pl-pds"></span></pre></div>
+<div class="markdown-heading"><h2 class="heading-element">Icons</h2><a id="user-content-icons" class="anchor" aria-label="Permalink: Icons" href="#icons"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>I started with inline svg icons because this allowed me to easily change their colors by defining their stroke color as <code>currentColor</code>.</p>
+<div class="highlight highlight-text-html-basic"><pre>/* easy to style svg icon colors */
+<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">style</span>="<span class="pl-s">color: red</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-c">&lt;!-- icon inherits color --&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">svg</span> <span class="pl-c1">stroke</span>="<span class="pl-s">currentColor</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">svg</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
+<p>But this stops working if the svg is in an external file</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/* currentColor ignored */</span>
+.<span class="pl-c1">icon--search</span> {
+  <span class="pl-c1">background-image</span><span class="pl-kos">:</span> <span class="pl-en">url</span>(<span class="pl-s">"data:..."</span>); <span class="pl-c">/* inlined in css */</span>
+  <span class="pl-c1">background-image</span><span class="pl-kos">:</span> <span class="pl-en">url</span>(<span class="pl-s">"plus.svg"</span>); <span class="pl-c">/* or external file */</span>
+}</pre></div>
+<p>The 37signals approach uses the svg as an <code>image-mask</code> over a background. The strokes of the icon form the visible parts of the mask, and the color from the image show through the mask.</p>
+<div class="highlight highlight-source-css"><pre>.<span class="pl-c1">icon</span> {
+  <span class="pl-c1">background-color</span><span class="pl-kos">:</span> currentColor;
+  <span class="pl-c1">mask-image</span><span class="pl-kos">:</span> <span class="pl-en">var</span>(<span class="pl-s1">--svg</span>);
+}
+
+.<span class="pl-c1">icon--search</span> {
+  <span class="pl-s1">--svg</span><span class="pl-kos">:</span> <span class="pl-en">url</span>(<span class="pl-s">"search.svg"</span>);
+}</pre></div>
+<p>Aside: propshaft translates <code>url("search.svg")</code> to the digested file. Neat. Having cached digested icon files means sending fewer bytes inline with the response.</p>
+<div class="markdown-heading"><h2 class="heading-element">Inputs</h2><a id="user-content-inputs" class="anchor" aria-label="Permalink: Inputs" href="#inputs"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<p>When icons were background images, I used relative positioning and padding to add a magnifying glass icon to a search input:</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-ent">input</span>[<span class="pl-c1">type</span><span class="pl-c1">=</span><span class="pl-s">search</span>] {
+  <span class="pl-s1">--inline-space</span><span class="pl-kos">:</span> <span class="pl-c1">1<span class="pl-smi">ch</span></span>;
+
+  <span class="pl-c1">background-image</span><span class="pl-kos">:</span> <span class="pl-en">url</span>(<span class="pl-s">"search.svg"</span>);
+  <span class="pl-c1">background-position</span><span class="pl-kos">:</span> center left <span class="pl-en">var</span>(<span class="pl-s1">--inline-space</span>);
+  <span class="pl-c1">background-repeat</span><span class="pl-kos">:</span> no-repeat;
+  
+  <span class="pl-c">/* space + icon + space before input content */</span>
+  <span class="pl-c1">padding-inline-start</span><span class="pl-kos">:</span> <span class="pl-en">calc</span>(<span class="pl-s1">--icon-size</span> <span class="pl-c1">+</span> <span class="pl-en">var</span>(<span class="pl-s1">--inline-space</span>) <span class="pl-c1">*</span> <span class="pl-c1">2</span>);
+}</pre></div>
+<p>I liked how this kept the html semantic without a wrapper element. But this meant a fixed icon for both light and dark mode, and prevented using css variables for customization. My first thought was using a <code>::before</code> pseudo element to add the background image, but <code>&lt;input&gt;</code>s don't allow pseudo elements. So I experimented with a wrapper:</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+  .<span class="pl-c1">icon-wrapper</span> {
+    <span class="pl-c1">position</span><span class="pl-kos">:</span> relative;
+    
+    <span class="pl-ent">&amp;</span> .<span class="pl-c1">icon</span> {
+      <span class="pl-c1">position</span><span class="pl-kos">:</span> absolute;
+      
+      <span class="pl-c">/* center vertically */</span>
+      <span class="pl-c1">top</span><span class="pl-kos">:</span> <span class="pl-c1">50<span class="pl-smi">%</span></span>;
+      <span class="pl-c1">transform</span><span class="pl-kos">:</span> <span class="pl-en">translate-y</span>(<span class="pl-c1">-50<span class="pl-smi">%</span></span>);
+    }
+    
+    <span class="pl-ent">&amp;</span> <span class="pl-ent">input</span> {
+      <span class="pl-c1">padding-inline-start</span><span class="pl-kos">:</span> <span class="pl-en">calc</span>(<span class="pl-en">var</span>(<span class="pl-s1">--icon-size</span>) <span class="pl-c1">+</span> <span class="pl-c1">2<span class="pl-smi">ch</span></span>);
+    }
+  }
+<span class="pl-kos">&lt;/</span><span class="pl-ent">style</span><span class="pl-kos">&gt;</span>
+<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">icon-wrapper</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">span</span> <span class="pl-c1">class</span>="<span class="pl-s">icon icon--search</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">span</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">search</span>" <span class="pl-kos">/&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
+<p>This worked, but I didn't like how the input had to calculate the correct padding to know where it started. What I really wanted was to use flexbox and have the following:</p>
+<pre><code>+---+--------+
+| o | xxxxxx |
++---+--------+
+o = icon
+x = input text
+- = border
+</code></pre>
+<p>Then I could use gap for spacing and flexbox for alignment. I thought I could get clever with an input background image and a mask:</p>
+<div class="highlight highlight-source-css"><pre><span class="pl-ent">input</span>[<span class="pl-c1">type</span><span class="pl-c1">=</span><span class="pl-s">search</span>] {
+  <span class="pl-c1">background-image</span><span class="pl-kos">:</span> <span class="pl-en">linear-gradient</span>(blue<span class="pl-kos">,</span> red);
+  <span class="pl-c1">background-position</span><span class="pl-kos">:</span> left center;
+  <span class="pl-c1">background-size</span><span class="pl-kos">:</span> <span class="pl-c1">1<span class="pl-smi">em</span></span> <span class="pl-c1">1<span class="pl-smi">em</span></span>;
+  
+  <span class="pl-c1">mask-image</span><span class="pl-kos">:</span>
+    <span class="pl-en">url</span>(<span class="pl-s">"search.svg"</span>)<span class="pl-kos">,</span>             <span class="pl-c">/* mask 1: icon color */</span>
+    <span class="pl-en">linear-gradient</span>(black<span class="pl-kos">,</span> black); <span class="pl-c">/* mask 2: input text */</span>
+}</pre></div>
+<p>This kinda worked, but ends up masking out the border on the icon side:</p>
+<pre><code>    +--------+
+  o | xxxxxx |
+    +--------+
+o = icon
+x = input text
+- = border
+</code></pre>
+<p>I messed with the <code>mask-*</code> properties, and while <code>mask-origin</code> sounded promising, it still ended up masking out the border. With border widths defined in variables and additional masks, this felt doable, but I stopped because it felt complex and brittle.</p>
+<p>Studying campfire's <code>inputs.css</code>, their approach is to style the wrapper like an input, and hide an input's styling when it's within a wrapper. Input styling is defined by <code>.input</code> and a wrapper acting as an input is an <code>.input--actor</code>.</p>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">class</span>="<span class="pl-s">input input--actor</span>" <span class="pl-c1">style</span>="<span class="pl-s">display: flex; gap: 1ch</span>"<span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">span</span> <span class="pl-c1">class</span>="<span class="pl-s">icon icon--search</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">span</span><span class="pl-kos">&gt;</span>
+  <span class="pl-kos">&lt;</span><span class="pl-ent">input</span> <span class="pl-c1">type</span>="<span class="pl-s">search</span>" <span class="pl-c1">class</span>="<span class="pl-s">input</span>" <span class="pl-kos">/&gt;</span>
+<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
+<p>The clever bits here were</p>
+<ol>
+<li>adding input border, outlines, focus states on the wrapper with <code>.input</code> 2. using a child selector to clear the actual <code>&lt;input&gt;</code> styling with css vars</li>
+</ol>
+<div class="highlight highlight-source-css"><pre><span class="pl-c">/* inputs.css */</span>
+.<span class="pl-c1">input</span> {
+  <span class="pl-c1">border</span><span class="pl-kos">:</span> <span class="pl-c1">1<span class="pl-smi">px</span></span> solid <span class="pl-en">var</span>(<span class="pl-s1">--input-border-color</span><span class="pl-kos">,</span> gray);
+}
+
+.<span class="pl-c1">input--actor</span> {
+  <span class="pl-ent">&amp;</span> .<span class="pl-c1">input</span> {
+    <span class="pl-c">/* hide when inside a wrapper acting as an input */</span>
+    <span class="pl-s1">--input-border-color</span><span class="pl-kos">:</span> transparent;
+  }
+}</pre></div>
+<p>Campfire wraps all of it's inputs with these classes, assuming input styling has been reset in <code>base.css</code>. But since I wanted to make incremental changes without breaking inputs on other pages, I didn't pull in their <code>base.css</code>. Even if I had, the base reset uses a <code>:where</code> selector with zero specificity that wouldn't override my <code>input[type=search]</code> styling. I was impressed that campfire's stylesheets are self-contained and could be added to my project without overriding my styles.</p>
+<div class="markdown-heading"><h2 class="heading-element">Take aways</h2><a id="user-content-take-aways" class="anchor" aria-label="Permalink: Take aways" href="#take-aways"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li>Think decoratively. What variables and fallbacks do I need?</li>
+<li>Undo-ing styles is a smell that suggests a missing css variable.</li>
+<li>Zero specificity <code>:where</code> for reset and base styling</li>
+<li>Define and redefine colors based on light / dark mode like <code>--lch-blue</code>
+</li>
+<li>Define named semantic colors like <code>--color-link</code> that depend on varying lch variables</li>
+</ul>
+<div class="markdown-heading"><h2 class="heading-element">Reference</h2><a id="user-content-reference" class="anchor" aria-label="Permalink: Reference" href="#reference"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
+<ul>
+<li><a href="https://dev.37signals.com/modern-css-patterns-and-techniques-in-campfire/" rel="nofollow">Modern CSS patterns in Campfire</a></li>
+<li><a href="https://github.com/basecamp/once-campfire">Campfire</a></li>
+<li><a href="https://github.com/basecamp/fizzy">Fizzy</a></li>
+<li><a href="https://github.com/rails/propshaft/pull/7">Propshaft #7: Add digest to valid urls in assets</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask" rel="nofollow">MDN: mask</a></li>
+</ul>
+  ]]></description>
+</item>
+
+<item>
   <title>Pico CSS notes</title>
   <link>https://jch.github.io/posts/2026-02-24-picocss.html
 </link>
