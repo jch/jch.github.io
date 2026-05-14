@@ -40,6 +40,8 @@ I wish the Nokia 8110 4g aka "Banana phone" from the matrix worked in the US, bu
 
 I'm working through the [animations.dev] course. Nothing fancy here, but added a transform 97% and ease-out on the buttons. I can imagine some animations around the cover art or shrinking the player controls, but I think those may feel excessive, especially on smaller screens.
 
+The [MediaSession API](https://developer.mozilla.org/en-US/docs/Web/API/Media_Session_API) makes it easy to preview what's playing from the lock screen.
+
 ## Dead ends
 
 I thought about creating a static site generator that would create the player html page based on the audiobooks in a directory. But decided against it because I already had my books in iCloud and didn't want to use the network needlessly.

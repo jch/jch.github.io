@@ -614,6 +614,16 @@
     const speedBtn       = document.getElementById('speed-btn');
     const sleepBtn       = document.getElementById('sleep-btn');
 
+    // ── MediaSession feature detection ────────────────────────────
+    const ms = (typeof navigator !== 'undefined' &&
+                'mediaSession' in navigator &&
+                typeof MediaMetadata !== 'undefined')
+      ? navigator.mediaSession : null;
+    function msSetAction(action, handler) {
+      if (!ms) return;
+      try { ms.setActionHandler(action, handler); } catch (_) {}
+    }
+
     // Compat refs — kept in case future parsers reference them
     // (none of the rewritten display functions use these)
 
@@ -906,15 +916,28 @@
         document.title = title;
       }
 
+      let artworkSrc = null;
       if (cover && cover.type === 'image') {
         const blob = new Blob([cover.data], { type: cover.mimeType });
-        coverImg.src = URL.createObjectURL(blob);
+        artworkSrc = URL.createObjectURL(blob);
+        coverImg.src = artworkSrc;
         coverImg.style.display = 'block';
         coverWrap.style.display = '';
         metaSection.style.display = 'none';
       } else {
         coverWrap.style.display = 'none';
         metaSection.style.display = '';
+      }
+
+      if (ms) {
+        try {
+          ms.metadata = new MediaMetadata({
+            title:   title  || document.title,
+            artist:  artist || '',
+            album:   album  || '',
+            artwork: artworkSrc ? [{ src: artworkSrc, type: cover.mimeType }] : [],
+          });
+        } catch (_) {}
       }
     }
 
@@ -1061,6 +1084,7 @@
     function setPlaying(playing) {
       iconPlay.style.display  = playing ? 'none' : '';
       iconPause.style.display = playing ? '' : 'none';
+      if (ms) ms.playbackState = playing ? 'playing' : 'paused';
     }
 
     function updateScrubber() {
@@ -1201,6 +1225,12 @@
       source.type = 'audio/mp4';
       player.appendChild(source);
       player.load();
+
+      // MediaSession action handlers
+      msSetAction('play',         () => player.play());
+      msSetAction('pause',        () => player.pause());
+      msSetAction('seekbackward', () => { player.currentTime = Math.max(0, player.currentTime - SKIP_BACK_SEC); });
+      msSetAction('seekforward',  () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + SKIP_FWD_SEC); });
 
       // Restore position: fragment takes priority, then localStorage
       const fragment = parseFragment();
