@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Audiobooks</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #080808;
+      --surface: #111111;
+      --raised:  #1a1a1a;
+      --border:  #222222;
+      --line:    #2a2a2a;
+      --text:    #efefef;
+      --muted:   #828282;
+      --dim:     #303030;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg:      #ffffff;
+        --surface: #f4f4f4;
+        --raised:  #ebebeb;
+        --border:  #e2e2e2;
+        --line:    #d4d4d4;
+        --text:    #111111;
+        --muted:   #6a6a6a;
+        --dim:     #c8c8c8;
+      }
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── PRESS FEEDBACK ── */
+    button:active, .recent-item:active {
+      transform: scale(0.97);
+    }
+
+    /* ── APP SHELL ── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      height: 100vh; /* fallback */
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+    }
+
+    /* ── HEADER ── */
+    #header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    #header > * { pointer-events: auto; }
+
+    #open-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 13px 7px 10px;
+      border-radius: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.1s ease-out, border-color 0.1s ease-out, transform 0.1s ease-out;
+    }
+    #open-btn:active { color: var(--text); border-color: var(--muted); }
+
+    #fileInput { display: none; }
+
+    /* ── SCROLLABLE MAIN ── */
+    #main {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ── EMPTY STATE ── */
+    #empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100%;
+      padding: 64px 32px 48px;
+      text-align: center;
+      gap: 0;
+    }
+
+    .empty-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      background: var(--raised);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    #empty-state h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      margin-bottom: 10px;
+    }
+
+    #empty-state p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 260px;
+      margin-bottom: 36px;
+    }
+
+    #empty-open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      font-size: 15px;
+      font-weight: 650;
+      padding: 14px 30px;
+      border-radius: 14px;
+      cursor: pointer;
+      letter-spacing: -0.2px;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.1s ease-out;
+    }
+    #empty-open-btn:active { }
+
+    #recent-list {
+      width: 100%;
+      max-width: 320px;
+      margin-top: 32px;
+      text-align: left;
+    }
+    #recent-list h3 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 4px 8px;
+    }
+    .recent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      min-height: 44px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.1s ease-out;
+    }
+    .recent-item:hover  { background: var(--raised); }
+    .recent-item:active { opacity: 0.65; }
+    .recent-name {
+      font-size: 14px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .recent-time {
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #librivox-link {
+      display: block;
+      margin-top: 28px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      opacity: 0.7;
+    }
+    #librivox-link:hover { opacity: 1; }
+
+    /* ── BOOK VIEW ── */
+    #book-view { display: none; flex-direction: column; }
+
+    /* Cover art */
+    #cover-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: var(--surface);
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    #cover {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* Shrink cover on short viewports so it doesn't crowd out the controls */
+    @media (max-height: 500px) {
+      #cover-wrap {
+        width: min(100%, 42vh);
+        align-self: center;
+      }
+    }
+
+    /* Metadata */
+    #meta-section {
+      padding: 20px 20px 0;
+    }
+
+    #meta-title-el {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    #meta-secondary {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ── CHAPTERS LIST ── */
+    #chapters-section {
+      border-top: 1px solid var(--border);
+    }
+
+    #chapters-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 10px;
+    }
+
+    #chapters-header h3 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    #chapters-count {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chapter-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.1s ease-out;
+    }
+    .chapter-item:active { background: var(--raised); }
+    .chapter-item.active  { background: var(--surface); }
+
+    .ch-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text);
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+    }
+    .chapter-item.active .ch-dot { opacity: 1; }
+
+    .ch-time {
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      min-width: 44px;
+      flex-shrink: 0;
+    }
+
+    .ch-title {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.35;
+      flex: 1;
+    }
+    .chapter-item.active .ch-title {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── CONTROLS (sticky bottom) ── */
+    #controls {
+      display: none;
+      flex-direction: column;
+      padding: 14px 20px calc(28px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+      gap: 16px;
+    }
+
+    /* Scrubber */
+    #progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .time-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      min-width: 38px;
+      flex-shrink: 0;
+    }
+    #time-total { text-align: right; }
+
+    #scrub-wrap {
+      flex: 1;
+      height: 40px; /* enlarged touch target */
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    #scrub-track {
+      width: 100%;
+      height: 2px;
+      background: var(--dim);
+      border-radius: 2px;
+      position: relative;
+      overflow: visible;
+    }
+
+    #scrub-fill {
+      height: 100%;
+      background: var(--text);
+      border-radius: 2px;
+      width: 0%;
+      pointer-events: none;
+    }
+
+    #scrub-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--text);
+      left: 0%;
+      pointer-events: none;
+      transition: transform 0.1s ease-out;
+    }
+    #scrub-wrap:active #scrub-thumb {
+      transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    /* Playback buttons */
+    #buttons-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.1s ease-out;
+    }
+    .ctrl-btn:active { }
+
+    #btn-play {
+      width: 62px;
+      height: 62px;
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .skip-btn {
+      width: 48px;
+      height: 48px;
+      color: var(--text);
+    }
+
+    #speed-btn {
+      width: 48px;
+      height: 48px;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: -0.3px;
+      color: var(--muted);
+    }
+
+    #sleep-btn {
+      width: 48px;
+      height: 48px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      position: relative;
+    }
+    #sleep-btn.active { color: var(--text); }
+    #sleep-btn span {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* Scrollable chapters bottom padding so last item isn't under controls */
+    #chapters-list { padding-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header id="header">
+      <button id="open-btn" aria-label="Open audio file">
+        Open
+      </button>
+      <input type="file" id="fileInput" accept=".m4b,.m4a,.mp3,.aac,.ogg,.flac,.opus,.wav,audio/*">
+    </header>
+
+    <!-- Scrollable content -->
+    <div id="main">
+
+      <!-- Empty state -->
+      <div id="empty-state">
+        <div class="empty-icon">
+          <!-- audiobook by Ahmad Roaayala from Noun Project https://thenounproject.com/browse/icons/term/audiobook/ (CC BY 3.0) -->
+          <svg width="60" height="60" viewBox="-5.0 -10.0 110.0 135.0" fill="currentColor" opacity="0.45" xmlns="http://www.w3.org/2000/svg">
+            <path d="m42.219 34.781c-0.98438 0.55078-1.5938 1.5898-1.5938 2.7188v18.75c0 1.1289 0.60938 2.168 1.5938 2.7188 0.46875 0.26562 0.99609 0.40625 1.5312 0.40625 0.5625 0 1.1133-0.15234 1.5938-0.4375l15.625-9.375c0.94922-0.5625 1.5312-1.5859 1.5312-2.6875s-0.58203-2.125-1.5312-2.6875l-15.625-9.375c-0.96094-0.56641-2.1523-0.57812-3.125-0.03125zm4.6562 8.25 6.4375 3.8438-6.4375 3.8438z"/>
+            <path d="m91.906 14.312c-1.1719-1.1641-2.7539-1.8125-4.4062-1.8125-14.031 0-30.688 0-37.5 5.8438-6.8125-5.8438-23.469-5.8438-37.5-5.8438-3.4531 0-6.25 2.7969-6.25 6.25v50c0 1.6562 0.66016 3.2461 1.832 4.418s2.7617 1.832 4.418 1.832v6.25c0 1.6562 0.66016 3.2461 1.832 4.418s2.7617 1.832 4.418 1.832h62.5c1.6562 0 3.2461-0.66016 4.418-1.832s1.832-2.7617 1.832-4.418v-6.25c1.6562 0 3.2461-0.66016 4.418-1.832s1.832-2.7617 1.832-4.418v-50c0-1.6641-0.66406-3.2617-1.8438-4.4375zm-73.156 66.938v-6.25c11.531 0.1875 28.125 1.0625 28.125 6.25zm62.5 0h-28.125c0-5.1562 16.594-6.0312 28.125-6.25zm6.25-12.5h-3.125c-13.281 0-28.125 0.46875-34.375 5.8438-6.25-5.375-21.062-5.8438-34.375-5.8438h-3.125v-50c10.281 0 34.375 0 34.375 6.25 0 1.7266 1.3984 3.125 3.125 3.125s3.125-1.3984 3.125-3.125c0-6.25 24.094-6.25 34.375-6.25z"/>
+          </svg>
+        </div>
+        <h2 id="empty-heading">Open an audiobook</h2>
+        <p id="empty-sub">Select an M4B or other audio file</p>
+        <button id="empty-open-btn">
+          Choose file
+        </button>
+        <div id="recent-list"></div>
+        <a id="librivox-link" href="https://librivox.org" target="_blank" rel="noopener">Need a book?</a>
+      </div>
+
+      <!-- Book view (shown once file loaded) -->
+      <div id="book-view">
+
+        <!-- Cover art -->
+        <div id="cover-wrap">
+          <img id="cover" alt="Cover art">
+        </div>
+
+        <!-- Metadata -->
+        <div id="meta-section">
+          <div id="meta-title-el"></div>
+          <div id="meta-secondary"></div>
+        </div>
+
+        <!-- Chapters -->
+        <div id="chapters-section" style="display:none">
+          <div id="chapters-header">
+            <h3>Chapters</h3>
+            <span id="chapters-count"></span>
+          </div>
+          <div id="chapters-list"></div>
+        </div>
+
+      </div><!-- /book-view -->
+    </div><!-- /main -->
+
+    <!-- Player controls -->
+    <div id="controls">
+      <!-- Scrubber -->
+      <div id="progress-row">
+        <span class="time-label" id="time-current">0:00</span>
+        <div id="scrub-wrap" role="slider" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="scrub-track">
+            <div id="scrub-fill"></div>
+            <div id="scrub-thumb"></div>
+          </div>
+        </div>
+        <span class="time-label" id="time-total">0:00</span>
+      </div>
+
+      <!-- Buttons -->
+      <div id="buttons-row">
+        <!-- Playback speed -->
+        <button class="ctrl-btn" id="speed-btn" aria-label="Playback speed">1×</button>
+
+        <!-- Skip back 30s -->
+        <button class="ctrl-btn skip-btn" id="btn-skip-back" aria-label="Skip back 30 seconds">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8567 11.4931L20.4043 7.13548C21.071 6.75058 21.9043 7.23171 21.9043 8.00151L21.9043 17.0742C21.9043 17.844 21.071 18.3251 20.4043 17.9402L12.8567 13.5826L12.8567 17.0742C12.8567 17.844 12.0233 18.3251 11.3567 17.9402L3.49953 13.4039C2.83287 13.019 2.83287 12.0567 3.49953 11.6718L11.3567 7.13549C12.0233 6.75059 12.8567 7.23172 12.8567 8.00152L12.8567 11.4931Z"/>
+          </svg>
+        </button>
+
+        <!-- Play / Pause -->
+        <button class="ctrl-btn" id="btn-play" aria-label="Play">
+          <svg id="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 4.5l13 7.5-13 7.5V4.5z"/>
+          </svg>
+          <svg id="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+            <rect x="5" y="4" width="5" height="16" rx="1.5"/>
+            <rect x="14" y="4" width="5" height="16" rx="1.5"/>
+          </svg>
+        </button>
+
+        <!-- Skip forward 30s -->
+        <button class="ctrl-btn skip-btn" id="btn-skip-fwd" aria-label="Skip forward 30 seconds">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <g transform="translate(24,0) scale(-1,1)">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8567 11.4931L20.4043 7.13548C21.071 6.75058 21.9043 7.23171 21.9043 8.00151L21.9043 17.0742C21.9043 17.844 21.071 18.3251 20.4043 17.9402L12.8567 13.5826L12.8567 17.0742C12.8567 17.844 12.0233 18.3251 11.3567 17.9402L3.49953 13.4039C2.83287 13.019 2.83287 12.0567 3.49953 11.6718L11.3567 7.13549C12.0233 6.75059 12.8567 7.23172 12.8567 8.00152L12.8567 11.4931Z"/>
+            </g>
+          </svg>
+        </button>
+
+        <!-- Sleep timer -->
+        <button class="ctrl-btn" id="sleep-btn" aria-label="Sleep timer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div><!-- /controls -->
+
+  </div><!-- /app -->
+
+  <audio id="player"></audio>
+
+  <script>
+    // ── Configuration ──────────────────────────────────────────────
+    const SKIP_BACK_SEC    = 15;                  // seconds to jump backward
+    const SKIP_FWD_SEC     = 15;                  // seconds to jump forward
+    const PLAYBACK_SPEEDS  = [1, 1.25, 1.5, 1.75, 2];
+    const SLEEP_TIMERS_MIN = [15, 30, 45, 60];    // minutes; cycles Off → these → Off
+
+    const fileInput   = document.getElementById('fileInput');
+    const player      = document.getElementById('player');
+
+    // New UI elements
+    const emptyState     = document.getElementById('empty-state');
+    const bookView       = document.getElementById('book-view');
+    const coverImg       = document.getElementById('cover');
+    const coverWrap      = document.getElementById('cover-wrap');
+    const metaTitleEl    = document.getElementById('meta-title-el');
+    const metaSecondary  = document.getElementById('meta-secondary');
+    const metaSection    = document.getElementById('meta-section');
+
+    const chaptersSection = document.getElementById('chapters-section');
+    const chaptersCount  = document.getElementById('chapters-count');
+    const chaptersList   = document.getElementById('chapters-list');
+    const controls       = document.getElementById('controls');
+    const timeCurrent    = document.getElementById('time-current');
+    const timeTotal      = document.getElementById('time-total');
+    const scrubWrap      = document.getElementById('scrub-wrap');
+    const scrubFill      = document.getElementById('scrub-fill');
+    const scrubThumb     = document.getElementById('scrub-thumb');
+    const btnPlay        = document.getElementById('btn-play');
+    const iconPlay       = document.getElementById('icon-play');
+    const iconPause      = document.getElementById('icon-pause');
+    const btnSkipBack    = document.getElementById('btn-skip-back');
+    const btnSkipFwd     = document.getElementById('btn-skip-fwd');
+    const speedBtn       = document.getElementById('speed-btn');
+    const sleepBtn       = document.getElementById('sleep-btn');
+
+    // Compat refs — kept in case future parsers reference them
+    // (none of the rewritten display functions use these)
+
+    // --- MP4 metadata parser ---
+
+    function readAtom(view, offset) {
+      const size = view.getUint32(offset);
+      const name = String.fromCharCode(
+        view.getUint8(offset + 4), view.getUint8(offset + 5),
+        view.getUint8(offset + 6), view.getUint8(offset + 7)
+      );
+      return { size, name, offset };
+    }
+
+    function findAtom(view, name, start, end) {
+      let pos = start;
+      while (pos < end - 8) {
+        const atom = readAtom(view, pos);
+        if (atom.size < 8) break;
+        if (atom.name === name) return atom;
+        pos += atom.size;
+      }
+      return null;
+    }
+
+    function parseIlst(view, start, end) {
+      const tags = {};
+      const dec = new TextDecoder('utf-8');
+      let pos = start;
+      while (pos < end - 8) {
+        const atom = readAtom(view, pos);
+        if (atom.size < 8) break;
+        const tagName = atom.name;
+        // find 'data' child
+        const dataAtom = findAtom(view, 'data', pos + 8, pos + atom.size);
+        if (dataAtom) {
+          const typeFlag = view.getUint32(dataAtom.offset + 8); // type indicator
+          const dataStart = dataAtom.offset + 16; // skip 8-byte header + 4 type + 4 locale
+          const dataEnd = dataAtom.offset + dataAtom.size;
+          if (typeFlag === 13 || typeFlag === 14) {
+            // JPEG or PNG cover art
+            tags[tagName] = { type: 'image', data: view.buffer.slice(dataStart, dataEnd), mimeType: typeFlag === 13 ? 'image/jpeg' : 'image/png' };
+          } else {
+            tags[tagName] = { type: 'text', value: dec.decode(new Uint8Array(view.buffer, dataStart, dataEnd - dataStart)) };
+          }
+        }
+        pos += atom.size;
+      }
+      return tags;
+    }
+
+    function parseChpl(view, atom) {
+      // chpl preamble varies by encoder:
+      //   version(1) + flags(3)                     → 4 bytes (version 0)
+      //   version(1) + flags(3) + reserved(4)        → 8 bytes (version 1)
+      //   some encoders add extra padding bytes
+      // Try different preamble sizes and use the first that gives valid results.
+      const dec = new TextDecoder('utf-8');
+      const atomEnd = atom.offset + atom.size;
+
+      function tryParse(preambleBytes) {
+        let pos = atom.offset + 8 + preambleBytes; // start of count field
+        if (pos + 4 > atomEnd) return null;
+        const count = view.getUint32(pos);
+        const firstTs8 = pos + 4 + 9 <= atomEnd
+          ? (view.getUint32(pos + 4) * 2 ** 32 + view.getUint32(pos + 8)) / 10_000_000
+          : -1;
+        const firstTitleLen = pos + 12 < atomEnd ? view.getUint8(pos + 12) : -1;
+        console.log(`[chpl] preamble=${preambleBytes} count=${count} firstTs=${firstTs8.toFixed(1)}s titleLen=${firstTitleLen}`);
+        if (count === 0 || count > 2000) return null;
+        if (pos + 9 > atomEnd) return null;
+        if (firstTs8 > 60) return null;
+        if (firstTitleLen <= 0 || firstTitleLen > 200) return null;
+        // Parse all entries
+        pos += 4; // advance past count
+        const chapters = [];
+        for (let i = 0; i < count; i++) {
+          if (pos + 9 > atomEnd) break;
+          const hi = view.getUint32(pos);
+          const lo = view.getUint32(pos + 4);
+          const start = (hi * 2 ** 32 + lo) / 10_000_000;
+          pos += 8;
+          const titleLen = view.getUint8(pos++);
+          if (pos + titleLen > atomEnd) break;
+          const title = dec.decode(new Uint8Array(view.buffer, pos, titleLen));
+          pos += titleLen;
+          chapters.push({ start, title });
+        }
+        return chapters.length > 0 ? chapters : null;
+      }
+
+      const version = view.getUint8(atom.offset + 8);
+      const standardPreamble = version === 1 ? 8 : 4;
+      for (const preamble of [standardPreamble, 4, 8, 6, 2, 0, 10]) {
+        const result = tryParse(preamble);
+        if (result) {
+          console.log('[chpl] parsed', result.length, 'chapters with preamble', preamble, 'bytes');
+          return result;
+        }
+      }
+      console.warn('[chpl] could not parse chapters');
+      return [];
+    }
+
+    function findAllAtoms(view, name, start, end) {
+      const results = [];
+      let pos = start;
+      while (pos < end - 8) {
+        const atom = readAtom(view, pos);
+        if (atom.size < 8) break;
+        if (atom.name === name) results.push(atom);
+        pos += atom.size;
+      }
+      return results;
+    }
+
+    // Parse QuickTime chapter text track: timing from stts, titles from trak udta ilst ©nam
+    function parseQtChapterTrack(view, moov) {
+      const dec = new TextDecoder('utf-8');
+      const traks = findAllAtoms(view, 'trak', moov.offset + 8, moov.offset + moov.size);
+      for (const trak of traks) {
+        const mdia = findAtom(view, 'mdia', trak.offset + 8, trak.offset + trak.size);
+        if (!mdia) continue;
+
+        // handler_type is at offset 16 from atom start (after 8-byte header + 4-byte version/flags + 4-byte pre_defined)
+        const hdlr = findAtom(view, 'hdlr', mdia.offset + 8, mdia.offset + mdia.size);
+        if (!hdlr) continue;
+        const handlerType = String.fromCharCode(
+          view.getUint8(hdlr.offset + 16), view.getUint8(hdlr.offset + 17),
+          view.getUint8(hdlr.offset + 18), view.getUint8(hdlr.offset + 19)
+        );
+        if (handlerType !== 'text') continue;
+
+        const mdhd = findAtom(view, 'mdhd', mdia.offset + 8, mdia.offset + mdia.size);
+        if (!mdhd) continue;
+        const mdhdVersion = view.getUint8(mdhd.offset + 8);
+        // version 0: timescale at +20; version 1: timescale at +28
+        const timescale = mdhdVersion === 1
+          ? view.getUint32(mdhd.offset + 28)
+          : view.getUint32(mdhd.offset + 20);
+        if (!timescale) continue;
+
+        const minf = findAtom(view, 'minf', mdia.offset + 8, mdia.offset + mdia.size);
+        if (!minf) continue;
+        const stbl = findAtom(view, 'stbl', minf.offset + 8, minf.offset + minf.size);
+        if (!stbl) continue;
+        const stts = findAtom(view, 'stts', stbl.offset + 8, stbl.offset + stbl.size);
+        if (!stts) continue;
+
+        // stts: 8-byte header + 4-byte version/flags + 4-byte entry_count + entries
+        const entryCount = view.getUint32(stts.offset + 12);
+        const starts = [];
+        let cumTime = 0;
+        for (let i = 0; i < entryCount && i < 5000; i++) {
+          const sampleCount = view.getUint32(stts.offset + 16 + i * 8);
+          const sampleDelta = view.getUint32(stts.offset + 20 + i * 8);
+          for (let j = 0; j < sampleCount; j++) {
+            starts.push(cumTime / timescale);
+            cumTime += sampleDelta;
+          }
+        }
+        if (!starts.length) continue;
+
+        // Titles from trak's own udta → meta → ilst → ©nam
+        const titles = [];
+        const udtaTrak = findAtom(view, 'udta', trak.offset + 8, trak.offset + trak.size);
+        if (udtaTrak) {
+          const meta = findAtom(view, 'meta', udtaTrak.offset + 8, udtaTrak.offset + udtaTrak.size);
+          if (meta) {
+            const ilst = findAtom(view, 'ilst', meta.offset + 12, meta.offset + meta.size);
+            if (ilst) {
+              let ipos = ilst.offset + 8;
+              while (ipos < ilst.offset + ilst.size - 8) {
+                const iAtom = readAtom(view, ipos);
+                if (iAtom.size < 8) break;
+                if (iAtom.name === '©nam') {
+                  const dataAtom = findAtom(view, 'data', ipos + 8, ipos + iAtom.size);
+                  if (dataAtom) {
+                    const dStart = dataAtom.offset + 16;
+                    titles.push(dec.decode(new Uint8Array(view.buffer, dStart, dataAtom.size - 16)));
+                  }
+                }
+                ipos += iAtom.size;
+              }
+            }
+          }
+        }
+
+        console.log('[qt-chapters] found', starts.length, 'chapters, titles:', titles.length);
+        return starts.map((start, i) => ({ start, title: titles[i] || `Chapter ${i + 1}` }));
+      }
+      return [];
+    }
+
+
+    async function readM4bMeta(file) {
+      // Scan top-level atom headers to locate moov without reading mdat
+      let pos = 0;
+      let buf = null;
+      while (pos < file.size - 8) {
+        const headerBuf = await file.slice(pos, pos + 8).arrayBuffer();
+        const hv = new DataView(headerBuf);
+        let size = hv.getUint32(0);
+        const name = String.fromCharCode(hv.getUint8(4), hv.getUint8(5), hv.getUint8(6), hv.getUint8(7));
+        // Handle extended 64-bit size (size == 1)
+        if (size === 1) {
+          const extBuf = await file.slice(pos, pos + 16).arrayBuffer();
+          const ev = new DataView(extBuf);
+          size = ev.getUint32(8) * 2 ** 32 + ev.getUint32(12);
+        }
+        console.log('[meta] atom:', name, 'size:', size, 'at:', pos);
+        if (size < 8) { console.warn('[meta] invalid atom size'); break; }
+        if (name === 'moov') {
+          buf = await file.slice(pos, pos + size).arrayBuffer();
+          break;
+        }
+        pos += size;
+      }
+      if (!buf) { console.warn('[meta] moov not found'); return null; }
+
+      const view = new DataView(buf);
+      const moov = readAtom(view, 0);
+      console.log('[meta] moov size', moov.size);
+
+      const udta = findAtom(view, 'udta', moov.offset + 8, moov.offset + moov.size);
+
+      // Parse iTunes tags from moov → udta → meta → ilst
+      let tags = null;
+      if (udta) {
+        const meta = findAtom(view, 'meta', udta.offset + 8, udta.offset + udta.size);
+        if (meta) {
+          const ilst = findAtom(view, 'ilst', meta.offset + 12, meta.offset + meta.size);
+          if (ilst) tags = parseIlst(view, ilst.offset + 8, ilst.offset + ilst.size);
+        }
+      }
+
+      // Parse chapters: 1) Nero chpl atom, 2) QT chapter text track, 3) JSON tag
+      let chapters = [];
+      if (udta) {
+        const chpl = findAtom(view, 'chpl', udta.offset + 8, udta.offset + udta.size);
+        if (chpl) {
+          try { chapters = parseChpl(view, chpl); } catch(e) { console.warn('[meta] chpl parse error', e); }
+        }
+      }
+      if (!chapters.length) {
+        try { chapters = parseQtChapterTrack(view, moov); } catch(e) { console.warn('[meta] qt chapter track error', e); }
+        // If QT track gave chapters but no titles, try enriching titles from JSON tag
+        if (chapters.length && chapters.every(ch => /^Chapter \d+$/.test(ch.title))) {
+          const jsonChapters = chaptersFromJsonTag(tags);
+          if (jsonChapters.length === chapters.length) {
+            chapters = chapters.map((ch, i) => ({ start: ch.start, title: jsonChapters[i].title || ch.title }));
+          }
+        }
+      }
+
+      return { tags, chapters };
+    }
+
+    function chaptersFromJsonTag(tags) {
+      const jsonTag = tags && tags['JSON']?.value;
+      if (!jsonTag) return [];
+      try {
+        const decoded = atob(jsonTag);
+        const obj = JSON.parse(decoded);
+        if (Array.isArray(obj.chapters)) {
+          return obj.chapters.map(ch => ({
+            start: (ch.start_offset_ms || 0) / 1000,
+            title: ch.title || '',
+          }));
+        }
+      } catch(e) {
+        console.warn('[meta] JSON tag chapter parse error', e);
+      }
+      return [];
+    }
+
+    function displayMeta(tags) {
+      console.log('[meta] all tag keys:', Object.keys(tags));
+
+      const title  = tags['©nam']?.value || tags['\u00a9nam']?.value || '';
+      const artist = tags['©ART']?.value || tags['©art']?.value || '';
+      const album  = tags['©alb']?.value || '';
+      const cover  = tags['covr'];
+
+      metaTitleEl.textContent = title;
+      const secondary = [artist, album].filter(Boolean).join(' · ');
+      metaSecondary.textContent = secondary;
+
+      if (title) {
+        document.title = title;
+      }
+
+      if (cover && cover.type === 'image') {
+        const blob = new Blob([cover.data], { type: cover.mimeType });
+        coverImg.src = URL.createObjectURL(blob);
+        coverImg.style.display = 'block';
+        coverWrap.style.display = '';
+        metaSection.style.display = 'none';
+      } else {
+        coverWrap.style.display = 'none';
+        metaSection.style.display = '';
+      }
+    }
+
+    let currentChapters = [];
+
+    function displayChapters(chapters) {
+      currentChapters = chapters;
+      chaptersList.innerHTML = '';
+      if (!chapters.length) { chaptersSection.style.display = 'none'; return; }
+
+      chaptersCount.textContent = chapters.length + (chapters.length === 1 ? ' chapter' : ' chapters');
+      chaptersSection.style.display = '';
+
+      chapters.forEach((ch, i) => {
+        const row = document.createElement('div');
+        row.className = 'chapter-item';
+        row.dataset.index = i;
+        row.innerHTML = `
+          <span class="ch-dot"></span>
+          <span class="ch-time">${formatTime(ch.start)}</span>
+          <span class="ch-title">${ch.title}</span>
+        `;
+        row.addEventListener('click', () => { player.currentTime = ch.start; player.play(); });
+        chaptersList.appendChild(row);
+      });
+    }
+
+    let activeChapterIdx = -1;
+
+    function updateCurrentChapter(time) {
+      if (!currentChapters.length) return;
+      let idx = 0;
+      for (let i = 0; i < currentChapters.length; i++) {
+        if (time >= currentChapters[i].start) idx = i;
+        else break;
+      }
+      if (idx === activeChapterIdx) return; // nothing changed
+      activeChapterIdx = idx;
+
+      chaptersList.querySelectorAll('.chapter-item').forEach((row, i) => {
+        row.classList.toggle('active', i === idx);
+      });
+      const ch = currentChapters[idx];
+
+      // Scroll newly-active chapter into view only on chapter change
+      const activeEl = chaptersList.querySelector('.chapter-item.active');
+      if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    function parseFragment() {
+      const hash = location.hash.slice(1);
+      if (!hash) return null;
+      const params = new URLSearchParams(hash);
+      return { name: params.get('name'), t: parseFloat(params.get('t')) || 0 };
+    }
+
+    function formatTime(secs) {
+      const h = Math.floor(secs / 3600);
+      const m = Math.floor((secs % 3600) / 60);
+      const s = Math.floor(secs % 60);
+      return h > 0
+        ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+        : `${m}:${String(s).padStart(2,'0')}`;
+    }
+
+    function updateFragment(name, time) {
+      const params = new URLSearchParams();
+      params.set('name', name);
+      params.set('t', Math.floor(time));
+      history.replaceState(null, '', '#' + params.toString());
+    }
+
+    // Show last position from URL fragment on page load
+    (function initFromFragment() {
+      const fragment = parseFragment();
+      if (fragment && fragment.name) {
+        document.title = fragment.name;
+        document.getElementById('empty-heading').textContent = 'Resume listening';
+        document.getElementById('empty-sub').textContent =
+          `Choose \u201c${fragment.name}\u201d to continue from ${formatTime(fragment.t)}, or pick another file to start fresh.`;
+      }
+    })();
+
+    // ── Position persistence (localStorage) ──────────────────────
+    const LS_PREFIX = 'ab:';
+    function savePosition(name, time) {
+      try { localStorage.setItem(LS_PREFIX + name, JSON.stringify({ t: Math.floor(time), ts: Date.now() })); } catch (_) {}
+    }
+    function loadPosition(name) {
+      try {
+        const raw = localStorage.getItem(LS_PREFIX + name);
+        if (!raw) return 0;
+        const v = JSON.parse(raw);
+        return (typeof v === 'object' ? v.t : v) || 0;
+      } catch (_) { return 0; }
+    }
+    function listRecentFiles() {
+      const files = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith(LS_PREFIX)) continue;
+          const name = key.slice(LS_PREFIX.length);
+          try {
+            const v = JSON.parse(localStorage.getItem(key));
+            files.push({ name, t: (typeof v === 'object' ? v.t : v) || 0, ts: v.ts || 0 });
+          } catch (_) {}
+        }
+      } catch (_) {}
+      return files.sort((a, b) => b.ts - a.ts);
+    }
+    function renderRecentList() {
+      const el = document.getElementById('recent-list');
+      if (!el) return;
+      const files = listRecentFiles();
+      if (!files.length) { el.innerHTML = ''; return; }
+
+      // If no fragment, use most recent localStorage entry to populate empty-state heading
+      if (!parseFragment()) {
+        const recent = files[0];
+        document.title = recent.name;
+        document.getElementById('empty-heading').textContent = 'Resume listening';
+        document.getElementById('empty-sub').textContent =
+          `Choose \u201c${recent.name}\u201d to continue from ${formatTime(recent.t)}, or pick another file to start fresh.`;
+      }
+
+      const items = files.map(f => `
+        <div class="recent-item" data-name="${f.name.replace(/"/g, '&quot;')}">
+          <span class="recent-name">${f.name}</span>
+          <span class="recent-time">${formatTime(f.t)}</span>
+        </div>`).join('');
+      el.innerHTML = `<h3>Previously played</h3>${items}`;
+      el.querySelectorAll('.recent-item').forEach(item => {
+        item.addEventListener('click', () => fileInput.click());
+      });
+    }
+    renderRecentList();
+
+    // ── Playback state ────────────────────────────────────────────
+    let currentFileName = null;
+    const speeds = PLAYBACK_SPEEDS;
+    let speedIdx = 0;
+
+    function setPlaying(playing) {
+      iconPlay.style.display  = playing ? 'none' : '';
+      iconPause.style.display = playing ? '' : 'none';
+    }
+
+    function updateScrubber() {
+      if (!player.duration) return;
+      const pct = player.currentTime / player.duration * 100;
+      scrubFill.style.width  = pct + '%';
+      scrubThumb.style.left  = pct + '%';
+      timeCurrent.textContent = formatTime(player.currentTime);
+      timeTotal.textContent   = formatTime(player.duration);
+      scrubWrap.setAttribute('aria-valuenow', Math.round(pct));
+    }
+
+    // Scrubber interaction (pointer events — works for both touch and mouse)
+    let scrubbing = false;
+    function scrubTo(e) {
+      const rect = scrubWrap.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      player.currentTime = pct * (player.duration || 0);
+      updateScrubber();
+    }
+    scrubWrap.addEventListener('pointerdown', e => { scrubbing = true; scrubWrap.setPointerCapture(e.pointerId); scrubTo(e); });
+    scrubWrap.addEventListener('pointermove', e => { if (scrubbing) scrubTo(e); });
+    scrubWrap.addEventListener('pointerup',   () => { scrubbing = false; });
+
+    // Play / pause
+    btnPlay.addEventListener('click', () => {
+      player.paused ? player.play() : player.pause();
+    });
+    player.addEventListener('play',  () => setPlaying(true));
+    player.addEventListener('pause', () => setPlaying(false));
+    player.addEventListener('ended', () => setPlaying(false));
+
+    // Skip buttons
+    btnSkipBack.addEventListener('click', () => { player.currentTime = Math.max(0, player.currentTime - SKIP_BACK_SEC); });
+    btnSkipFwd.addEventListener('click',  () => { player.currentTime = Math.min(player.duration || 0, player.currentTime + SKIP_FWD_SEC); });
+    btnSkipBack.setAttribute('aria-label', `Skip back ${SKIP_BACK_SEC} seconds`);
+    btnSkipFwd.setAttribute('aria-label',  `Skip forward ${SKIP_FWD_SEC} seconds`);
+
+    // Speed cycling
+    speedBtn.addEventListener('click', () => {
+      speedIdx = (speedIdx + 1) % speeds.length;
+      player.playbackRate = speeds[speedIdx];
+      const label = speeds[speedIdx];
+      speedBtn.textContent = (label % 1 === 0 ? label : label) + '×';
+    });
+
+    // Sleep timer
+    const sleepOptions = [null, ...SLEEP_TIMERS_MIN.map(m => m * 60)];
+    let sleepIdx = 0;
+    let sleepRemaining = 0;
+    let sleepInterval = null;
+    const moonSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>`;
+
+    function clearSleep() {
+      if (sleepInterval) { clearInterval(sleepInterval); sleepInterval = null; }
+      sleepIdx = 0;
+      sleepRemaining = 0;
+      sleepBtn.classList.remove('active');
+      sleepBtn.innerHTML = moonSVG;
+    }
+
+    function updateSleepDisplay() {
+      const m = Math.ceil(sleepRemaining / 60);
+      sleepBtn.innerHTML = `${moonSVG}<span>${m}m</span>`;
+    }
+
+    sleepBtn.addEventListener('click', () => {
+      sleepIdx = (sleepIdx + 1) % sleepOptions.length;
+      if (sleepInterval) { clearInterval(sleepInterval); sleepInterval = null; }
+      if (sleepOptions[sleepIdx] === null) {
+        clearSleep();
+        return;
+      }
+      sleepRemaining = sleepOptions[sleepIdx];
+      sleepBtn.classList.add('active');
+      updateSleepDisplay();
+      sleepInterval = setInterval(() => {
+        sleepRemaining -= 1;
+        if (sleepRemaining <= 0) {
+          player.pause();
+          clearSleep();
+        } else {
+          updateSleepDisplay();
+        }
+      }, 1000);
+    });
+
+    // Timeupdate → scrubber + chapter highlight + fragment + localStorage
+    player.addEventListener('timeupdate', () => {
+      if (!scrubbing) updateScrubber();
+      if (currentFileName) {
+        updateFragment(currentFileName, player.currentTime);
+        savePosition(currentFileName, player.currentTime);
+        updateCurrentChapter(player.currentTime);
+      }
+    });
+
+    player.addEventListener('loadedmetadata', updateScrubber);
+
+    // ── Open file buttons ─────────────────────────────────────────
+    document.getElementById('open-btn').addEventListener('click',       () => fileInput.click());
+    document.getElementById('empty-open-btn').addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      document.title = file.name;
+      activeChapterIdx = -1;
+      clearSleep();
+
+      // Show book view, hide empty state, show controls
+      emptyState.style.display  = 'none';
+      bookView.style.display    = 'flex';
+      coverWrap.style.display   = 'none'; // hide until we know if cover art exists
+      metaSection.style.display = '';    // show until cover art confirmed
+      controls.style.display    = 'flex';
+
+      // Parse metadata
+      try {
+        const result = await readM4bMeta(file);
+        if (result) {
+          if (result.tags) displayMeta(result.tags);
+          let chapters = result.chapters;
+          if (!chapters.length) chapters = chaptersFromJsonTag(result.tags);
+          displayChapters(chapters);
+        }
+      } catch (e) {
+        console.warn('metadata parse failed', e);
+      }
+
+      currentFileName = file.name;
+      const url = URL.createObjectURL(file);
+      player.innerHTML = '';
+      const source = document.createElement('source');
+      source.src  = url;
+      source.type = 'audio/mp4';
+      player.appendChild(source);
+      player.load();
+
+      // Restore position: fragment takes priority, then localStorage
+      const fragment = parseFragment();
+      const savedTime = (fragment && fragment.name === file.name)
+        ? fragment.t
+        : loadPosition(file.name);
+      if (savedTime > 0) {
+        player.addEventListener('canplay', () => {
+          player.currentTime = savedTime;
+          player.play();
+        }, { once: true });
+      } else {
+        player.play();
+      }
+
+      updateFragment(file.name, savedTime);
+    });
+  </script>
+</body>
+</html>

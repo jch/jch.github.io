@@ -7,6 +7,7 @@ These are projects I've started or contributed to. My GitHub profile is
 [jch](https://github.com/jch).
 
 * [jch.app](https://jch.app) - Networth and investment tracker
+* [audiobook](/posts/2026-05-14-audiobook-player-no-dep.html) - serverless, offline audiobook player
 * [personal-finance](https://github.com/jch/personal-finance) - Guide and notes for personal finance
 * [sourdough](/projects/sourdough) - local-first recipe and journal using IndexDB, practice grid layout
 * [html-pipeline](https://github.com/jch/html-pipeline) - HTML processing filters and utilities
