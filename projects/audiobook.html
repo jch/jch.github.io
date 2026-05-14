@@ -16,6 +16,7 @@
       --text:    #efefef;
       --muted:   #828282;
       --dim:     #303030;
+      --link:    #5db8f5;
     }
 
     @media (prefers-color-scheme: light) {
@@ -28,6 +29,7 @@
         --text:    #111111;
         --muted:   #6a6a6a;
         --dim:     #c8c8c8;
+        --link:    #2272c9;
       }
     }
 
@@ -201,15 +203,18 @@
       font-variant-numeric: tabular-nums;
     }
 
-    #librivox-link {
-      display: block;
-      margin-top: 28px;
+    .empty-link {
       font-size: 13px;
-      color: var(--muted);
+      color: var(--link);
       text-decoration: none;
-      opacity: 0.7;
     }
-    #librivox-link:hover { opacity: 1; }
+    .empty-link:hover { text-decoration: underline; }
+
+    #empty-footer-links {
+      display: flex;
+      gap: 20px;
+      margin-top: 28px;
+    }
 
     /* ── BOOK VIEW ── */
     #book-view { display: none; flex-direction: column; }
@@ -490,7 +495,10 @@
           Choose file
         </button>
         <div id="recent-list"></div>
-        <a id="librivox-link" href="https://librivox.org" target="_blank" rel="noopener">Need a book?</a>
+        <div id="empty-footer-links">
+          <a class="empty-link" href="https://librivox.org" target="_blank" rel="noopener">Need a book?</a>
+          <a class="empty-link" href="https://jch.github.io/posts/2026-05-14-audiobook-player-no-dep.html" id="about-link">About</a>
+        </div>
       </div>
 
       <!-- Book view (shown once file loaded) -->
