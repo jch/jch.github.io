@@ -36,6 +36,7 @@ pre { font-size: var(--s-1); font-family: var(--font-mono); }
 small { font-size: var(--s-2); }
 p { text-wrap: pretty; }
 a { text-decoration: none; text-underline-offset: 2px; }
+sup { line-height: 0; }
 
 .pl-c {color: darkgray;}
 .pl-c1, .pl-s .pl-v {color: deepskyblue;}
