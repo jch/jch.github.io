@@ -584,7 +584,7 @@
 
   </div><!-- /app -->
 
-  <audio id="player"></audio>
+  <audio id="player" preload="auto"></audio>
 
   <script>
     // ── Configuration ──────────────────────────────────────────────
@@ -1086,6 +1086,7 @@
 
     // ── Playback state ────────────────────────────────────────────
     let currentFileName = null;
+    let currentFile     = null;  // kept for stall/error recovery
     const speeds = PLAYBACK_SPEEDS;
     let speedIdx = 0;
 
@@ -1182,16 +1183,63 @@
     });
 
     // Timeupdate → scrubber + chapter highlight + fragment + localStorage
+    // replaceState and localStorage writes are throttled — browsers (esp. iOS Safari)
+    // rate-limit history.replaceState and may penalise pages that call it too often.
+    let lastFragmentUpdate = 0;
+    let lastPositionSave   = 0;
     player.addEventListener('timeupdate', () => {
       if (!scrubbing) updateScrubber();
       if (currentFileName) {
-        updateFragment(currentFileName, player.currentTime);
-        savePosition(currentFileName, player.currentTime);
+        const now = Date.now();
+        if (now - lastFragmentUpdate > 5000) {
+          updateFragment(currentFileName, player.currentTime);
+          lastFragmentUpdate = now;
+        }
+        if (now - lastPositionSave > 10000) {
+          savePosition(currentFileName, player.currentTime);
+          lastPositionSave = now;
+        }
         updateCurrentChapter(player.currentTime);
       }
     });
 
     player.addEventListener('loadedmetadata', updateScrubber);
+
+    // Flush position immediately on pause/ended — don't wait for throttle window
+    function flushPosition() {
+      if (!currentFileName) return;
+      updateFragment(currentFileName, player.currentTime);
+      savePosition(currentFileName, player.currentTime);
+      lastFragmentUpdate = lastPositionSave = Date.now();
+    }
+    player.addEventListener('pause', flushPosition);
+    player.addEventListener('ended', flushPosition);
+
+    // ── Stall / error recovery ────────────────────────────────────
+    // iOS Safari may drop the blob URL from memory under pressure.
+    // Re-attach using the retained File reference and seek back.
+    let recovering = false;
+    function recoverPlayback() {
+      if (!currentFile || recovering || player.paused) return;
+      recovering = true;
+      const resumeAt = player.currentTime || loadPosition(currentFileName);
+      const wasPlaying = !player.paused;
+      const newUrl = URL.createObjectURL(currentFile);
+      player.src = newUrl;
+      player.load();
+      player.addEventListener('canplay', () => {
+        player.currentTime = resumeAt;
+        if (wasPlaying) player.play();
+        recovering = false;
+      }, { once: true });
+    }
+    player.addEventListener('error',   recoverPlayback);
+    player.addEventListener('stalled', () => {
+      // stalled fires on normal buffering too; only recover if truly stuck
+      clearTimeout(player._stallTimer);
+      player._stallTimer = setTimeout(recoverPlayback, 4000);
+    });
+    player.addEventListener('playing', () => clearTimeout(player._stallTimer));
 
     // ── Open file buttons ─────────────────────────────────────────
     document.getElementById('open-btn').addEventListener('click',       () => fileInput.click());
@@ -1226,6 +1274,8 @@
       }
 
       currentFileName = file.name;
+      currentFile     = file;
+      recovering      = false;
       const url = URL.createObjectURL(file);
       player.innerHTML = '';
       const source = document.createElement('source');
