@@ -15,7 +15,7 @@
     </header>
 
     <div class="markdown-heading"><h1 class="heading-element">Serverless Offline Audiobook player</h1><a id="user-content-serverless-offline-audiobook-player" class="anchor" aria-label="Permalink: Serverless Offline Audiobook player" href="#serverless-offline-audiobook-player"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>I built <a href="/projects/audiobook.html">Audiobook Player</a> to play local and iCloud audiobooks offline<sup><a href="#user-content-fn-0" id="user-content-fnref-0" data-footnote-ref="">1</a></sup> without any syncing<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="">2</a></sup> or importing<sup><a href="#user-content-fn-2" id="user-content-fnref-2" data-footnote-ref="">3</a></sup>. The HTML, CSS, and JS are all in that single file, and can be hosted anywhere. Try it with this small audiobook <a href="/projects/SmackInSchool_LibriVox.m4b">"The Smack in School"</a>.</p>
+<p>I built <a href="/projects/audiobook.html">Audiobook Player</a> to play local and iCloud audiobooks offline<sup><a href="#fn-0" id="user-content-fnref-0" data-footnote-ref="">1</a></sup> without any syncing<sup><a href="#fn-1" id="user-content-fnref-1" data-footnote-ref="">2</a></sup> or importing<sup><a href="#fn-2" id="user-content-fnref-2" data-footnote-ref="">3</a></sup>. The HTML, CSS, and JS are all in that single file, and can be hosted anywhere. Try it with this small audiobook <a href="/projects/SmackInSchool_LibriVox.m4b">"The Smack in School"</a>.</p>
 <div class="markdown-heading"><h2 class="heading-element">Concept</h2><a id="user-content-concept" class="anchor" aria-label="Permalink: Concept" href="#concept"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Browsers have good support for playing audio, so the idea was to build a player out of HTML/CSS and load local audiobooks into it:</p>
 <div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- choose a local audiobook file --&gt;</span>
@@ -23,7 +23,7 @@
 
 <span class="pl-c">&lt;!-- set the src to the contents of the audiobook --&gt;</span>
 <span class="pl-kos">&lt;</span><span class="pl-ent">audio</span> <span class="pl-c1">id</span>="<span class="pl-s">player</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">audio</span><span class="pl-kos">&gt;</span></pre></div>
-<p>To remember playback position, I store them in the url document fragment. It's a janky workaround because iOS Safari doesn't persist access grants to files<sup><a href="#user-content-fn-3" id="user-content-fnref-3" data-footnote-ref="">4</a></sup>, so if I navigate away from the page, I can select the audiobook again and skip to where I left off. A nice side effect is it also works with Safari Handoff to share the URL between devices.</p>
+<p>To remember playback position, I store them in the url document fragment. It's a janky workaround because iOS Safari doesn't persist access grants to files<sup><a href="#fn-3" id="user-content-fnref-3" data-footnote-ref="">4</a></sup>, so if I navigate away from the page, I can select the audiobook again and skip to where I left off. A nice side effect is it also works with Safari Handoff to share the URL between devices.</p>
 <p><a target="_blank" rel="noopener noreferrer" href="/images/audiobook-resume.png"><img src="/images/audiobook-resume.png" alt="Audiobook player showing resume position in the document fragment URL" style="max-width: 100%;"></a></p>
 <div class="markdown-heading"><h2 class="heading-element">Chapter information</h2><a id="user-content-chapter-information" class="anchor" aria-label="Permalink: Chapter information" href="#chapter-information"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Getting playback and position working was straightforward. The first challenge was getting metadata details from an m4b. I started with <a href="https://github.com/gpac/mp4box.js/">mp4box.js</a> which gave me good results for general audio metadata like <code>title</code>, <code>artist</code>, <code>cover art</code>, but there are audiobook specific tags including <code>chpl/tref/chap</code> for chapter information. I ran parallel experiments with manual parsing the file bytes and mp4box across a handful of audiobooks. Sometimes that metadata is the beginning bytes of a file, and sometimes the end. Sometimes there would be number chapters, but the actual chapter names would be in a different part of the document within JSON. I'm wary of this code and additional edge cases, so I have it fail gracefully when parsing fails or metadata isn't available. If chapter information is available, it's easy to set the player to scrub to that position. The player also emits change events which are used to persist playback position.</p>
@@ -37,7 +37,7 @@
 </ul>
 <p>From there, I spent most of my time removing elements and copy. I chose familiar icons and set defaults I prefer for rewind, playback speed, and sleep timer. I didn't build any UI to change these, they're variables if you'd like to customize it.</p>
 <p>For the blank state icon, I chose "audiobook" by Ahmad Roaayala from Noun Project <a href="https://thenounproject.com/browse/icons/term/audiobook/" rel="nofollow">https://thenounproject.com/browse/icons/term/audiobook/</a> (CC BY 3.0).</p>
-<p>I wish the Nokia 8110 4g aka "Banana phone" from the matrix worked in the US, but I decided to make this look nice on 240x320 viewports too. If you have a feature phone or a KaiOS device, I'd love to hear if this player works<sup><a href="#user-content-fn-4" id="user-content-fnref-4" data-footnote-ref="">5</a></sup>.</p>
+<p>I wish the Nokia 8110 4g aka "Banana phone" from the matrix worked in the US, but I decided to make this look nice on 240x320 viewports too. If you have a feature phone or a KaiOS device, I'd love to hear if this player works<sup><a href="#fn-4" id="user-content-fnref-4" data-footnote-ref="">5</a></sup>.</p>
 <p>I'm working through the <a href="https://animations.dev" rel="nofollow">animations.dev</a> course. Nothing fancy here, but added a transform 97% and ease-out on the buttons. I can imagine some animations around the cover art or shrinking the player controls, but I think those may feel excessive, especially on smaller screens.</p>
 <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/Media_Session_API" rel="nofollow">MediaSession API</a> makes it easy to preview what's playing from the lock screen.</p>
 <div class="markdown-heading"><h2 class="heading-element">Dead ends</h2><a id="user-content-dead-ends" class="anchor" aria-label="Permalink: Dead ends" href="#dead-ends"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -57,19 +57,19 @@
 <section data-footnotes="">
 <ol>
 <li id="user-content-fn-0">
-<p><a href="https://www.audiobookshelf.org" rel="nofollow">https://www.audiobookshelf.org</a> is a neat project and had a polished PWA. But I only occasionally get shared audiobooks and didn't want to self-host something this full featured. <a href="#user-content-fnref-0" data-footnote-backref="" aria-label="Back to reference 1">↩</a></p>
+<p><a href="https://www.audiobookshelf.org" rel="nofollow">https://www.audiobookshelf.org</a> is a neat project and had a polished PWA. But I only occasionally get shared audiobooks and didn't want to self-host something this full featured. <a href="#fnref-0" data-footnote-backref="" aria-label="Back to reference 1">↩</a></p>
 </li>
 <li id="user-content-fn-1">
-<p>I like Apple Books, but it doesn't Handoff or sync timestamps properly <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 2">↩</a></p>
+<p>I like Apple Books, but it doesn't Handoff or sync timestamps properly <a href="#fnref-1" data-footnote-backref="" aria-label="Back to reference 2">↩</a></p>
 </li>
 <li id="user-content-fn-2">
-<p>I like Book Player, but sometimes importing fails or act wonky. Plus, this was a fun excuse to learn about m4b's, HTTP range, OPFS, KaiOS, ... <a href="#user-content-fnref-2" data-footnote-backref="" aria-label="Back to reference 3">↩</a></p>
+<p>I like Book Player, but sometimes importing fails or act wonky. Plus, this was a fun excuse to learn about m4b's, HTTP range, OPFS, KaiOS, ... <a href="#fnref-2" data-footnote-backref="" aria-label="Back to reference 3">↩</a></p>
 </li>
 <li id="user-content-fn-3">
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showOpenFilePicker#browser_compatibility" rel="nofollow"><code>showOpenFilePicker</code></a> and directory picker is available on Chrome Android 132 (2025-01-14), and file handles can be serialized to IndexDB. I think this makes it possible to prompt a user once for access to folder of audiobooks, and then keeping access across page reloads. <a href="#user-content-fnref-3" data-footnote-backref="" aria-label="Back to reference 4">↩</a></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showOpenFilePicker#browser_compatibility" rel="nofollow"><code>showOpenFilePicker</code></a> and directory picker is available on Chrome Android 132 (2025-01-14), and file handles can be serialized to IndexDB. I think this makes it possible to prompt a user once for access to folder of audiobooks, and then keeping access across page reloads. <a href="#fnref-3" data-footnote-backref="" aria-label="Back to reference 4">↩</a></p>
 </li>
 <li id="user-content-fn-4">
-<p>Fell into a rabbit hole last night reading about KaiOS and old gecko. <a href="#user-content-fnref-4" data-footnote-backref="" aria-label="Back to reference 5">↩</a></p>
+<p>Fell into a rabbit hole last night reading about KaiOS and old gecko. <a href="#fnref-4" data-footnote-backref="" aria-label="Back to reference 5">↩</a></p>
 </li>
 </ol>
 </section>
