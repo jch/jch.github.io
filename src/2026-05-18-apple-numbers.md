@@ -4,4 +4,4 @@ I'm a big fan of spreadsheets for tracking stuff. I keep a Google sheet for each
 
 After the early demise of my iPhone 13 mini, I started fresh and didn't reinstall my previous apps. So I decided to give Numbers a try. I exported the Google Sheet as an Excel file and had no trouble opening it on Mac, and saving it to iCloud. On phones, there's ["Enter data using forms in Numbers on iPhone"](https://support.apple.com/guide/numbers-iphone/enter-data-using-forms-tan66fd732f9/ios). Each column can be customized with a type so "cost" can be currency and show the numbers keyboard, and "type" can be a pop up menu with a set list of options. It even imported the pivot table properly!
 
-Sharing is available through iCloud web, and has familiar permissions and options. I also like the option to share as PDF.
+Sharing is available through iCloud web, and has familiar permissions and options. I also like the option to share as PDF. With Shortcuts, I added a "Record Mazda" shortcut that uses the "Add 'Values' to 'Form' in '2014 Mazda6 Touring'" Numbers task, and saved this Shortcut to my homescreen with a red car icon.
