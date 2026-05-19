@@ -15,6 +15,7 @@
   <description><![CDATA[
 <p>I'm a big fan of spreadsheets for tracking stuff. I keep a Google sheet for each car to track spending and maintenance. Here's a <a href="https://docs.google.com/spreadsheets/d/1dVcq4kxKHR8Kcvq82-DF0Lg_ixU45y8EPd3OJN9AT44/edit?usp=sharing" rel="nofollow">copy of my 2014 Mazda 6 sheet</a>. I track date, odometer, cost, type, and description. Type lets me categorize spending into a pivot table in a 2nd sheet, and do some arithmetic to figure out price per mile, and price per month over time. I've used Google Sheets as a default because that's where I started. I used a Google Form to make mobile input friendly, but went back to the mobile app for offline and faster access.</p>
 <p>After the early demise of my iPhone 13 mini, I started fresh and didn't reinstall my previous apps. So I decided to give Numbers a try. I exported the Google Sheet as an Excel file and had no trouble opening it on Mac, and saving it to iCloud. On phones, there's <a href="https://support.apple.com/guide/numbers-iphone/enter-data-using-forms-tan66fd732f9/ios" rel="nofollow">"Enter data using forms in Numbers on iPhone"</a>. Each column can be customized with a type so "cost" can be currency and show the numbers keyboard, and "type" can be a pop up menu with a set list of options. It even imported the pivot table properly!</p>
+<p>Sharing is available through iCloud web, and has familiar permissions and options. I also like the option to share as PDF.</p>
   ]]></description>
 </item>
 
