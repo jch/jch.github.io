@@ -12,14 +12,14 @@ Once I got home, I sat down to dig through how it works and what local nodes wer
 
 Meshtastic defines a number of configuration presets. For radios to form a mesh and talk to each other, they have to broadcast with the same preset [^docs]. I made myself this study guide to understand how these settings trade off between range, speed, congestion, and battery life.
 
-| Preset Name | Bandwidth (BW) | Spreading Factor (SF) | Coding Rate (CR) | Recommended Application / Best Use Case |
+| Preset | Bandwidth (BW) | Spreading Factor (SF) | Coding Rate (CR) | Use Case |
 | :--- | :--- | :--- | :--- | :--- |
-| **Short Turbo** | 500 kHz | SF7 | 4/5 | **Closed Testing & Development:** Bench testing hardware or tracking high-speed, close-range vehicles where ultra-low latency is required. |
-| **Short Fast** | 250 kHz | SF7 | 4/5 | **Localized Indoor Events:** Tactical arenas, convention centers, or small campuses where nodes are close and channel traffic is incredibly high. |
-| **Medium Fast** | 250 kHz | SF9 | 4/5 | **Private Local Teams:** Search and rescue teams or family caravans operating in a tight 1-2 mile radius who want faster text delivery than the public mesh. |
-| **Long Fast** *(Default)* | 250 kHz | SF11 | 4/5 | **The Public Mesh Standard:** Highly recommended for 95% of standard users. Optimized for general urban/suburban community mesh networks and regional discovery. |
-| **Long Slow** | 125 kHz | SF11 | 4/8 | **Fringe Network Extensions:** Connecting a remote, isolated valley or a distant mountain node back into an existing local grid over heavy terrain. |
-| **Very Long Slow** | 62.5 kHz | SF12 | 4/8 | **Extreme Wilderness & Off-Grid Telemetry:** Remote solar-powered weather stations, scientific sensors, or emergency links spanning massive empty deserts/plains. |
+| **Short Turbo** | 500 kHz | SF7 | 4/5 | testing hardware, low latency, drones? |
+| **Short Fast** | 250 kHz | SF7 | 4/5 | close nodes, high traffic, defcon used this |
+| **Medium Fast** | 250 kHz | SF9 | 4/5 | bayme.sh, faster delivery |
+| **Long Fast** *(Default)* | 250 kHz | SF11 | 4/5 | general urban/suburban community mesh networks |
+| **Long Slow** | 125 kHz | SF11 | 4/8 | Connecting a remote node |
+| **Very Long Slow** | 62.5 kHz | SF12 | 4/8 | Remote solar-powered weather stations, scientific sensors, or emergency links |
 
 Meshtastic lives on the ISM spectrum[^ism] and uses the 915Mhz range from 902Mhz to 928Mhz in North America. A hertz is the time it takes for something to complete a full cycle in one second. So a 100hz radio wave is one that takes 0.01 second for the wave to go up and down, and a 915Mhz wave means there are 915 million up's and down's wave cycles in a second. With radio waves, there are a few ways to modulate[^modem] information inside it. AM and FM radio are easy to visualize. Amplitude modulation makes the waves taller and shorter, while frequency modulation makes the waves faster/closer and slower/further. LoRa uses Chirp Spread Spectrum (CSS) to encode information as a series of 'chirps', which I don't understand yet and leaving as a black box[^css].
 

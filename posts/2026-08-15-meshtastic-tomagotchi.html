@@ -20,15 +20,15 @@
 <p>The radio is cool too! Defcon was a great place to try it out because there were nodes everywhere, making it easy to trace how different nodes would relay messages, testing out private messages, and playing around with the configs and the companion phone app.</p>
 <p>Once I got home, I sat down to dig through how it works and what local nodes were available. It's built on <a href="https://en.wikipedia.org/wiki/LoRa" rel="nofollow">LoRa Long Range</a> using sub-gigahertz unlicensed spectrum intended for transmitting small amounts of data where wifi or cellular can't reach. I plan to use it during hiking and camping, but there are lots of other applications including IoT sensors, controlling drones, and emergency communications.</p>
 <div class="markdown-heading"><h2 class="heading-element">Presets</h2><a id="user-content-presets" class="anchor" aria-label="Permalink: Presets" href="#presets"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>Meshtastic defines a number of configuration presets. For radios to form a mesh and talk to each other, they have to broadcast with the same preset <sup><a href="#fn-docs" id="user-content-fnref-docs" data-footnote-ref="">2</a></sup>. I made myself this study guide to understand how these settings represent trade offs between range, speed, congestion, and battery life.</p>
+<p>Meshtastic defines a number of configuration presets. For radios to form a mesh and talk to each other, they have to broadcast with the same preset <sup><a href="#fn-docs" id="user-content-fnref-docs" data-footnote-ref="">2</a></sup>. I made myself this study guide to understand how these settings trade off between range, speed, congestion, and battery life.</p>
 <table>
 <thead>
 <tr>
-<th align="left">Preset Name</th>
+<th align="left">Preset</th>
 <th align="left">Bandwidth (BW)</th>
 <th align="left">Spreading Factor (SF)</th>
 <th align="left">Coding Rate (CR)</th>
-<th align="left">Recommended Application / Best Use Case</th>
+<th align="left">Use Case</th>
 </tr>
 </thead>
 <tbody>
@@ -37,24 +37,21 @@
 <td align="left">500 kHz</td>
 <td align="left">SF7</td>
 <td align="left">4/5</td>
-<td align="left">
-<strong>Closed Testing &amp; Development:</strong> Bench testing hardware or tracking high-speed, close-range vehicles where ultra-low latency is required.</td>
+<td align="left">testing hardware, low latency, drones?</td>
 </tr>
 <tr>
 <td align="left"><strong>Short Fast</strong></td>
 <td align="left">250 kHz</td>
 <td align="left">SF7</td>
 <td align="left">4/5</td>
-<td align="left">
-<strong>Localized Indoor Events:</strong> Tactical arenas, convention centers, or small campuses where nodes are close and channel traffic is incredibly high.</td>
+<td align="left">close nodes, high traffic, defcon used this</td>
 </tr>
 <tr>
 <td align="left"><strong>Medium Fast</strong></td>
 <td align="left">250 kHz</td>
 <td align="left">SF9</td>
 <td align="left">4/5</td>
-<td align="left">
-<strong>Private Local Teams:</strong> Search and rescue teams or family caravans operating in a tight 1-2 mile radius who want faster text delivery than the public mesh.</td>
+<td align="left">bayme.sh, faster delivery</td>
 </tr>
 <tr>
 <td align="left">
@@ -63,24 +60,21 @@
 <td align="left">250 kHz</td>
 <td align="left">SF11</td>
 <td align="left">4/5</td>
-<td align="left">
-<strong>The Public Mesh Standard:</strong> Highly recommended for 95% of standard users. Optimized for general urban/suburban community mesh networks and regional discovery.</td>
+<td align="left">general urban/suburban community mesh networks</td>
 </tr>
 <tr>
 <td align="left"><strong>Long Slow</strong></td>
 <td align="left">125 kHz</td>
 <td align="left">SF11</td>
 <td align="left">4/8</td>
-<td align="left">
-<strong>Fringe Network Extensions:</strong> Connecting a remote, isolated valley or a distant mountain node back into an existing local grid over heavy terrain.</td>
+<td align="left">Connecting a remote node</td>
 </tr>
 <tr>
 <td align="left"><strong>Very Long Slow</strong></td>
 <td align="left">62.5 kHz</td>
 <td align="left">SF12</td>
 <td align="left">4/8</td>
-<td align="left">
-<strong>Extreme Wilderness &amp; Off-Grid Telemetry:</strong> Remote solar-powered weather stations, scientific sensors, or emergency links spanning massive empty deserts/plains.</td>
+<td align="left">Remote solar-powered weather stations, scientific sensors, or emergency links</td>
 </tr>
 </tbody>
 </table>
